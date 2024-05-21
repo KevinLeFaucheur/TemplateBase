@@ -1,10 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacterController.h"
-
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Player/PlayerCharacter.h"
+
+void APlayerCharacterController::BeginPlay()
+{
+	Super::BeginPlay();
+	PlayerCharacter = Cast<APlayerCharacter>(GetCharacter());
+}
 
 void APlayerCharacterController::SetupInputComponent()
 {
@@ -21,6 +26,8 @@ void APlayerCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &APlayerCharacterController::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &APlayerCharacterController::StopJumping);
+		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Started, this, &APlayerCharacterController::EquipButtonPressed);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &APlayerCharacterController::CrouchButtonPressed);
 	}
 }
 
@@ -54,16 +61,20 @@ void APlayerCharacterController::Look(const FInputActionValue& Value)
 void APlayerCharacterController::Jump()
 {
 	// TODO: Casting here probably not the best option
-	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetCharacter()))
-	{
-		PlayerCharacter->Jump();
-	}
+	if (PlayerCharacter) PlayerCharacter->Jump();
 }
 
 void APlayerCharacterController::StopJumping()
 {
-	if (APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(GetCharacter()))
-	{
-		PlayerCharacter->StopJumping();
-	}
+	if (PlayerCharacter) PlayerCharacter->StopJumping();
+}
+
+void APlayerCharacterController::CrouchButtonPressed()
+{
+	if (PlayerCharacter) PlayerCharacter->CrouchButtonPressed();
+}
+
+void APlayerCharacterController::EquipButtonPressed()
+{
+	if (PlayerCharacter) PlayerCharacter->EquipButtonPressed();
 }

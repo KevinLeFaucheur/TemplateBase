@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "PlayerCharacterController.generated.h"
 
+class APlayerCharacter;
 class UInputAction;
 class UInputMappingContext;
 /**
@@ -30,12 +31,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputAction> LookAction;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> EquipAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> CrouchAction;
+	
 protected:
+	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Jump();
 	void StopJumping();
+	void CrouchButtonPressed();
+	void EquipButtonPressed();
 
-protected:
-	virtual void SetupInputComponent() override;
+private:
+	TObjectPtr<APlayerCharacter> PlayerCharacter;
 };

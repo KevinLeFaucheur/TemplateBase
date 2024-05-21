@@ -3,6 +3,7 @@
 #include "Player/PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Equipment/EquipmentComponent.h"
 #include "Equipment/Tool.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -28,12 +29,23 @@ APlayerCharacter::APlayerCharacter()
 
 	OverheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidget"));
 	OverheadWidget->SetupAttachment(RootComponent);
+
+	EquipmentComponent = CreateDefaultSubobject<UEquipmentComponent>(TEXT("EquipmentComponent"));
+	EquipmentComponent->SetIsReplicated(true);
+
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION(APlayerCharacter, OverlappingTool, COND_OwnerOnly);
+}
+
+void APlayerCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	if(EquipmentComponent) EquipmentComponent->PlayerCharacter = this;
 }
 
 void APlayerCharacter::SetOverlappingTool(ATool* Tool)
@@ -47,4 +59,37 @@ void APlayerCharacter::OnRep_OverlappingTool(ATool* LastTool)
 {
 	if(OverlappingTool) OverlappingTool->ShowPickupWidget(true);
 	if(LastTool) LastTool->ShowPickupWidget(false);
+}
+
+void APlayerCharacter::EquipButtonPressed()
+{
+	if(EquipmentComponent)
+	{
+		if(HasAuthority())
+		{
+			EquipmentComponent->EquipTool(OverlappingTool);
+		}
+		else
+		{
+			ServerEquipButtonPressed();
+		}
+	}
+}
+
+void APlayerCharacter::ServerEquipButtonPressed_Implementation()
+{
+	if(EquipmentComponent)
+	{
+		EquipmentComponent->EquipTool(OverlappingTool);
+	}
+}
+
+bool APlayerCharacter::IsEquipped()
+{
+	return (EquipmentComponent && EquipmentComponent->EquippedTool);
+}
+
+void APlayerCharacter::CrouchButtonPressed()
+{
+	bIsCrouched ? UnCrouch() : Crouch();
 }

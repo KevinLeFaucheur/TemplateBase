@@ -32,6 +32,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION()
 	void OnSphereBeginOverlap(
@@ -59,9 +60,13 @@ protected:
 	TObjectPtr<UWidgetComponent> PickupWidget;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category="Equipment")
+	UPROPERTY(ReplicatedUsing=OnRep_ToolState, VisibleAnywhere, Category="Equipment")
 	EToolState ToolState = EToolState::ETS_Initial;
 
-public:	
+	UFUNCTION()
+	void OnRep_ToolState();
 
+public:	
+	void SetToolState(const EToolState NewState);
+	FORCEINLINE USphereComponent* GetAreaSphere() { return AreaSphere; }
 };

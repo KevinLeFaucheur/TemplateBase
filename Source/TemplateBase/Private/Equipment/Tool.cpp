@@ -3,6 +3,7 @@
 #include "Equipment/Tool.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Player/PlayerCharacter.h"
 
 ATool::ATool()
@@ -26,6 +27,12 @@ ATool::ATool()
 
 	PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
 	PickupWidget->SetupAttachment(RootComponent);
+}
+
+void ATool::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ATool, ToolState);
 }
 
 void ATool::BeginPlay()
@@ -68,4 +75,36 @@ void ATool::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 void ATool::ShowPickupWidget(bool bShowWidget)
 {
 	if(PickupWidget) PickupWidget->SetVisibility(bShowWidget);
+}
+
+void ATool::SetToolState(const EToolState NewState)
+{
+	ToolState = NewState;
+	
+	switch (ToolState) {
+	case EToolState::ETS_Initial:
+		break;
+	case EToolState::ETS_Equipped:
+		ShowPickupWidget(false);
+		AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+	case EToolState::ETS_Dropped:
+		break;
+	default: ;
+	}
+}
+
+void ATool::OnRep_ToolState()
+{
+	switch (ToolState) {
+	case EToolState::ETS_Initial:
+		break;
+	case EToolState::ETS_Equipped:
+		ShowPickupWidget(false);
+		// AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		break;
+	case EToolState::ETS_Dropped:
+		break;
+	default: ;
+	}
 }

@@ -31,5 +31,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	bool bIsAccelerating;
 	
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	bool bIsEquipped;
+	
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	bool bIsCrouched;
+	
 private:
 };

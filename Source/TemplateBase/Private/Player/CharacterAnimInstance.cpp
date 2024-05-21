@@ -24,7 +24,8 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	Speed = UKismetMathLibrary::VSizeXY(PlayerCharacter->GetVelocity());
 	bAirborne = PlayerCharacter->GetCharacterMovement()->IsFalling();
-	bIsAccelerating =
-		UKismetMathLibrary::NotEqual_VectorVector(PlayerCharacter->GetCharacterMovement()->GetCurrentAcceleration(), FVector::ZeroVector, 0.f)
+	bIsAccelerating = UKismetMathLibrary::NotEqual_VectorVector(PlayerCharacter->GetCharacterMovement()->GetCurrentAcceleration(), FVector::ZeroVector, 0.f)
 		&& Speed > 3.f;
+	bIsEquipped = PlayerCharacter->IsEquipped();
+	bIsCrouched = PlayerCharacter->bIsCrouched;
 }
