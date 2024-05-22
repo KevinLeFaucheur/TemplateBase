@@ -22,12 +22,28 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	void SetAiming(bool bIsAiming);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetAiming(bool bIsAiming);
+
+	UFUNCTION()
+	void OnRep_EquippedTool();
 
 private:
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_EquippedTool)
 	TObjectPtr<ATool> EquippedTool;
+
+	UPROPERTY(Replicated)
+	bool bAiming;
+
+	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
+	float BaseWalkSpeed;
+	
+	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
+	float AimWalkSpeed;
 
 public:
 };

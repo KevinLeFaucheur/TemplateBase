@@ -6,6 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "CharacterAnimInstance.generated.h"
 
+class ATool;
 class APlayerCharacter;
 /**
  * 
@@ -22,6 +23,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
+	TObjectPtr<ATool> EquippedTool;
+
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	float Speed;
 
@@ -36,6 +39,29 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	bool bIsCrouched;
+	
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	bool bAiming;
+
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	float YawOffset;
+
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	float Lean;
+
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	float AO_Yaw;
+
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	float AO_Pitch;
+
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	FTransform LeftHandTransform;
+	
+private:
+	FRotator CharacterRotationLastFrame;
+	FRotator CharacterRotation;
+	FRotator DeltaRotation;
 	
 private:
 };

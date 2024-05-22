@@ -69,4 +69,5 @@ private:
 public:	
 	void SetToolState(const EToolState NewState);
 	FORCEINLINE USphereComponent* GetAreaSphere() { return AreaSphere; }
+	FORCEINLINE USkeletalMeshComponent* GetMesh() const { return Mesh; }
 };

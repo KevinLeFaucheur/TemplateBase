@@ -24,10 +24,13 @@ public:
 	APlayerCharacter();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PostInitializeComponents() override;
+	virtual void Tick(float DeltaTime) override;
 	void SetOverlappingTool(ATool* Tool);
 	
-	void EquipButtonPressed();
 	void CrouchButtonPressed();
+	void AimButtonPressed();
+	void AimButtonReleased();
+	void EquipButtonPressed();
 
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
@@ -44,6 +47,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> OverheadWidget;
 
+protected:
+	void AimOffset(float DeltaTime);
+	
 private:
 	UPROPERTY(ReplicatedUsing=OnRep_OverlappingTool)
 	TObjectPtr<ATool> OverlappingTool;
@@ -51,8 +57,16 @@ private:
 	UFUNCTION()
 	void OnRep_OverlappingTool(ATool* LastTool);
 
+	float AO_Yaw;
+	float AO_Pitch;
+	FRotator StartingAimRotation;
+
 public:
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return SpringArm; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	ATool* GetEquippedTool();
+	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
+	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
 	bool IsEquipped();
+	bool IsAiming();
 };

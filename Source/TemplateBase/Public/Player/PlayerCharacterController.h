@@ -37,6 +37,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputAction> CrouchAction;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> AimAction;
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -46,6 +49,8 @@ protected:
 	void StopJumping();
 	void CrouchButtonPressed();
 	void EquipButtonPressed();
+	void AimButtonPressed();
+	void AimButtonReleased();
 
 private:
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
