@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
 #include "Character/BaseCharacter.h"
+#include "Character/CharacterData.h"
 #include "PlayerCharacter.generated.h"
 
 class UEquipmentComponent;
@@ -61,6 +62,9 @@ private:
 	float AO_Pitch;
 	FRotator StartingAimRotation;
 
+	void TurnInPlace(float DeltaTime);
+	ETurningInPlace TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+
 public:
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return SpringArm; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
@@ -69,4 +73,5 @@ public:
 	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
 	bool IsEquipped();
 	bool IsAiming();
+	FORCEINLINE ETurningInPlace GetTurningInPlace() const { return TurningInPlace; }
 };

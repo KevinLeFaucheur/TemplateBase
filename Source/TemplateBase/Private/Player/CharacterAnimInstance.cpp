@@ -31,6 +31,7 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsEquipped = PlayerCharacter->IsEquipped();
 	bIsCrouched = PlayerCharacter->bIsCrouched;
 	bAiming = PlayerCharacter->IsAiming();
+	TurningInPlace = PlayerCharacter->GetTurningInPlace();
 	EquippedTool = PlayerCharacter->GetEquippedTool();
 
 	/* YawOffset */

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Character/CharacterData.h"
 #include "CharacterAnimInstance.generated.h"
 
 class ATool;
@@ -57,6 +58,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	FTransform LeftHandTransform;
+	
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	ETurningInPlace TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 	
 private:
 	FRotator CharacterRotationLastFrame;
