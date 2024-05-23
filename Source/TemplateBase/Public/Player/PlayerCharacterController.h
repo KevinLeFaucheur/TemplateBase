@@ -38,6 +38,9 @@ public:
 	TObjectPtr<UInputAction> CrouchAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> FireAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputAction> AimAction;
 	
 protected:
@@ -49,6 +52,8 @@ protected:
 	void StopJumping();
 	void CrouchButtonPressed();
 	void EquipButtonPressed();
+	void FireButtonPressed();
+	void FireButtonReleased();
 	void AimButtonPressed();
 	void AimButtonReleased();
 

@@ -28,6 +28,8 @@ void APlayerCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &APlayerCharacterController::StopJumping);
 		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Started, this, &APlayerCharacterController::EquipButtonPressed);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &APlayerCharacterController::CrouchButtonPressed);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &APlayerCharacterController::FireButtonPressed);
+		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &APlayerCharacterController::FireButtonReleased);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &APlayerCharacterController::AimButtonPressed);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &APlayerCharacterController::AimButtonReleased);
 	}
@@ -78,6 +80,16 @@ void APlayerCharacterController::CrouchButtonPressed()
 void APlayerCharacterController::EquipButtonPressed()
 {
 	if (PlayerCharacter) PlayerCharacter->EquipButtonPressed();
+}
+
+void APlayerCharacterController::FireButtonPressed()
+{
+	if (PlayerCharacter) PlayerCharacter->FireButtonPressed();
+}
+
+void APlayerCharacterController::FireButtonReleased()
+{
+	if (PlayerCharacter) PlayerCharacter->FireButtonReleased();
 }
 
 void APlayerCharacterController::AimButtonPressed()

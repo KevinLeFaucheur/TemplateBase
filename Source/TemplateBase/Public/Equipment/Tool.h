@@ -29,6 +29,7 @@ public:
 	ATool();
 	virtual void Tick(float DeltaTime) override;
 	void ShowPickupWidget(bool bShowWidget);
+	virtual void Activate(const FVector& HitTarget);
 
 protected:
 	virtual void BeginPlay() override;
@@ -65,6 +66,9 @@ private:
 
 	UFUNCTION()
 	void OnRep_ToolState();
+
+	UPROPERTY(EditAnywhere, Category="Equipment|Animation")
+	TObjectPtr<UAnimationAsset> ActiveAnimation;
 
 public:	
 	void SetToolState(const EToolState NewState);

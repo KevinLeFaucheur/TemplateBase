@@ -61,6 +61,14 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	ETurningInPlace TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+
+	/*
+	 * Montages
+	 */
+	void PlayFireMontage(bool bIsAiming);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
+	TObjectPtr<UAnimMontage> FireMontage;
 	
 private:
 	FRotator CharacterRotationLastFrame;

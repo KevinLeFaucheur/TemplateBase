@@ -54,6 +54,17 @@ void ATool::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+/*
+ * Activation
+ */
+void ATool::Activate(const FVector& HitTarget)
+{
+	if(ActiveAnimation) Mesh->PlayAnimation(ActiveAnimation, false);
+}
+
+/*
+ * Interaction
+ */
 void ATool::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -77,6 +88,9 @@ void ATool::ShowPickupWidget(bool bShowWidget)
 	if(PickupWidget) PickupWidget->SetVisibility(bShowWidget);
 }
 
+/*
+ * State
+ */
 void ATool::SetToolState(const EToolState NewState)
 {
 	ToolState = NewState;

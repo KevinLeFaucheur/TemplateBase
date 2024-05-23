@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "EquipmentComponent.generated.h"
 
+#define TRACE_LENGTH 80000.f
+
 class ATool;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -30,11 +32,23 @@ protected:
 	UFUNCTION()
 	void OnRep_EquippedTool();
 
+	UFUNCTION(Server, Reliable)
+	void ServerActivate(const FVector_NetQuantize& HitTarget);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastFire(const FVector_NetQuantize& HitTarget);
+
+	void TraceUnderCrosshairs(FHitResult& HitResult);
+
 private:
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
 	UPROPERTY(ReplicatedUsing=OnRep_EquippedTool)
 	TObjectPtr<ATool> EquippedTool;
+
+	void FireButtonPressed(bool bPressed);
+
+	bool bFireButtonPressed;
 
 	UPROPERTY(Replicated)
 	bool bAiming;
@@ -44,6 +58,8 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
 	float AimWalkSpeed;
+
+	// FVector HitTarget;
 
 public:
 };

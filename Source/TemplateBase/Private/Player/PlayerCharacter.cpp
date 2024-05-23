@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/CharacterAnimInstance.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -73,6 +74,9 @@ void APlayerCharacter::Jump()
 	}
 }
 
+/*
+ * Aiming
+ */
 void APlayerCharacter::AimOffset(float DeltaTime)
 {
 	if(EquipmentComponent && EquipmentComponent->EquippedTool == nullptr) return;
@@ -130,19 +134,9 @@ void APlayerCharacter::TurnInPlace(float DeltaTime)
 	}
 }
 
-void APlayerCharacter::SetOverlappingTool(ATool* Tool)
-{
-	if(IsLocallyControlled()) if(OverlappingTool) OverlappingTool->ShowPickupWidget(false);
-	OverlappingTool = Tool;
-	if(IsLocallyControlled()) if(OverlappingTool) OverlappingTool->ShowPickupWidget(true);
-}
-
-void APlayerCharacter::OnRep_OverlappingTool(ATool* LastTool)
-{
-	if(OverlappingTool) OverlappingTool->ShowPickupWidget(true);
-	if(LastTool) LastTool->ShowPickupWidget(false);
-}
-
+/*
+ * Equipping
+ */
 void APlayerCharacter::EquipButtonPressed()
 {
 	if(EquipmentComponent)
@@ -166,11 +160,44 @@ void APlayerCharacter::ServerEquipButtonPressed_Implementation()
 	}
 }
 
-void APlayerCharacter::CrouchButtonPressed()
+void APlayerCharacter::SetOverlappingTool(ATool* Tool)
 {
-	bIsCrouched ? UnCrouch() : Crouch();
+	if(IsLocallyControlled()) if(OverlappingTool) OverlappingTool->ShowPickupWidget(false);
+	OverlappingTool = Tool;
+	if(IsLocallyControlled()) if(OverlappingTool) OverlappingTool->ShowPickupWidget(true);
 }
 
+void APlayerCharacter::OnRep_OverlappingTool(ATool* LastTool)
+{
+	if(OverlappingTool) OverlappingTool->ShowPickupWidget(true);
+	if(LastTool) LastTool->ShowPickupWidget(false);
+}
+
+/*
+ * Firing
+ */
+void APlayerCharacter::FireButtonPressed()
+{
+	if(EquipmentComponent) EquipmentComponent->FireButtonPressed(true);
+}
+
+void APlayerCharacter::FireButtonReleased()
+{
+	if(EquipmentComponent) EquipmentComponent->FireButtonPressed(false);
+}
+
+void APlayerCharacter::PlayFireMontage(bool bAiming)
+{
+	if(!IsEquipped()) return;
+	if(UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->PlayFireMontage(bAiming);
+	}
+}
+
+/*
+ * Aiming
+ */
 void APlayerCharacter::AimButtonPressed()
 {
 	if(EquipmentComponent) EquipmentComponent->SetAiming(true);
@@ -181,6 +208,17 @@ void APlayerCharacter::AimButtonReleased()
 	if(EquipmentComponent) EquipmentComponent->SetAiming(false);
 }
 
+/*
+ * Crouching
+ */
+void APlayerCharacter::CrouchButtonPressed()
+{
+	bIsCrouched ? UnCrouch() : Crouch();
+}
+
+/*
+ * GETTERS
+ */
 ATool* APlayerCharacter::GetEquippedTool()
 {
 	if(EquipmentComponent == nullptr) return nullptr;

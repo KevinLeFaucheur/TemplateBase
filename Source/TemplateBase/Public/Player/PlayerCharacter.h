@@ -30,12 +30,16 @@ public:
 	
 	virtual void Jump() override;
 	void CrouchButtonPressed();
+	void FireButtonPressed();
+	void FireButtonReleased();
 	void AimButtonPressed();
 	void AimButtonReleased();
 	void EquipButtonPressed();
 
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
+
+	void PlayFireMontage(bool bAiming);
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<USpringArmComponent> SpringArm;

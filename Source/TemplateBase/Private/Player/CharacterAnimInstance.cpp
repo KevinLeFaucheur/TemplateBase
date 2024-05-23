@@ -74,3 +74,16 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		LeftHandTransform.SetRotation(FQuat(OutRotation));
 	}
 }
+
+/*
+ * Montages
+ */
+void UCharacterAnimInstance::PlayFireMontage(bool bIsAiming)
+{
+	if(FireMontage)
+	{
+		Montage_Play(FireMontage);
+		const FName SectionName = bIsAiming ? FName("RifleAim") : FName("RifleHip");
+		Montage_JumpToSection(SectionName);
+	}
+}
