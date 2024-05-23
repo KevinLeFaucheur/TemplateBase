@@ -11,7 +11,7 @@ UEquipmentComponent::UEquipmentComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	BaseWalkSpeed = 600.f;;
-	AimWalkSpeed = 450.f;;
+	AimWalkSpeed = 400.f;;
 }
 
 void UEquipmentComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

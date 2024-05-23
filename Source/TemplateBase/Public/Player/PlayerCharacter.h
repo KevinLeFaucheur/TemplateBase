@@ -28,6 +28,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void SetOverlappingTool(ATool* Tool);
 	
+	virtual void Jump() override;
 	void CrouchButtonPressed();
 	void AimButtonPressed();
 	void AimButtonReleased();
@@ -59,11 +60,15 @@ private:
 	void OnRep_OverlappingTool(ATool* LastTool);
 
 	float AO_Yaw;
+	float InterpAO_Yaw;
 	float AO_Pitch;
 	FRotator StartingAimRotation;
 
 	void TurnInPlace(float DeltaTime);
 	ETurningInPlace TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+
+	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
+	float AngleBeforeTurning = 25.f;
 
 public:
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return SpringArm; }

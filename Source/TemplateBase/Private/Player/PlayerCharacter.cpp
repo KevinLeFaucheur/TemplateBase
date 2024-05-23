@@ -13,6 +13,8 @@
 
 APlayerCharacter::APlayerCharacter()
 {
+	NetUpdateFrequency = 66.f;
+	MinNetUpdateFrequency = 33.f;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -22,7 +24,7 @@ APlayerCharacter::APlayerCharacter()
 	
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 400.0f;
+	SpringArm->TargetArmLength = 300.0f;
 	SpringArm->bUsePawnControlRotation = true;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -59,6 +61,18 @@ void APlayerCharacter::Tick(float DeltaTime)
 	AimOffset(DeltaTime);
 }
 
+void APlayerCharacter::Jump()
+{
+	if(bIsCrouched)
+	{
+		UnCrouch();
+	}
+	else
+	{
+		Super::Jump();
+	}
+}
+
 void APlayerCharacter::AimOffset(float DeltaTime)
 {
 	if(EquipmentComponent && EquipmentComponent->EquippedTool == nullptr) return;
@@ -70,7 +84,11 @@ void APlayerCharacter::AimOffset(float DeltaTime)
 		const FRotator CurrentAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
 		const FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
 		AO_Yaw = DeltaAimRotation.Yaw;
-		bUseControllerRotationYaw = false;
+		if(TurningInPlace == ETurningInPlace::ETIP_NotTurning)
+		{
+			InterpAO_Yaw = AO_Yaw;
+		}
+		bUseControllerRotationYaw = true;
 		TurnInPlace(DeltaTime);
 	}
 	if(Speed > 0.f || bAirborne)
@@ -99,6 +117,16 @@ void APlayerCharacter::TurnInPlace(float DeltaTime)
 	else if (AO_Yaw < -90.f)
 	{
 		TurningInPlace = ETurningInPlace::ETIP_Left;
+	}
+	if(TurningInPlace != ETurningInPlace::ETIP_NotTurning)
+	{
+		InterpAO_Yaw = FMath::FInterpTo(InterpAO_Yaw, 0.f, DeltaTime, 4.f);
+		AO_Yaw = InterpAO_Yaw;
+		if(FMath::Abs(AO_Yaw) < AngleBeforeTurning)
+		{
+			TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+			StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		}
 	}
 }
 

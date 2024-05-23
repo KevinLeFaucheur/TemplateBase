@@ -62,7 +62,6 @@ void APlayerCharacterController::Look(const FInputActionValue& Value)
 
 void APlayerCharacterController::Jump()
 {
-	// TODO: Casting here probably not the best option
 	if (PlayerCharacter) PlayerCharacter->Jump();
 }
 
