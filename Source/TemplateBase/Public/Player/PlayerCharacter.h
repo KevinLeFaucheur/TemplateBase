@@ -83,4 +83,5 @@ public:
 	bool IsEquipped();
 	bool IsAiming();
 	FORCEINLINE ETurningInPlace GetTurningInPlace() const { return TurningInPlace; }
+	FVector GetHitTarget() const;
 };

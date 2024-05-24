@@ -92,8 +92,19 @@ private:
 	UPROPERTY(EditAnywhere, Category="Equipment")
 	TSubclassOf<ACasing> CasingClass;
 
+	/*
+	 * Zoomed FoV while Aiming
+	 */
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	float MarksmanFOV = 30.f;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	float MarksmanInterpSpeed = 20.f;
+
 public:	
 	void SetToolState(const EToolState NewState);
 	FORCEINLINE USphereComponent* GetAreaSphere() { return AreaSphere; }
 	FORCEINLINE USkeletalMeshComponent* GetMesh() const { return Mesh; }
+	FORCEINLINE float GetMarksmanFOV() const { return MarksmanFOV; }
+	FORCEINLINE float GetMarksmanInterpSpeed() const { return MarksmanInterpSpeed; }
 };

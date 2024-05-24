@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interaction/PlayerInterface.h"
 #include "BaseCharacter.generated.h"
 
 UCLASS()
-class TEMPLATEBASE_API ABaseCharacter : public ACharacter
+class TEMPLATEBASE_API ABaseCharacter : public ACharacter, public IPlayerInterface
 {
 	GENERATED_BODY()
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "UI/PlayerHUD.h"
 #include "EquipmentComponent.generated.h"
 
 #define TRACE_LENGTH 80000.f
@@ -35,12 +36,12 @@ protected:
 	void OnRep_EquippedTool();
 
 	UFUNCTION(Server, Reliable)
-	void ServerActivate(const FVector_NetQuantize& HitTarget);
+	void ServerActivate(const FVector_NetQuantize& TraceHitTarget);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastFire(const FVector_NetQuantize& HitTarget);
+	void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
 
-	void TraceUnderCrosshairs(FHitResult& HitResult);
+	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
 
 	void SetHUDCrosshairs(float DeltaTime);
 
@@ -65,17 +66,34 @@ private:
 	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
 	float AimWalkSpeed;
 	
-	// FVector HitTarget;
-
+	FVector HitTarget;
+	
 	/*
 	 * Crosshairs
 	 */
 	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsCenter;
+
+	FHUDPackage HUDPackage;
 	
 	float CrosshairVelocityFactor;
 	float CrosshairAirborneFactor;
+	float CrosshairMarksmanFactor;
+	float CrosshairPerShotFactor;
 
+	/*
+	 * Aiming and FoV
+	 */
+	float DefaultFOV;
+	float CurrentFOV;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	float MarksmanFOV = 30.f;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	float MarksmanInterpSpeed = 20.f;
 
+	void InterpFOV(float DeltaTime);
+	
 public:
 };

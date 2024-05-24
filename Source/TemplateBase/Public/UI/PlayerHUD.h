@@ -18,6 +18,7 @@ public:
 	UPROPERTY() TObjectPtr<UTexture2D> CrosshairsTop;
 	UPROPERTY() TObjectPtr<UTexture2D> CrosshairsBottom;
 	float CrosshairSpread;
+	FLinearColor Color;
 };
 
 /**
@@ -32,7 +33,7 @@ public:
 	virtual void DrawHUD() override;
 
 private:
-	void DrawCrosshairs(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread);
+	void DrawCrosshairs(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread, FLinearColor Color);
 	
 	FHUDPackage HUDPackage;
 

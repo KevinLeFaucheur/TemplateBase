@@ -10,6 +10,7 @@ ACasing::ACasing()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	Mesh->SetSimulatePhysics(true);
 	Mesh->SetNotifyRigidBodyCollision(true);
 	Mesh->SetEnableGravity(true);
@@ -27,9 +28,8 @@ void ACasing::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrim
 	FVector NormalImpulse, const FHitResult& Hit)
 {
 	SetLifeSpan(5.f);
-	if(CasingSound/* && !bCasingSoundPlayed*/)
+	if(CasingSound)
 	{
-		// bCasingSoundPlayed = true;
 		Mesh->SetNotifyRigidBodyCollision(false);
 		UGameplayStatics::PlaySoundAtLocation(this, CasingSound, GetActorLocation());
 	}

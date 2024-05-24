@@ -1,6 +1,7 @@
 // Retropsis @ 2024
 
 #include "Equipment/EquipmentComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Equipment/Tool.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -8,7 +9,6 @@
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerCharacter.h"
 #include "Player/PlayerCharacterController.h"
-#include "UI/PlayerHUD.h"
 
 UEquipmentComponent::UEquipmentComponent()
 {
@@ -27,13 +27,31 @@ void UEquipmentComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 void UEquipmentComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	if(PlayerCharacter) PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
+	if(PlayerCharacter)
+	{
+		PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed = BaseWalkSpeed;
+		if(PlayerCharacter->GetFollowCamera())
+		{
+			DefaultFOV = PlayerCharacter->GetFollowCamera()->FieldOfView;
+			CurrentFOV = DefaultFOV;
+		}
+	}
 }
 
 void UEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	SetHUDCrosshairs(DeltaTime);
+
+	// Autonomous Proxy only
+	if(PlayerCharacter && PlayerCharacter->IsLocallyControlled())
+	{
+		FHitResult HitResult;
+		TraceUnderCrosshairs(HitResult);
+		HitTarget = HitResult.ImpactPoint;
+
+		SetHUDCrosshairs(DeltaTime);
+		InterpFOV(DeltaTime);
+	}
 }
 
 /*
@@ -74,25 +92,30 @@ void UEquipmentComponent::FireButtonPressed(bool bPressed)
 		FHitResult HitResult;
 		TraceUnderCrosshairs(HitResult);
 		ServerActivate(HitResult.ImpactPoint);
+
+		if(EquippedTool)
+		{
+			CrosshairPerShotFactor = FMath::Clamp(CrosshairPerShotFactor + 0.2f, 0.f, 1.f);
+		}
 	}
 }
 
-void UEquipmentComponent::ServerActivate_Implementation(const FVector_NetQuantize& HitTarget)
+void UEquipmentComponent::ServerActivate_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
-	MulticastFire(HitTarget);
+	MulticastFire(TraceHitTarget);
 }
 
-void UEquipmentComponent::MulticastFire_Implementation(const FVector_NetQuantize& HitTarget)
+void UEquipmentComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
 	if(EquippedTool == nullptr) return;
 	if(PlayerCharacter)
 	{
 		PlayerCharacter->PlayFireMontage(bAiming);
-		EquippedTool->Activate(HitTarget);
+		EquippedTool->Activate(TraceHitTarget);
 	}
 }
 
-void UEquipmentComponent::TraceUnderCrosshairs(FHitResult& HitResult)
+void UEquipmentComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 {
 	FVector2D ViewportSize;
 	if(GEngine && GEngine->GameViewport)
@@ -113,10 +136,17 @@ void UEquipmentComponent::TraceUnderCrosshairs(FHitResult& HitResult)
 	{
 		const FVector Start = CrosshairWorldPosition;
 		const FVector End = Start + CrosshairWorldDirection * TRACE_LENGTH;
-		GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility);
+		GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECC_Visibility);
 
-		if(!HitResult.bBlockingHit) HitResult.ImpactPoint = End;
-		UKismetSystemLibrary::DrawDebugSphere(this, HitResult.ImpactPoint, 4.f, 12, FLinearColor::Green);
+		if(!TraceHitResult.bBlockingHit) TraceHitResult.ImpactPoint = End;
+		if(TraceHitResult.GetActor() &&TraceHitResult.GetActor()->Implements<UPlayerInterface>())
+		{
+			HUDPackage.Color = FLinearColor::Red;
+		}
+		else
+		{
+			HUDPackage.Color = FLinearColor::White;
+		}
 	}
 }
 
@@ -130,7 +160,6 @@ void UEquipmentComponent::SetHUDCrosshairs(float DeltaTime)
 		PlayerHUD = PlayerHUD == nullptr ? Cast<APlayerHUD>(PlayerCharacterController->GetHUD()) : PlayerHUD;
 		if(PlayerHUD)
 		{
-			FHUDPackage HUDPackage;
 			if(EquippedTool)
 			{
 				HUDPackage.CrosshairsCenter = EquippedTool->CrosshairsCenter;
@@ -164,8 +193,22 @@ void UEquipmentComponent::SetHUDCrosshairs(float DeltaTime)
 			{
 				CrosshairAirborneFactor = FMath::FInterpTo(CrosshairAirborneFactor, 0.f, DeltaTime, 30.f);				
 			}
+			if(bAiming)
+			{
+				CrosshairMarksmanFactor = FMath::FInterpTo(CrosshairMarksmanFactor, 0.58, DeltaTime, 30.f);
+			}
+			else
+			{
+				CrosshairMarksmanFactor = FMath::FInterpTo(CrosshairMarksmanFactor, 0.f, DeltaTime, 30.f);			
+			}
+			CrosshairPerShotFactor = FMath::FInterpTo(CrosshairPerShotFactor, 0.f, DeltaTime, 4.f);
 			
-			HUDPackage.CrosshairSpread = CrosshairVelocityFactor + CrosshairAirborneFactor;
+			HUDPackage.CrosshairSpread =
+				0.5f +																		// Base line for crosshairs wont overlap each other
+				CrosshairVelocityFactor +
+				CrosshairAirborneFactor -
+				CrosshairMarksmanFactor +
+				CrosshairPerShotFactor;
 			PlayerHUD->SetHUDPackage(HUDPackage);
 		}
 	}
@@ -173,7 +216,25 @@ void UEquipmentComponent::SetHUDCrosshairs(float DeltaTime)
 
 /*
  * Aiming
- */
+*/
+void UEquipmentComponent::InterpFOV(float DeltaTime)
+{
+	if(EquippedTool == nullptr) return;
+
+	if(bAiming)
+	{
+		CurrentFOV = FMath::FInterpTo(CurrentFOV, EquippedTool->GetMarksmanFOV(), DeltaTime, EquippedTool->GetMarksmanInterpSpeed());
+	}
+	else
+	{
+		CurrentFOV = FMath::FInterpTo(CurrentFOV, DefaultFOV, DeltaTime, MarksmanInterpSpeed);
+	}
+	if(PlayerCharacter && PlayerCharacter->GetFollowCamera())
+	{
+		PlayerCharacter->GetFollowCamera()->SetFieldOfView(CurrentFOV);
+	}
+}
+
 void UEquipmentComponent::SetAiming(bool bIsAiming)
 {
 	bAiming = bIsAiming;

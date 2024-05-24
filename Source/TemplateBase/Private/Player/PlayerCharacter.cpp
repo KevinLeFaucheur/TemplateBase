@@ -41,6 +41,7 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 }
 
@@ -233,4 +234,10 @@ bool APlayerCharacter::IsEquipped()
 bool APlayerCharacter::IsAiming()
 {
 	return (EquipmentComponent && EquipmentComponent->bAiming);
+}
+
+FVector APlayerCharacter::GetHitTarget() const
+{
+	if(EquipmentComponent == nullptr) return FVector();
+	return EquipmentComponent->HitTarget;
 }
