@@ -3,6 +3,8 @@
 #include "Equipment/Tool.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Engine/SkeletalMeshSocket.h"
+#include "Equipment/Weapon/Casing.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerCharacter.h"
 
@@ -60,6 +62,17 @@ void ATool::Tick(float DeltaTime)
 void ATool::Activate(const FVector& HitTarget)
 {
 	if(ActiveAnimation) Mesh->PlayAnimation(ActiveAnimation, false);
+	if(CasingClass)
+	{
+		if(const USkeletalMeshSocket* AmmoEjectSocket = Mesh->GetSocketByName(FName("AmmoEject")))
+		{
+			const FTransform SocketTransform = AmmoEjectSocket->GetSocketTransform(Mesh);
+			if(UWorld* World = GetWorld())
+			{
+				World->SpawnActor<ACasing>(CasingClass, SocketTransform.GetLocation(), SocketTransform.GetRotation().Rotator());
+			}
+		}
+	}
 }
 
 /*

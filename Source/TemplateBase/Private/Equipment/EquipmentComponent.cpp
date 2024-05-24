@@ -7,6 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerCharacter.h"
+#include "Player/PlayerCharacterController.h"
+#include "UI/PlayerHUD.h"
 
 UEquipmentComponent::UEquipmentComponent()
 {
@@ -31,6 +33,7 @@ void UEquipmentComponent::BeginPlay()
 void UEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	SetHUDCrosshairs(DeltaTime);
 }
 
 /*
@@ -114,6 +117,57 @@ void UEquipmentComponent::TraceUnderCrosshairs(FHitResult& HitResult)
 
 		if(!HitResult.bBlockingHit) HitResult.ImpactPoint = End;
 		UKismetSystemLibrary::DrawDebugSphere(this, HitResult.ImpactPoint, 4.f, 12, FLinearColor::Green);
+	}
+}
+
+void UEquipmentComponent::SetHUDCrosshairs(float DeltaTime)
+{
+	if (PlayerCharacter == nullptr || PlayerCharacter->Controller == nullptr) return;
+
+	PlayerCharacterController = PlayerCharacterController == nullptr ? Cast<APlayerCharacterController>(PlayerCharacter->Controller) : PlayerCharacterController;
+	if(PlayerCharacterController)
+	{
+		PlayerHUD = PlayerHUD == nullptr ? Cast<APlayerHUD>(PlayerCharacterController->GetHUD()) : PlayerHUD;
+		if(PlayerHUD)
+		{
+			FHUDPackage HUDPackage;
+			if(EquippedTool)
+			{
+				HUDPackage.CrosshairsCenter = EquippedTool->CrosshairsCenter;
+				HUDPackage.CrosshairsLeft = EquippedTool->CrosshairsLeft;
+				HUDPackage.CrosshairsRight = EquippedTool->CrosshairsRight;
+				HUDPackage.CrosshairsTop = EquippedTool->CrosshairsTop;
+				HUDPackage.CrosshairsBottom = EquippedTool->CrosshairsBottom;
+			}
+			else
+			{
+				HUDPackage.CrosshairsCenter = CrosshairsCenter;
+				HUDPackage.CrosshairsLeft = nullptr;
+				HUDPackage.CrosshairsRight = nullptr;
+				HUDPackage.CrosshairsTop = nullptr;
+				HUDPackage.CrosshairsBottom = nullptr;
+			}
+
+			// Calculate Crosshairs Spread
+			// [0, 600) -> [0, 1)
+			const FVector2D WalkSpeedRange(0.f, PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed);
+			const FVector2D VelocityMultiplierRange(0.f, 1.f);
+			FVector Velocity = PlayerCharacter->GetVelocity();
+			Velocity.Z = 0.f;
+			
+			CrosshairVelocityFactor = FMath::GetMappedRangeValueClamped(WalkSpeedRange, VelocityMultiplierRange, Velocity.Size());
+			if(PlayerCharacter->GetCharacterMovement()->IsFalling())
+			{
+				CrosshairAirborneFactor = FMath::FInterpTo(CrosshairAirborneFactor, 2.25f, DeltaTime, 2.25f);
+			}
+			else
+			{
+				CrosshairAirborneFactor = FMath::FInterpTo(CrosshairAirborneFactor, 0.f, DeltaTime, 30.f);				
+			}
+			
+			HUDPackage.CrosshairSpread = CrosshairVelocityFactor + CrosshairAirborneFactor;
+			PlayerHUD->SetHUDPackage(HUDPackage);
+		}
 	}
 }
 

@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Tool.generated.h"
 
+class ACasing;
 class UWidgetComponent;
 
 UENUM(BlueprintType)
@@ -30,6 +31,24 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void ShowPickupWidget(bool bShowWidget);
 	virtual void Activate(const FVector& HitTarget);
+
+	/*
+	 * Crosshairs
+	 */
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	TObjectPtr<UTexture2D> CrosshairsCenter;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	TObjectPtr<UTexture2D> CrosshairsLeft;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	TObjectPtr<UTexture2D> CrosshairsRight;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	TObjectPtr<UTexture2D> CrosshairsTop;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	TObjectPtr<UTexture2D> CrosshairsBottom;
 
 protected:
 	virtual void BeginPlay() override;
@@ -69,6 +88,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Equipment|Animation")
 	TObjectPtr<UAnimationAsset> ActiveAnimation;
+
+	UPROPERTY(EditAnywhere, Category="Equipment")
+	TSubclassOf<ACasing> CasingClass;
 
 public:	
 	void SetToolState(const EToolState NewState);

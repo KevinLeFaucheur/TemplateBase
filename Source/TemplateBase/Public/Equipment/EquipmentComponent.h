@@ -8,6 +8,8 @@
 
 #define TRACE_LENGTH 80000.f
 
+class APlayerHUD;
+class APlayerCharacterController;
 class ATool;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -40,8 +42,12 @@ protected:
 
 	void TraceUnderCrosshairs(FHitResult& HitResult);
 
+	void SetHUDCrosshairs(float DeltaTime);
+
 private:
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
+	UPROPERTY() APlayerCharacterController* PlayerCharacterController;
+	UPROPERTY() APlayerHUD* PlayerHUD;
 
 	UPROPERTY(ReplicatedUsing=OnRep_EquippedTool)
 	TObjectPtr<ATool> EquippedTool;
@@ -58,8 +64,18 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
 	float AimWalkSpeed;
-
+	
 	// FVector HitTarget;
+
+	/*
+	 * Crosshairs
+	 */
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	TObjectPtr<UTexture2D> CrosshairsCenter;
+	
+	float CrosshairVelocityFactor;
+	float CrosshairAirborneFactor;
+
 
 public:
 };
