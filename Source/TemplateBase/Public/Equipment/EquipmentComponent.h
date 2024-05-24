@@ -65,6 +65,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
 	float AimWalkSpeed;
+
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	float TraceStartAdjustment = 85.f;
 	
 	FVector HitTarget;
 	

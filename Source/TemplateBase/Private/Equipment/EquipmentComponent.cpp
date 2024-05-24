@@ -134,7 +134,13 @@ void UEquipmentComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 
 	if(bScreenToWorld)
 	{
-		const FVector Start = CrosshairWorldPosition;
+		FVector Start = CrosshairWorldPosition;
+		if(PlayerCharacter)
+		{
+			const float DistanceToCharacter = (PlayerCharacter->GetActorLocation() - Start).Size();
+			Start += CrosshairWorldDirection * (DistanceToCharacter + TraceStartAdjustment);
+			DrawDebugSphere(GetWorld(), Start, 16.f, 12, FColor::White, false);
+		}
 		const FVector End = Start + CrosshairWorldDirection * TRACE_LENGTH;
 		GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECC_Visibility);
 

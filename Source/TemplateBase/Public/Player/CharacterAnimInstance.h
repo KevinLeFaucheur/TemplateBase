@@ -72,9 +72,13 @@ public:
 	 * Montages
 	 */
 	void PlayFireMontage(bool bIsAiming);
+	void PlayHitReactMontage();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
 	TObjectPtr<UAnimMontage> FireMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 	
 private:
 	FRotator CharacterRotationLastFrame;

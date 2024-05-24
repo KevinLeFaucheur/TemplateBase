@@ -11,6 +11,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/CharacterAnimInstance.h"
+#include "TemplateBase/TemplateBase.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -40,6 +41,7 @@ APlayerCharacter::APlayerCharacter()
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetMesh()->SetCollisionObjectType(ECC_SkeletalMesh);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
@@ -61,18 +63,13 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	AimOffset(DeltaTime);
+	HideCharacterIfCameraClose();
 }
 
 void APlayerCharacter::Jump()
 {
-	if(bIsCrouched)
-	{
-		UnCrouch();
-	}
-	else
-	{
-		Super::Jump();
-	}
+	if(bIsCrouched) UnCrouch();
+	else Super::Jump();
 }
 
 /*
@@ -196,6 +193,20 @@ void APlayerCharacter::PlayFireMontage(bool bAiming)
 	}
 }
 
+void APlayerCharacter::PlayHitReactMontage()
+{
+	MulticastHitReact();
+}
+
+void APlayerCharacter::MulticastHitReact_Implementation()
+{
+	if(!IsEquipped()) return;
+	if(UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->PlayHitReactMontage();
+	}
+}
+
 /*
  * Aiming
  */
@@ -215,6 +226,21 @@ void APlayerCharacter::AimButtonReleased()
 void APlayerCharacter::CrouchButtonPressed()
 {
 	bIsCrouched ? UnCrouch() : Crouch();
+}
+
+/*
+ * QoL
+ */
+void APlayerCharacter::HideCharacterIfCameraClose()
+{
+	if(!IsLocallyControlled()) return;
+
+	const bool bCameraTooClose = (FollowCamera->GetComponentLocation() - GetActorLocation()).Size() < CameraThreshold;
+	GetMesh()->SetVisibility(!bCameraTooClose);
+	if(EquipmentComponent && EquipmentComponent->EquippedTool && EquipmentComponent->EquippedTool->GetMesh())
+	{
+		EquipmentComponent->EquippedTool->GetMesh()->bOwnerNoSee = bCameraTooClose;
+	}
 }
 
 /*

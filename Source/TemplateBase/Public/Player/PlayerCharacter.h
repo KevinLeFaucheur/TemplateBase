@@ -40,6 +40,10 @@ public:
 	void ServerEquipButtonPressed();
 
 	void PlayFireMontage(bool bAiming);
+	virtual void PlayHitReactMontage() override;
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastHitReact();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<USpringArmComponent> SpringArm;
@@ -74,6 +78,11 @@ private:
 	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
 	float AngleBeforeTurning = 25.f;
 
+	void HideCharacterIfCameraClose();
+
+	UPROPERTY(EditAnywhere, Category="PlayerCharacter|Camera")
+	float CameraThreshold = 200.f;
+
 public:
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return SpringArm; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
@@ -84,4 +93,5 @@ public:
 	bool IsAiming();
 	FORCEINLINE ETurningInPlace GetTurningInPlace() const { return TurningInPlace; }
 	FVector GetHitTarget() const;
+	
 };

@@ -3,7 +3,9 @@
 #include "Equipment/Weapon/Projectile.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Interaction/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "TemplateBase/TemplateBase.h"
 
 AProjectile::AProjectile()
 {
@@ -18,6 +20,7 @@ AProjectile::AProjectile()
 	HitCollision->SetCollisionResponseToAllChannels(ECR_Ignore);
 	HitCollision->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	HitCollision->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	HitCollision->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECR_Block);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
@@ -48,6 +51,10 @@ void AProjectile::Tick(float DeltaTime)
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
+	if(IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(OtherActor))
+	{
+		PlayerInterface->PlayHitReactMontage();
+	}
 	Destroy();
 }
 

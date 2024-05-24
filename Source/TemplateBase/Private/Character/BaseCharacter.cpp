@@ -21,3 +21,8 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
+
+void ABaseCharacter::PlayHitReactMontage()
+{
+	IPlayerInterface::PlayHitReactMontage();
+}
