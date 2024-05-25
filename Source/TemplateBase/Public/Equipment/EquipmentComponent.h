@@ -34,12 +34,13 @@ protected:
 
 	UFUNCTION()
 	void OnRep_EquippedTool();
+	void ActivateTool();
 
 	UFUNCTION(Server, Reliable)
 	void ServerActivate(const FVector_NetQuantize& TraceHitTarget);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
+	void MulticastActivate(const FVector_NetQuantize& TraceHitTarget);
 
 	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
 
@@ -97,6 +98,16 @@ private:
 	float MarksmanInterpSpeed = 20.f;
 
 	void InterpFOV(float DeltaTime);
+
+	/*
+	 * Automatic Fire
+	 */
+	FTimerHandle FireIntervalTimer;
+
+	void FireIntervalStart();
+	void FireIntervalEnd();
+
+	bool bCanFire = true;
 	
 public:
 };

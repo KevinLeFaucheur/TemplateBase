@@ -32,6 +32,7 @@ public:
 	void ShowPickupWidget(bool bShowWidget);
 	virtual void Activate(const FVector& HitTarget);
 
+	// TODO: Should be DataAsset/Table
 	/*
 	 * Crosshairs
 	 */
@@ -49,6 +50,33 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsBottom;
+
+	/*
+	 * Zoomed FoV while Aiming
+	 */
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	float MarksmanFOV = 30.f;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	float MarksmanInterpSpeed = 20.f;
+
+	/*
+	 * Automatic
+	 */
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	float FireInterval = .35f;
+
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	bool bAutomatic = false;
+	
+	/*
+	 * Cosmetics
+	 */
+	UPROPERTY(EditAnywhere, Category="Equipment|Animation")
+	TObjectPtr<UAnimationAsset> ActiveAnimation;
+
+	UPROPERTY(EditAnywhere, Category="Equipment")
+	TSubclassOf<ACasing> CasingClass;
 
 protected:
 	virtual void BeginPlay() override;
@@ -85,21 +113,6 @@ private:
 
 	UFUNCTION()
 	void OnRep_ToolState();
-
-	UPROPERTY(EditAnywhere, Category="Equipment|Animation")
-	TObjectPtr<UAnimationAsset> ActiveAnimation;
-
-	UPROPERTY(EditAnywhere, Category="Equipment")
-	TSubclassOf<ACasing> CasingClass;
-
-	/*
-	 * Zoomed FoV while Aiming
-	 */
-	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
-	float MarksmanFOV = 30.f;
-	
-	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
-	float MarksmanInterpSpeed = 20.f;
 
 public:	
 	void SetToolState(const EToolState NewState);

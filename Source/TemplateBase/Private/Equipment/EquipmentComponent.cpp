@@ -82,30 +82,38 @@ void UEquipmentComponent::OnRep_EquippedTool()
 }
 
 /*
- * Firing
+ * Firing / Activation
  */
 void UEquipmentComponent::FireButtonPressed(bool bPressed)
 {
 	bFireButtonPressed = bPressed;
 	if(bFireButtonPressed)
 	{
-		FHitResult HitResult;
-		TraceUnderCrosshairs(HitResult);
-		ServerActivate(HitResult.ImpactPoint);
+		ActivateTool();
+	}
+}
+
+void UEquipmentComponent::ActivateTool()
+{
+	if(bCanFire)
+	{
+		ServerActivate(HitTarget);
 
 		if(EquippedTool)
 		{
+			bCanFire = false;
 			CrosshairPerShotFactor = FMath::Clamp(CrosshairPerShotFactor + 0.2f, 0.f, 1.f);
 		}
+		FireIntervalStart();
 	}
 }
 
 void UEquipmentComponent::ServerActivate_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
-	MulticastFire(TraceHitTarget);
+	MulticastActivate(TraceHitTarget);
 }
 
-void UEquipmentComponent::MulticastFire_Implementation(const FVector_NetQuantize& TraceHitTarget)
+void UEquipmentComponent::MulticastActivate_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
 	if(EquippedTool == nullptr) return;
 	if(PlayerCharacter)
@@ -115,6 +123,28 @@ void UEquipmentComponent::MulticastFire_Implementation(const FVector_NetQuantize
 	}
 }
 
+/*
+ * Automatic Fire / Activation
+ */
+void UEquipmentComponent::FireIntervalStart()
+{
+	if(EquippedTool == nullptr || PlayerCharacter == nullptr) return;
+	PlayerCharacter->GetWorldTimerManager().SetTimer(FireIntervalTimer, this, &UEquipmentComponent::FireIntervalEnd, EquippedTool->FireInterval);
+}
+
+void UEquipmentComponent::FireIntervalEnd()
+{
+	if(EquippedTool == nullptr) return;
+	bCanFire = true;
+	if(bFireButtonPressed && EquippedTool->bAutomatic)
+	{
+		ActivateTool();
+	}
+}
+
+/*
+ * Crosshairs / Aiming
+ */
 void UEquipmentComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 {
 	FVector2D ViewportSize;
