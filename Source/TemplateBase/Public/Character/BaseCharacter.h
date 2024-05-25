@@ -5,10 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interaction/PlayerInterface.h"
+#include "AbilitySystemInterface.h"
 #include "BaseCharacter.generated.h"
 
-UCLASS()
-class TEMPLATEBASE_API ABaseCharacter : public ACharacter, public IPlayerInterface
+class UAttributeSet;
+class UAbilitySystemComponent;
+
+UCLASS(Abstract)
+class TEMPLATEBASE_API ABaseCharacter : public ACharacter, public IPlayerInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -17,9 +21,21 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//~ Player Interface
+	virtual void PlayHitReactMontage() override;
+	//~ Player Interface
+
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
+
 public:
-	virtual void PlayHitReactMontage() override;
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	
 };

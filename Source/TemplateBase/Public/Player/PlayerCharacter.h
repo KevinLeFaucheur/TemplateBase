@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InputActionValue.h"
 #include "Character/BaseCharacter.h"
 #include "Character/CharacterData.h"
 #include "PlayerCharacter.generated.h"
@@ -25,9 +24,12 @@ public:
 	APlayerCharacter();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PostInitializeComponents() override;
-	virtual void Tick(float DeltaTime) override;
-	void SetOverlappingTool(ATool* Tool);
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
 	virtual void OnRep_ReplicatedMovement() override;
+	virtual void Tick(float DeltaTime) override;
+	
+	void SetOverlappingTool(ATool* Tool);
 
 	virtual void Jump() override;
 	void CalculateAO_Pitch();
@@ -65,6 +67,8 @@ protected:
 	void SimProxiesTurn();
 	
 private:
+	void InitAbilityActorInfo();
+	
 	UPROPERTY(ReplicatedUsing=OnRep_OverlappingTool)
 	TObjectPtr<ATool> OverlappingTool;
 

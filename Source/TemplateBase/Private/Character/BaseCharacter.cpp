@@ -26,3 +26,8 @@ void ABaseCharacter::PlayHitReactMontage()
 {
 	IPlayerInterface::PlayHitReactMontage();
 }
+
+UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}

@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacter.h"
+
+#include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
@@ -11,6 +13,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/CharacterAnimInstance.h"
+#include "Player/PlayerCharacterState.h"
 #include "TemplateBase/TemplateBase.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -57,6 +60,34 @@ void APlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	if(EquipmentComponent) EquipmentComponent->PlayerCharacter = this;
+}
+
+/*
+ * GAS
+ */
+void APlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	// Init Actor Info - Server
+	InitAbilityActorInfo();
+}
+
+void APlayerCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	
+	// Init Actor Info - Client
+	InitAbilityActorInfo();
+}
+
+void APlayerCharacter::InitAbilityActorInfo()
+{
+	APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	PlayerCharacterState->GetAbilitySystemComponent()->InitAbilityActorInfo(PlayerCharacterState, this);
+	AbilitySystemComponent = PlayerCharacterState->GetAbilitySystemComponent();
+	AttributeSet = PlayerCharacterState->GetAttributeSet();
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
