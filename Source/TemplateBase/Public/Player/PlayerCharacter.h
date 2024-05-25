@@ -27,8 +27,11 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void Tick(float DeltaTime) override;
 	void SetOverlappingTool(ATool* Tool);
-	
+	virtual void OnRep_ReplicatedMovement() override;
+
 	virtual void Jump() override;
+	void CalculateAO_Pitch();
+	float CalculateSpeed();
 	void CrouchButtonPressed();
 	void FireButtonPressed();
 	void FireButtonReleased();
@@ -59,6 +62,7 @@ public:
 
 protected:
 	void AimOffset(float DeltaTime);
+	void SimProxiesTurn();
 	
 private:
 	UPROPERTY(ReplicatedUsing=OnRep_OverlappingTool)
@@ -67,6 +71,7 @@ private:
 	UFUNCTION()
 	void OnRep_OverlappingTool(ATool* LastTool);
 
+	/* Aiming & Animation */
 	float AO_Yaw;
 	float InterpAO_Yaw;
 	float AO_Pitch;
@@ -78,20 +83,29 @@ private:
 	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
 	float AngleBeforeTurning = 25.f;
 
+	bool bRotateRootBone;
+	float TurnThreshold = 0.5f;
+	FRotator ProxyRotationLastFrame;
+	FRotator ProxyRotation;
+	float ProxyYaw;
+	float TimeSinceLastMovementReplication;
+
+	/* Camera */
 	void HideCharacterIfCameraClose();
 
 	UPROPERTY(EditAnywhere, Category="PlayerCharacter|Camera")
 	float CameraThreshold = 200.f;
 
 public:
-	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return SpringArm; }
-	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	ATool* GetEquippedTool();
-	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
-	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
+	FVector GetHitTarget() const;
 	bool IsEquipped();
 	bool IsAiming();
+	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return SpringArm; }
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
+	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
 	FORCEINLINE ETurningInPlace GetTurningInPlace() const { return TurningInPlace; }
-	FVector GetHitTarget() const;
+	FORCEINLINE bool ShouldRotateRootBone() const { return bRotateRootBone; }
 	
 };

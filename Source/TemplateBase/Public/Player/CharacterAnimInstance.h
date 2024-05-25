@@ -62,11 +62,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	ETurningInPlace TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	FRotator RightHandRotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	bool bLocallyControlled = false;
+
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	bool bRotateRootBone;
 
 	/*
 	 * Montages

@@ -62,14 +62,39 @@ void APlayerCharacter::PostInitializeComponents()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	AimOffset(DeltaTime);
+
+	if(GetLocalRole() > ROLE_SimulatedProxy && IsLocallyControlled())
+	{
+		AimOffset(DeltaTime);
+	}
+	else
+	{
+		TimeSinceLastMovementReplication += DeltaTime;
+		if(TimeSinceLastMovementReplication > 0.25f) OnRep_ReplicatedMovement();
+		CalculateAO_Pitch();
+	}
 	HideCharacterIfCameraClose();
 }
 
+/*
+ * Movement
+ */
 void APlayerCharacter::Jump()
 {
 	if(bIsCrouched) UnCrouch();
 	else Super::Jump();
+}
+
+void APlayerCharacter::OnRep_ReplicatedMovement()
+{
+	Super::OnRep_ReplicatedMovement();
+	SimProxiesTurn();
+	TimeSinceLastMovementReplication = 0.f;
+}
+
+float APlayerCharacter::CalculateSpeed()
+{
+	return UKismetMathLibrary::VSizeXY(GetVelocity());
 }
 
 /*
@@ -78,11 +103,12 @@ void APlayerCharacter::Jump()
 void APlayerCharacter::AimOffset(float DeltaTime)
 {
 	if(EquipmentComponent && EquipmentComponent->EquippedTool == nullptr) return;
-	const float Speed = UKismetMathLibrary::VSizeXY(GetVelocity());
+	const float Speed= CalculateSpeed();
 	const bool bAirborne = GetCharacterMovement()->IsFalling();
 	
 	if(Speed == 0.f && !bAirborne)
 	{
+		bRotateRootBone = true;
 		const FRotator CurrentAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
 		const FRotator DeltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, StartingAimRotation);
 		AO_Yaw = DeltaAimRotation.Yaw;
@@ -95,11 +121,17 @@ void APlayerCharacter::AimOffset(float DeltaTime)
 	}
 	if(Speed > 0.f || bAirborne)
 	{
+		bRotateRootBone = false;
 		StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
 		AO_Yaw = 0.f;
 		bUseControllerRotationYaw = true;
 		TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 	}
+	CalculateAO_Pitch();
+}
+
+void APlayerCharacter::CalculateAO_Pitch()
+{
 	AO_Pitch = GetBaseAimRotation().Pitch;
 	if(AO_Pitch > 90.f && !IsLocallyControlled())
 	{
@@ -130,6 +162,34 @@ void APlayerCharacter::TurnInPlace(float DeltaTime)
 			StartingAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
 		}
 	}
+	
+}
+
+void APlayerCharacter::SimProxiesTurn()
+{
+	if(EquipmentComponent && EquipmentComponent->EquippedTool == nullptr) return;
+	
+	bRotateRootBone = false;
+	
+	if(const float Speed= CalculateSpeed(); Speed > 0.f)
+	{
+		TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+		return;
+	}
+	// CalculateAO_Pitch();
+
+	ProxyRotationLastFrame = ProxyRotation;
+	ProxyRotation = GetActorRotation();
+	ProxyYaw = UKismetMathLibrary::NormalizedDeltaRotator(ProxyRotation, ProxyRotationLastFrame).Yaw;
+
+	if(FMath::Abs(ProxyYaw) > TurnThreshold)
+	{
+		if(ProxyYaw > TurnThreshold) TurningInPlace = ETurningInPlace::ETIP_Right;
+		else if (ProxyYaw< -TurnThreshold) TurningInPlace = ETurningInPlace::ETIP_Left;
+		else TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+		return;
+	}
+	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 }
 
 /*
