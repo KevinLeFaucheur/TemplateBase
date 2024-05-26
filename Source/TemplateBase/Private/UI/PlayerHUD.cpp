@@ -2,6 +2,8 @@
 
 
 #include "UI/PlayerHUD.h"
+#include "UI/BaseUserWidget.h"
+#include "UI/Controller/OverlayWidgetController.h"
 
 void APlayerHUD::DrawHUD()
 {
@@ -39,6 +41,38 @@ void APlayerHUD::DrawHUD()
 	}
 }
 
+void APlayerHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
+{
+	checkf(OverlayWidgetClass, TEXT("OverlayWidgetClass uninitialized, set in BP_PlayerHUD"));
+	checkf(OverlayWidgetControllerClass, TEXT("OverlayWidgetControlerClass uninitialized, set in BP_PlayerHUD"));
+	
+	UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), OverlayWidgetClass);
+	OverlayWidget = Cast<UBaseUserWidget>(Widget);
+
+	const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
+	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
+	OverlayWidget->SetWidgetController(WidgetController);
+	WidgetController->BroadcastInitialValues();
+	
+	Widget->AddToViewport();
+}
+
+UOverlayWidgetController* APlayerHUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if(OverlayWidgetController == nullptr)
+	{
+		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
+		OverlayWidgetController->SetWidgetControllerParams(WCParams);
+		OverlayWidgetController->BindCallbacksToDependencies();
+		
+		return OverlayWidgetController;
+	}
+	return OverlayWidgetController;
+}
+
+/*
+ * Crosshairs
+ */
 void APlayerHUD::DrawCrosshairs(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread, FLinearColor Color)
 {
 	const float TextureWidth = Texture->GetSizeX();

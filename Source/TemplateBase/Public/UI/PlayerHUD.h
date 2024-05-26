@@ -6,6 +6,12 @@
 #include "GameFramework/HUD.h"
 #include "PlayerHUD.generated.h"
 
+class UAttributeSet;
+class UAbilitySystemComponent;
+class UOverlayWidgetController;
+class UBaseUserWidget;
+struct FWidgetControllerParams;
+
 USTRUCT(BlueprintType)
 struct FHUDPackage
 {
@@ -32,7 +38,26 @@ class TEMPLATEBASE_API APlayerHUD : public AHUD
 public:
 	virtual void DrawHUD() override;
 
+	void InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS);
+
+	UPROPERTY()
+	TObjectPtr<UBaseUserWidget> OverlayWidget;
+
+	UOverlayWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WCParams);
+
 private:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UBaseUserWidget> OverlayWidgetClass;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UOverlayWidgetController> OverlayWidgetControllerClass;
+
+	UPROPERTY()
+	TObjectPtr<UOverlayWidgetController> OverlayWidgetController;
+
+	/*
+	 * Crosshairs
+	 */
 	void DrawCrosshairs(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread, FLinearColor Color);
 	
 	FHUDPackage HUDPackage;

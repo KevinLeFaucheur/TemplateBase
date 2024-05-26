@@ -34,6 +34,7 @@ void AEffectActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 		const UBaseAttributeSet* BaseAttributeSet = Cast<UBaseAttributeSet>(ASCInterface->GetAbilitySystemComponent()->GetAttributeSet(UBaseAttributeSet::StaticClass()));
 		UBaseAttributeSet* MutableAttributeSet = const_cast<UBaseAttributeSet*>(BaseAttributeSet);
 		MutableAttributeSet->SetHealth(BaseAttributeSet->GetHealth() + 25.f);
+		MutableAttributeSet->SetMana(BaseAttributeSet->GetMana() + 25.f);
 		Destroy();
 	}
 }

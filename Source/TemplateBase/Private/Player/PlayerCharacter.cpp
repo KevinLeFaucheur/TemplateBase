@@ -13,6 +13,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/CharacterAnimInstance.h"
+#include "Player/PlayerCharacterController.h"
 #include "Player/PlayerCharacterState.h"
 #include "TemplateBase/TemplateBase.h"
 
@@ -88,6 +89,14 @@ void APlayerCharacter::InitAbilityActorInfo()
 	PlayerCharacterState->GetAbilitySystemComponent()->InitAbilityActorInfo(PlayerCharacterState, this);
 	AbilitySystemComponent = PlayerCharacterState->GetAbilitySystemComponent();
 	AttributeSet = PlayerCharacterState->GetAttributeSet();
+
+	if (APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(GetController()))
+	{
+		if (APlayerHUD* PlayerHUD = PlayerCharacterController->GetHUD<APlayerHUD>())
+		{
+			PlayerHUD->InitOverlay(PlayerCharacterController, PlayerCharacterState, AbilitySystemComponent, AttributeSet);
+		}
+	}
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
