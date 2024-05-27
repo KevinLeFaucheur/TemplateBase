@@ -6,6 +6,8 @@
 #include "AbilitySystemComponent.h"
 #include "BaseAbilitySystemComponent.generated.h"
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* Asset Tags*/)
+
 /**
  * 
  */
@@ -16,6 +18,8 @@ class TEMPLATEBASE_API UBaseAbilitySystemComponent : public UAbilitySystemCompon
 
 public:
 	void AbilityActorInfoSet();
+
+	FEffectAssetTags EffectAssetTags;
 
 protected:
 	void EffectApplied(
