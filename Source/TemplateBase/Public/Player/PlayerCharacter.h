@@ -67,7 +67,7 @@ protected:
 	void SimProxiesTurn();
 	
 private:
-	void InitAbilityActorInfo();
+	virtual void InitAbilityActorInfo() override;
 	
 	UPROPERTY(ReplicatedUsing=OnRep_OverlappingTool)
 	TObjectPtr<ATool> OverlappingTool;

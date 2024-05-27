@@ -46,8 +46,10 @@ protected:
 	void OnEndOverlap(AActor* TargetActor);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Effects")
-	bool bDestroyOnEffectRemoval = false;
+	float Level = 1.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Effects")
+	bool bDestroyOnEffectRemoval = false;
 	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveEffectHandles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Effects")
