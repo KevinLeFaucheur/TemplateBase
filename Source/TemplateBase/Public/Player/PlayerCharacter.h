@@ -43,6 +43,10 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
+	
+	//~ Combat Interface
+	virtual int32 GetCharacterLevel() override;
+	//~ Combat Interface
 
 	void PlayFireMontage(bool bAiming);
 	virtual void PlayHitReactMontage() override;

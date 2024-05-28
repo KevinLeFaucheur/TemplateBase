@@ -4,6 +4,7 @@
 #include "Player/PlayerCharacterState.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
+#include "Net/UnrealNetwork.h"
 
 APlayerCharacterState::APlayerCharacterState()
 {
@@ -14,6 +15,17 @@ APlayerCharacterState::APlayerCharacterState()
 	AttributeSet = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("AttributeSet"));
 	
 	NetUpdateFrequency = 100.f;
+}
+
+void APlayerCharacterState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APlayerCharacterState, Level);
+}
+
+void APlayerCharacterState::OnRep_Level(int32 OldLevel)
+{
 }
 
 UAbilitySystemComponent* APlayerCharacterState::GetAbilitySystemComponent() const

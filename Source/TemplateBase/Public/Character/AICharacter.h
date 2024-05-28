@@ -16,8 +16,17 @@ class TEMPLATEBASE_API AAICharacter : public ABaseCharacter
 
 public:
 	AAICharacter();
+	
+	//~ Combat Interface
+	virtual int32 GetCharacterLevel();
+	//~ Combat Interface
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character")
+	int32 Level = 1;
+
+private:
 };

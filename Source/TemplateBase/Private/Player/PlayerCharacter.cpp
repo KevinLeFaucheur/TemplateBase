@@ -99,6 +99,7 @@ void APlayerCharacter::InitAbilityActorInfo()
 			PlayerHUD->InitOverlay(PlayerCharacterController, PlayerCharacterState, AbilitySystemComponent, AttributeSet);
 		}
 	}
+	InitializeDefaultAttributes();
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -343,6 +344,15 @@ void APlayerCharacter::HideCharacterIfCameraClose()
 	{
 		EquipmentComponent->EquippedTool->GetMesh()->bOwnerNoSee = bCameraTooClose;
 	}
+}
+/*
+ * Combat Interface
+ */
+int32 APlayerCharacter::GetCharacterLevel()
+{
+	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	return PlayerCharacterState->GetPlayerLevel();
 }
 
 /*
