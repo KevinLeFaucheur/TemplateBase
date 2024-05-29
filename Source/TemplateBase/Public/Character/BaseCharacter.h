@@ -39,6 +39,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Attributes")
+	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Attributes")
 	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
