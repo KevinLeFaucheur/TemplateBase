@@ -10,12 +10,12 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 	UBaseAttributeSet* AS = CastChecked<UBaseAttributeSet>(AttributeSet);
 	check(AttributeInfo);
 	
-	for (auto& Pair : AS->TagsToAttributes)
+	for (auto& Info : AttributeInfo.Get()->AttributeInformation)
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
-		[this, Pair](const FOnAttributeChangeData& Data)
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Info.AttributeGetter).AddLambda(
+		[this, Info](const FOnAttributeChangeData& Data)
 			{
-				BroadcastAttributeInfo(Pair.Key, Pair.Value());
+				BroadcastAttributeInfo(Info.AttributeTag);
 			}
 		);
 	}
@@ -26,15 +26,15 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	UBaseAttributeSet* AS = CastChecked<UBaseAttributeSet>(AttributeSet);
 	check(AttributeInfo);
 
-	for (auto& Pair : AS->TagsToAttributes)
+	for (auto& Info : AttributeInfo.Get()->AttributeInformation)
 	{
-		BroadcastAttributeInfo(Pair.Key, Pair.Value());
+		BroadcastAttributeInfo(Info.AttributeTag);
 	}
 }
 
-void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const
+void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag) const
 {
 	FBaseAttributeInfo Info = AttributeInfo->FindAttributeInfoForTag(AttributeTag);
-	Info.AttributeValue = Attribute.GetNumericValue(AttributeSet);
+	Info.AttributeValue = Info.AttributeGetter.GetNumericValue(AttributeSet);
 	AttributeInfoDelegate.Broadcast(Info);
 }
