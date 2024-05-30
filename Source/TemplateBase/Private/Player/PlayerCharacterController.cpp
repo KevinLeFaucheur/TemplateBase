@@ -1,9 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacterController.h"
-#include "EnhancedInputComponent.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Player/PlayerCharacter.h"
+#include "Player/Input/BaseEnhancedInputComponent.h"
 
 void APlayerCharacterController::BeginPlay()
 {
@@ -20,7 +23,7 @@ void APlayerCharacterController::SetupInputComponent()
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
 	
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent)) {
+	if (UBaseEnhancedInputComponent* EnhancedInputComponent = Cast<UBaseEnhancedInputComponent>(InputComponent)) {
 		
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::Look);
@@ -32,6 +35,8 @@ void APlayerCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &APlayerCharacterController::FireButtonReleased);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &APlayerCharacterController::AimButtonPressed);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &APlayerCharacterController::AimButtonReleased);
+
+		EnhancedInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 	}
 }
 
@@ -100,4 +105,32 @@ void APlayerCharacterController::AimButtonPressed()
 void APlayerCharacterController::AimButtonReleased()
 {
 	if (PlayerCharacter) PlayerCharacter->AimButtonReleased();
+}
+
+void APlayerCharacterController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(11, 5.f, FColor::Red, *InputTag.ToString());
+}
+
+void APlayerCharacterController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(12, 5.f, FColor::Green, *InputTag.ToString());
+	if(GetASC() == nullptr) return;
+	GetASC()->AbilityInputTagReleased(InputTag);
+}
+
+void APlayerCharacterController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	GEngine->AddOnScreenDebugMessage(13, 5.f, FColor::Blue, *InputTag.ToString());
+	if(GetASC() == nullptr) return;
+	GetASC()->AbilityInputTagHeld(InputTag);
+}
+
+UBaseAbilitySystemComponent* APlayerCharacterController::GetASC()
+{
+	if(BaseAbilitySystemComponent == nullptr)
+	{
+		BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return BaseAbilitySystemComponent;
 }

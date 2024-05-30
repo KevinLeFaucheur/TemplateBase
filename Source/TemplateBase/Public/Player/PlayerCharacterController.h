@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
 #include "PlayerCharacterController.generated.h"
 
+class UBaseAbilitySystemComponent;
 class APlayerCharacter;
 class UInputAction;
+class UInputConfig;
 class UInputMappingContext;
 /**
  * 
@@ -58,5 +61,18 @@ protected:
 	void AimButtonReleased();
 
 private:
+	UPROPERTY()
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
+
+	UPROPERTY()
+	TObjectPtr<UBaseAbilitySystemComponent> BaseAbilitySystemComponent;
+
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+
+	UBaseAbilitySystemComponent* GetASC();
+
+	UPROPERTY(EditDefaultsOnly, Category="PlayerCharacter|Input")
+	TObjectPtr<UInputConfig> InputConfig;
 };

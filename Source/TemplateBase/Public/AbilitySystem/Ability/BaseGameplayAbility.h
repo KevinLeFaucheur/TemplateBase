@@ -13,5 +13,9 @@ UCLASS()
 class TEMPLATEBASE_API UBaseGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
-	
+
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category="GAS|Input")
+	FGameplayTag StartupInputTag;
 };
