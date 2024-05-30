@@ -9,6 +9,7 @@
 #include "Interaction/CombatInterface.h"
 #include "BaseCharacter.generated.h"
 
+class UGameplayAbility;
 class UGameplayEffect;
 class UAttributeSet;
 class UAbilitySystemComponent;
@@ -33,6 +34,7 @@ protected:
 
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
 	void InitializeDefaultAttributes() const;
+	void AddCharacterAbilities();
 
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -49,8 +51,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Attributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 
+private:
+	UPROPERTY(EditAnywhere, Category="GAS|Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
-	
+	UAttributeSet* GetAttributeSet() const { return AttributeSet; }	
 };
