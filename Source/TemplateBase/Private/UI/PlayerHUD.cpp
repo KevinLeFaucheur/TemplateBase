@@ -3,6 +3,7 @@
 
 #include "UI/PlayerHUD.h"
 #include "UI/BaseUserWidget.h"
+#include "UI/Controller/AttributeMenuWidgetController.h"
 #include "UI/Controller/OverlayWidgetController.h"
 
 void APlayerHUD::DrawHUD()
@@ -64,10 +65,19 @@ UOverlayWidgetController* APlayerHUD::GetOverlayWidgetController(const FWidgetCo
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WCParams);
 		OverlayWidgetController->BindCallbacksToDependencies();
-		
-		return OverlayWidgetController;
 	}
 	return OverlayWidgetController;
+}
+
+UAttributeMenuWidgetController* APlayerHUD::GetAttributeMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if(AttributeMenuWidgetController == nullptr)
+	{
+		AttributeMenuWidgetController = NewObject<UAttributeMenuWidgetController>(this, AttributeMenuWidgetControllerClass);
+		AttributeMenuWidgetController->SetWidgetControllerParams(WCParams);
+		AttributeMenuWidgetController->BindCallbacksToDependencies();
+	}
+	return AttributeMenuWidgetController;
 }
 
 /*

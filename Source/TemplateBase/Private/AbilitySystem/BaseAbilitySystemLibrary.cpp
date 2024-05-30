@@ -1,6 +1,5 @@
 // Retropsis @ 2024
 
-
 #include "AbilitySystem/BaseAbilitySystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/PlayerCharacterState.h"
@@ -9,7 +8,6 @@
 
 UOverlayWidgetController* UBaseAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
-	// UGameplayStatics::GetPlayerController(WorldContextObject, 0);
 	if (APlayerController* PC  = WorldContextObject->GetWorld()->GetFirstPlayerController())
 	{
 		if(APlayerHUD* PlayerHUD = Cast<APlayerHUD>(PC->GetHUD()))
@@ -19,6 +17,23 @@ UOverlayWidgetController* UBaseAbilitySystemLibrary::GetOverlayWidgetController(
 			UAttributeSet* AS = PS->GetAttributeSet();
 			const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
 			return PlayerHUD->GetOverlayWidgetController(WidgetControllerParams);
+		}
+	}
+	return nullptr;
+}
+
+UAttributeMenuWidgetController* UBaseAbilitySystemLibrary::GetAttributeMenuWidgetController(
+	const UObject* WorldContextObject)
+{
+	if (APlayerController* PC  = WorldContextObject->GetWorld()->GetFirstPlayerController())
+	{
+		if(APlayerHUD* PlayerHUD = Cast<APlayerHUD>(PC->GetHUD()))
+		{
+			APlayerCharacterState* PS = PC->GetPlayerState<APlayerCharacterState>();
+			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+			UAttributeSet* AS = PS->GetAttributeSet();
+			const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
+			return PlayerHUD->GetAttributeMenuWidgetController(WidgetControllerParams);
 		}
 	}
 	return nullptr;
