@@ -8,7 +8,7 @@
 
 void UBaseAbilitySystemComponent::AbilityActorInfoSet()
 {
-	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UBaseAbilitySystemComponent::EffectApplied);
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UBaseAbilitySystemComponent::ClientEffectApplied);
 }
 
 void UBaseAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities)
@@ -24,7 +24,7 @@ void UBaseAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 	}
 }
 
-void UBaseAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent,
+void UBaseAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
                                                 const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
 	FGameplayTagContainer TagContainer;

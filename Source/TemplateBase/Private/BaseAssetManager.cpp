@@ -2,6 +2,7 @@
 
 #include "BaseAssetManager.h"
 #include "BaseGameplayTags.h"
+// #include "AbilitySystemGlobals.h"
 
 UBaseAssetManager& UBaseAssetManager::Get()
 {
@@ -13,4 +14,6 @@ void UBaseAssetManager::StartInitialLoading()
 {
 	Super::StartInitialLoading();
 	FBaseGameplayTags::InitializeNativeGameplayTags();
+	// Not anymore needed after 5.3
+	// UAbilitySystemGlobals::Get().InitGlobalData();
 }

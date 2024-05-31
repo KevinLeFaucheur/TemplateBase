@@ -28,6 +28,10 @@ public:
 	virtual void PlayHitReactMontage() override;
 	//~ Player Interface
 
+	//~ Combat Interface
+	virtual FVector GetCombatSocketLocation() override;
+	//~ Combat Interface
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() {}
@@ -50,6 +54,12 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Attributes")
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
+
+	UPROPERTY(EditAnywhere, Category="Character")
+	TObjectPtr<USkeletalMeshComponent> Weapon;
+
+	UPROPERTY(EditAnywhere, Category="Character")
+	FName CombatSocketName;
 
 private:
 	UPROPERTY(EditAnywhere, Category="GAS|Abilities")

@@ -8,6 +8,9 @@
 ABaseCharacter::ABaseCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
+	Weapon->SetupAttachment(GetMesh(), FName("RightHandSocket"));
+	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ABaseCharacter::BeginPlay()
@@ -53,6 +56,14 @@ void ABaseCharacter::AddCharacterAbilities()
 void ABaseCharacter::PlayHitReactMontage()
 {
 	IPlayerInterface::PlayHitReactMontage();
+}
+
+FVector ABaseCharacter::GetCombatSocketLocation()
+{
+	// TODO: Implements this for both weapons or just hands
+	// check(Weapon);
+	// return Weapon->GetSocketLocation(CombatSocketName);
+	return GetMesh()->GetSocketLocation(CombatSocketName);
 }
 
 UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
