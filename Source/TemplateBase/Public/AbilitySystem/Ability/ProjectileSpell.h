@@ -27,4 +27,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Abilities")
 	TSubclassOf<ASpellProjectile> SpellProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Abilities")
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
 };

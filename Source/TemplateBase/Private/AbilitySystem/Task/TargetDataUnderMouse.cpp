@@ -41,6 +41,8 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 	PlayerController->GetHitResultAtScreenPosition(ViewportCenter, ECC_Visibility, false, CursorHit);
 	// PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 
+	if(!CursorHit.bBlockingHit) CursorHit.Location = CursorHit.TraceEnd;
+
 	FGameplayAbilityTargetDataHandle DataHandle;
 	FGameplayAbilityTargetData_SingleTargetHit* Data = new FGameplayAbilityTargetData_SingleTargetHit();
 	Data->HitResult = CursorHit;

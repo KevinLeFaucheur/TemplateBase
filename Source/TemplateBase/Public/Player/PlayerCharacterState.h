@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "GameFramework/PlayerState.h"
 #include "PlayerCharacterState.generated.h"
 
@@ -31,6 +32,9 @@ protected:
 private:
 	UPROPERTY(ReplicatedUsing=OnRep_Level, VisibleAnywhere)
 	int32 Level = 1;
+	
+	UPROPERTY(VisibleAnywhere)
+	ECharacterClass CharacterClass = ECharacterClass::Novice;
 
 	UFUNCTION()
 	void OnRep_Level(int32 OldLevel);

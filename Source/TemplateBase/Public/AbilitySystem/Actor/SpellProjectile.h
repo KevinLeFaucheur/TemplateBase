@@ -3,11 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "GameFramework/Actor.h"
 #include "SpellProjectile.generated.h"
 
 class UProjectileMovementComponent;
 class USphereComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class TEMPLATEBASE_API ASpellProjectile : public AActor
@@ -20,9 +22,13 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
+	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn))
+	FGameplayEffectSpecHandle DamageEffectSpecHandle;
+
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void Destroyed() override;
+	
 	UFUNCTION()
 	virtual void OnSphereBeginOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -33,8 +39,25 @@ protected:
 		const FHitResult& SweepResult);
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category="GAS|Abilities")
+	float LifeSPan = 15.f;
+	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Sphere;
+
+	UPROPERTY(EditAnywhere, Category="GAS|Abilities|Effects")
+	TObjectPtr<UNiagaraSystem> ImpactEffect;
+
+	UPROPERTY(EditAnywhere, Category="GAS|Abilities|Effects")
+	TObjectPtr<USoundBase> ImpactSound;
+	
+	UPROPERTY(EditAnywhere, Category="GAS|Abilities|Effects")
+	TObjectPtr<USoundBase> LoopingSound;
+
+	UPROPERTY()
+	TObjectPtr<UAudioComponent> LoopingSoundComponent;
+
+	bool bHit = false;
 
 public:	
 };

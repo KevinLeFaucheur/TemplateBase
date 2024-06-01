@@ -5,7 +5,6 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Equipment/EquipmentComponent.h"
 #include "Equipment/Tool.h"
@@ -16,7 +15,6 @@
 #include "Player/CharacterAnimInstance.h"
 #include "Player/PlayerCharacterController.h"
 #include "Player/PlayerCharacterState.h"
-#include "TemplateBase/TemplateBase.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -45,10 +43,6 @@ APlayerCharacter::APlayerCharacter()
 	EquipmentComponent->SetIsReplicated(true);
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
-	GetMesh()->SetCollisionObjectType(ECC_SkeletalMesh);
-	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
-	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 }
 
