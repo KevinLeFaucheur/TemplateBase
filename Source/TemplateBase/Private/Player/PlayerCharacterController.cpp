@@ -5,8 +5,10 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "Player/PlayerCharacter.h"
 #include "Player/Input/BaseEnhancedInputComponent.h"
+#include "UI/DamageTextComponent.h"
 
 void APlayerCharacterController::BeginPlay()
 {
@@ -133,4 +135,16 @@ UBaseAbilitySystemComponent* APlayerCharacterController::GetASC()
 		BaseAbilitySystemComponent = Cast<UBaseAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
 	}
 	return BaseAbilitySystemComponent;
+}
+
+void APlayerCharacterController::ClientShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+{
+	if(IsValid(TargetCharacter) && DamageTextComponentClass)
+	{
+		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetDamageText(DamageAmount);
+	}
 }

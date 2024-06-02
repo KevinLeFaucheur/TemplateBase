@@ -50,7 +50,7 @@ void ASpellProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompo
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 	// LoopingSoundComponent->Stop();
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Hit: %s"), *OtherComp->GetName()));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Hit: %s"), *OtherComp->GetName()));
 	
 	if(HasAuthority())
 	{

@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerController.h"
 #include "PlayerCharacterController.generated.h"
 
+class UDamageTextComponent;
 class UBaseAbilitySystemComponent;
 class APlayerCharacter;
 class UInputAction;
@@ -45,6 +46,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputAction> AimAction;
+
+	UFUNCTION(Client, Reliable)
+	void ClientShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -75,4 +79,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="PlayerCharacter|Input")
 	TObjectPtr<UInputConfig> InputConfig;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
 };

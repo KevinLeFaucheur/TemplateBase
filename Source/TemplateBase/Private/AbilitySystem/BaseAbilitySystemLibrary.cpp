@@ -48,10 +48,10 @@ void UBaseAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 	
 	if(OverworldGameMode == nullptr) return;
 
-	AActor* AvatarActor = ASC->GetAvatarActor();
+	const AActor* AvatarActor = ASC->GetAvatarActor();
 
-	UCharacterClassInfo* ClassInfo = OverworldGameMode->CharacterClassInfo;
-	const FCharacterClassDefaultInfo ClassDefaultInfo = ClassInfo->GetClassDefaultInfo(CharacterClass);
+	UCharacterClassInfo* CharacterClassInfo = OverworldGameMode->CharacterClassInfo;
+	const FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
 
 	FGameplayEffectContextHandle PrimaryAttributesEffectContext = ASC->MakeEffectContext();
 	PrimaryAttributesEffectContext.AddSourceObject(AvatarActor);
@@ -60,11 +60,24 @@ void UBaseAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 	
 	FGameplayEffectContextHandle SecondaryAttributesEffectContext = ASC->MakeEffectContext();
 	SecondaryAttributesEffectContext.AddSourceObject(AvatarActor);
-	const FGameplayEffectSpecHandle SecondaryAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassInfo->SecondaryAttributes, Level, SecondaryAttributesEffectContext);
+	const FGameplayEffectSpecHandle SecondaryAttributesSpecHandle = ASC->MakeOutgoingSpec(CharacterClassInfo->SecondaryAttributes, Level, SecondaryAttributesEffectContext);
 	ASC->ApplyGameplayEffectSpecToSelf(*SecondaryAttributesSpecHandle.Data.Get());
 	
 	FGameplayEffectContextHandle VitalAttributesEffectContext = ASC->MakeEffectContext();
 	VitalAttributesEffectContext.AddSourceObject(AvatarActor);
-	const FGameplayEffectSpecHandle VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassInfo->VitalAttributes, Level, VitalAttributesEffectContext);
+	const FGameplayEffectSpecHandle VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(CharacterClassInfo->VitalAttributes, Level, VitalAttributesEffectContext);
 	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
+}
+
+void UBaseAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
+{
+	AOverworldGameMode* OverworldGameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if(OverworldGameMode == nullptr) return;
+	
+	UCharacterClassInfo* CharacterClassInfo = OverworldGameMode->CharacterClassInfo;
+	for (const TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfo->CommonAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		ASC->GiveAbility(AbilitySpec);
+	}
 }

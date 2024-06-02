@@ -58,6 +58,10 @@ static  void InitializeNativeGameplayTags();
  FGameplayTag InputTag_9;
  FGameplayTag InputTag_0;
  
+ FGameplayTag Damage;
+
+ FGameplayTag Effects_HitReact;
+ 
 protected:
 
 private:

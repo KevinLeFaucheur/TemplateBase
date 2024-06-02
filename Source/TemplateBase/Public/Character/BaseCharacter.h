@@ -30,7 +30,15 @@ public:
 
 	//~ Combat Interface
 	virtual FVector GetCombatSocketLocation() override;
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+	virtual void Die() override;
 	//~ Combat Interface
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
+
+	UPROPERTY(BlueprintReadOnly, Category="Character")
+	float BaseWalkSpeed = 250.f;
 
 protected:
 	virtual void BeginPlay() override;
@@ -61,11 +69,32 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Character")
 	FName CombatSocketName;
 
+	/*
+	 * Dissolve Material
+	 */
+	void Dissolve();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartDissolveTimeline(const TArray<UMaterialInstanceDynamic*>& DynamicMaterialInstances);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
+	TArray<TObjectPtr<UMaterialInstance>> DissolveMaterialInstances;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
+	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
+
 private:
 	UPROPERTY(EditAnywhere, Category="GAS|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
+	// TODO: Putting this back to CharacterAnimInstance, though enemies need it too
+	UPROPERTY(EditAnywhere, Category="Character|Montages")
+	TObjectPtr<UAnimMontage> HitReactMontage;
+
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }	
+	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 };

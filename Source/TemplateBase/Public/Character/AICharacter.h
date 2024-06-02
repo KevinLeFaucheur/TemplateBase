@@ -29,7 +29,13 @@ public:
 	
 	//~ Combat Interface
 	virtual int32 GetCharacterLevel();
+	virtual void Die() override;
 	//~ Combat Interface
+	
+	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	
+	UPROPERTY(BlueprintReadOnly, Category="Character")
+	bool bHitReacting = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -44,6 +50,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
+
+	UPROPERTY(EditAnywhere, Category="Character")
+	float LifeSpan = 5.f;
 
 private:
 };

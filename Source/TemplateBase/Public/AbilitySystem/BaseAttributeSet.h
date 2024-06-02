@@ -143,6 +143,13 @@ public:
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Mana);
 
 	/*
+	 * Meta Attributes
+	 */
+	UPROPERTY(BlueprintReadOnly, Category="Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, IncomingDamage);
+
+	/*
 	 * Primary Attributes Rep Notifies
 	 */
 	UFUNCTION()
@@ -207,4 +214,5 @@ public:
 
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
+	void ShowDamageText(const FEffectProperties& Props, float Damage) const;
 };

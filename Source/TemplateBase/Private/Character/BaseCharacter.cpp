@@ -67,6 +67,9 @@ void ABaseCharacter::PlayHitReactMontage()
 	IPlayerInterface::PlayHitReactMontage();
 }
 
+/*
+ * Combat Interface
+ */
 FVector ABaseCharacter::GetCombatSocketLocation()
 {
 	// TODO: Implements this for both weapons or just hands
@@ -75,6 +78,57 @@ FVector ABaseCharacter::GetCombatSocketLocation()
 	return GetMesh()->GetSocketLocation(CombatSocketName);
 }
 
+UAnimMontage* ABaseCharacter::GetHitReactMontage_Implementation()
+{
+	return HitReactMontage;
+}
+
+void ABaseCharacter::Die()
+{
+	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
+	MulticastHandleDeath();
+}
+
+void ABaseCharacter::MulticastHandleDeath_Implementation()
+{
+	Weapon->SetSimulatePhysics(true);
+	Weapon->SetEnableGravity(true);
+	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Dissolve();
+}
+
+void ABaseCharacter::Dissolve()
+{
+	TArray<UMaterialInstanceDynamic*> DynamicInstances;
+	for (int i = 0; i < DissolveMaterialInstances.Num(); ++i)
+	{
+		if (IsValid(DissolveMaterialInstances[i]))
+		{
+			UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstances[i], this);
+			GetMesh()->SetMaterial(i, DynamicMatInst);
+			DynamicInstances.Add(DynamicMatInst);
+		}
+	}
+	if(DynamicInstances.Num() > 0) StartDissolveTimeline(DynamicInstances);
+	
+	if(IsValid(WeaponDissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
+		Weapon->SetMaterial(0, DynamicMatInst);
+		StartWeaponDissolveTimeline(DynamicMatInst);
+	}
+}
+
+/*
+ *
+ */
 UAbilitySystemComponent* ABaseCharacter::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;

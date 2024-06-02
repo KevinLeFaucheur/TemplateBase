@@ -4,6 +4,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "BaseGameplayTags.h"
 #include "AbilitySystem/Actor/SpellProjectile.h"
 #include "Interaction/CombatInterface.h"
 
@@ -14,7 +15,7 @@ void UProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
 	{
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
-		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+		const FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 		// Rotation.Pitch = 0.f; // Parallel to the ground if needed
 
 		FTransform SpawnTransform;
@@ -30,6 +31,11 @@ void UProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 
 		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
 		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
+
+		const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+		const float ScaledDamage = AbilityPower.GetValueAtLevel(GetAbilityLevel());
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("FireBolt Damage: %f"), ScaledDamage));
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Damage, ScaledDamage);
 		Projectile->DamageEffectSpecHandle = SpecHandle;
 
 		Projectile->FinishSpawning(SpawnTransform);

@@ -18,4 +18,7 @@ class TEMPLATEBASE_API UBaseGameplayAbility : public UGameplayAbility
 public:
 	UPROPERTY(EditDefaultsOnly, Category="GAS|Input")
 	FGameplayTag StartupInputTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Abilities")
+	FScalableFloat AbilityPower;
 };
