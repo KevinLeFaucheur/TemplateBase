@@ -1,8 +1,6 @@
 // Retropsis @ 2024
 
-
 #include "Character/AICharacter.h"
-
 #include "BaseGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemLibrary.h"

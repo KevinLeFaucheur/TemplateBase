@@ -3,6 +3,7 @@
 #include "AbilitySystem/BaseAbilitySystemLibrary.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AbilityTypes.h"
 #include "Game/OverworldGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/PlayerCharacterState.h"
@@ -81,4 +82,38 @@ UCharacterClassInfo* UBaseAbilitySystemLibrary::GetCharacterClassInfo(const UObj
 	AOverworldGameMode* OverworldGameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if(OverworldGameMode == nullptr) return nullptr;
 	return  OverworldGameMode->CharacterClassInfo;
+}
+
+bool UBaseAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return BaseEffectContext->IsBlockedHit();
+	}
+	return false;
+}
+
+bool UBaseAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return BaseEffectContext->IsCriticalHit();
+	}
+	return false;
+}
+
+void UBaseAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool IsInBlockedHit)
+{
+	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		BaseEffectContext->SetIsBlockedHit(IsInBlockedHit);
+	}
+}
+
+void UBaseAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle, bool IsInCriticalHit)
+{
+	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		BaseEffectContext->SetIsCriticalHit(IsInCriticalHit);
+	}
 }

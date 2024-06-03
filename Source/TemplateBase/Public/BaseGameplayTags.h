@@ -41,7 +41,37 @@ static  void InitializeNativeGameplayTags();
  FGameplayTag Attributes_Secondary_ManaRegeneration;
  FGameplayTag Attributes_Secondary_MaxHealth;
  FGameplayTag Attributes_Secondary_MaxMana;
- 	
+ 
+ /*
+ * Resistances Attributes
+ */
+ FGameplayTag Attributes_Resistance_Fire;
+ FGameplayTag Attributes_Resistance_Ice;
+ FGameplayTag Attributes_Resistance_Wind;
+ FGameplayTag Attributes_Resistance_Lightning;
+ FGameplayTag Attributes_Resistance_Holy;
+ FGameplayTag Attributes_Resistance_Dark;
+ FGameplayTag Attributes_Resistance_Physical;
+  	
+ /*
+  * Damage Types
+  */
+ FGameplayTag Damage;
+ FGameplayTag Damage_Physical;
+ FGameplayTag Damage_Fire;
+ FGameplayTag Damage_Ice;
+ FGameplayTag Damage_Wind;
+ FGameplayTag Damage_Lightning;
+ FGameplayTag Damage_Holy;
+ FGameplayTag Damage_Dark;
+ 
+ TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+ 
+/*
+ * Side Effects
+ */
+ FGameplayTag Effects_HitReact;
+ 
  /*
   * Input Tags
   */
@@ -57,10 +87,6 @@ static  void InitializeNativeGameplayTags();
  FGameplayTag InputTag_8;
  FGameplayTag InputTag_9;
  FGameplayTag InputTag_0;
- 
- FGameplayTag Damage;
-
- FGameplayTag Effects_HitReact;
  
 protected:
 

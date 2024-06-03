@@ -137,7 +137,7 @@ UBaseAbilitySystemComponent* APlayerCharacterController::GetASC()
 	return BaseAbilitySystemComponent;
 }
 
-void APlayerCharacterController::ClientShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+void APlayerCharacterController::ClientShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit)
 {
 	if(IsValid(TargetCharacter) && DamageTextComponentClass)
 	{
@@ -145,6 +145,6 @@ void APlayerCharacterController::ClientShowDamageNumber_Implementation(float Dam
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
 	}
 }

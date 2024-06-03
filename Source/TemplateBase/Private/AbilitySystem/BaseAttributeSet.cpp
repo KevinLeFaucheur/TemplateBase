@@ -1,14 +1,13 @@
 // Retropsis @ 2024
 
 #include "AbilitySystem/BaseAttributeSet.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "GameplayEffectExtension.h"
+#include "AbilitySystem/BaseAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
-#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerCharacterController.h"
 
@@ -93,19 +92,21 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				TagContainer.AddTag(FBaseGameplayTags::Get().Effects_HitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
-			ShowDamageText(Props, LocalIncomingDamage);
+			const bool bBlockedHit = UBaseAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+			const bool bCriticalHit = UBaseAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+			ShowDamageText(Props, LocalIncomingDamage, bBlockedHit, bCriticalHit);
 		}
 	}
 }
 
-void UBaseAttributeSet::ShowDamageText(const FEffectProperties& Props, const float Damage) const
+void UBaseAttributeSet::ShowDamageText(const FEffectProperties& Props, const float Damage, bool bBlockedHit, bool bCriticalHit) const
 {
 	if(Props.SourceCharacter != Props.TargetCharacter)
 	{
 		// if (APlayerCharacterController* PC = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
 		if (APlayerCharacterController* PC = Cast<APlayerCharacterController>(Props.SourceCharacter->Controller))
 		{
-			PC->ClientShowDamageNumber(Damage, Props.TargetCharacter);
+			PC->ClientShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 		}
 	}
 }
