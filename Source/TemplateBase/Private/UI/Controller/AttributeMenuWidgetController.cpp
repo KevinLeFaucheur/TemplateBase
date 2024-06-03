@@ -7,7 +7,7 @@
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
-	UBaseAttributeSet* AS = CastChecked<UBaseAttributeSet>(AttributeSet);
+	// UBaseAttributeSet* AS = CastChecked<UBaseAttributeSet>(AttributeSet);
 	check(AttributeInfo);
 	
 	for (auto& Info : AttributeInfo.Get()->AttributeInformation)
@@ -23,7 +23,7 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
-	UBaseAttributeSet* AS = CastChecked<UBaseAttributeSet>(AttributeSet);
+	// UBaseAttributeSet* AS = CastChecked<UBaseAttributeSet>(AttributeSet);
 	check(AttributeInfo);
 
 	for (auto& Info : AttributeInfo.Get()->AttributeInformation)

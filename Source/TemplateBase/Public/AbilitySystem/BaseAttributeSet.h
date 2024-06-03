@@ -132,6 +132,37 @@ public:
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMana);
 	
 	/*
+	 * Resistance Attributes
+	*/
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_PhysicalResistance, Category="Resistance Attributes")
+	FGameplayAttributeData PhysicalResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, PhysicalResistance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_FireResistance, Category="Resistance Attributes")
+	FGameplayAttributeData FireResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, FireResistance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_IceResistance, Category="Resistance Attributes")
+	FGameplayAttributeData IceResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, IceResistance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_WindResistance, Category="Resistance Attributes")
+	FGameplayAttributeData WindResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, WindResistance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_LightningResistance, Category="Resistance Attributes")
+	FGameplayAttributeData LightningResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, LightningResistance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_HolyResistance, Category="Resistance Attributes")
+	FGameplayAttributeData HolyResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, HolyResistance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_DarkResistance, Category="Resistance Attributes")
+	FGameplayAttributeData DarkResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, DarkResistance);
+	
+	/*
 	 * Vital Attributes
 	 */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Health, Category="Vital Attributes")
@@ -202,6 +233,30 @@ public:
 
 	UFUNCTION()
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+	
+	/*
+	 * Resistance Attributes Rep Notifies
+	 */
+	UFUNCTION()
+	void OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance) const;
+	
+	UFUNCTION()
+	void OnRep_FireResistance(const FGameplayAttributeData& OldFireResistance) const;
+	
+	UFUNCTION()
+	void OnRep_IceResistance(const FGameplayAttributeData& OldIceResistance) const;
+	
+	UFUNCTION()
+	void OnRep_WindResistance(const FGameplayAttributeData& OldWindResistance) const;
+	
+	UFUNCTION()
+	void OnRep_LightningResistance(const FGameplayAttributeData& OldLightningResistance) const;
+	
+	UFUNCTION()
+	void OnRep_HolyResistance(const FGameplayAttributeData& OldHolyResistance) const;
+	
+	UFUNCTION()
+	void OnRep_DarkResistance(const FGameplayAttributeData& OldDarkResistance) const;
 	
 	/*
 	 * Vital Attributes Rep Notifies

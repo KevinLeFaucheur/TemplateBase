@@ -44,13 +44,15 @@ void ASpellProjectile::BeginPlay()
 void ASpellProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if(DamageEffectSpecHandle.Data.IsValid() && DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor) return;
 	if (OtherActor == GetInstigator()) return;
-	
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	// LoopingSoundComponent->Stop();
 
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Hit: %s"), *OtherComp->GetName()));
+	if(!bHit)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+		// LoopingSoundComponent->Stop();
+	}
 	
 	if(HasAuthority())
 	{

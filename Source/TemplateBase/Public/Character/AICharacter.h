@@ -8,6 +8,8 @@
 #include "UI/Controller/OverlayWidgetController.h"
 #include "AICharacter.generated.h"
 
+class ABaseAIController;
+class UBehaviorTree;
 class UWidgetComponent;
 
 /**
@@ -20,6 +22,7 @@ class TEMPLATEBASE_API AAICharacter : public ABaseCharacter
 
 public:
 	AAICharacter();
+	virtual void PossessedBy(AController* NewController) override;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnHealthChanged;
@@ -41,6 +44,12 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultAttributes() const override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY()
+	TObjectPtr<ABaseAIController> BaseAIController;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character")
 	int32 Level = 1;
