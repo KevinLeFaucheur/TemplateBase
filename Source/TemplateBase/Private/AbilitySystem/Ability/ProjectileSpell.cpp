@@ -43,10 +43,12 @@ void UProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 
 		const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
 
-		for (TTuple<FGameplayTag, FScalableFloat>& Pair : DamageTypes)
+		for (TTuple<FGameplayTag, FDamageRange>& Pair : DamageTypes)
 		{
-			const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);	
+			const float ScaledMagnitudeMin = Pair.Value.DamageMin.GetValueAtLevel(GetAbilityLevel());
+			const float ScaledMagnitudeMax = Pair.Value.DamageMax.GetValueAtLevel(GetAbilityLevel());
+			const float Magnitude = FMath::FRandRange(ScaledMagnitudeMin, ScaledMagnitudeMax);
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, Magnitude);	
 		}
 		Projectile->DamageEffectSpecHandle = SpecHandle;
 		Projectile->FinishSpawning(SpawnTransform);
