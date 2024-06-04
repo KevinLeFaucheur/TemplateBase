@@ -70,7 +70,7 @@ void ABaseCharacter::PlayHitReactMontage()
 /*
  * Combat Interface
  */
-FVector ABaseCharacter::GetCombatSocketLocation()
+FVector ABaseCharacter::GetCombatSocketLocation_Implementation()
 {
 	// TODO: Implements this for both weapons or just hands
 	// check(Weapon);

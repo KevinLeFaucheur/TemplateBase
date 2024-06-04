@@ -52,7 +52,7 @@ void AAICharacter::BeginPlay()
 	InitAbilityActorInfo();
 	if(HasAuthority())
 	{
-		UBaseAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent);
+		UBaseAbilitySystemLibrary::GiveStartupAbilities(this, AbilitySystemComponent, CharacterClass);
 	}
 
 	if (UBaseUserWidget* BaseUserWidget = Cast<UBaseUserWidget>(HealthBar->GetUserWidgetObject()))
@@ -100,9 +100,27 @@ void AAICharacter::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewC
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
-	BaseAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
+	// TODO: Investigate for client side BaseAIController
+	// if(!HasAuthority()) return;
+	if(BaseAIController) BaseAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
 }
 
+/*
+ * Enemy Interface
+ */
+AActor* AAICharacter::GetCombatTarget_Implementation() const
+{
+	return CombatTarget;
+}
+
+void AAICharacter::SetCombatTarget_Implementation(AActor* InCombatTarget)
+{
+	CombatTarget = InCombatTarget;
+}
+
+/*
+ * Combat Interface
+ */
 int32 AAICharacter::GetCharacterLevel()
 {
 	return Level;

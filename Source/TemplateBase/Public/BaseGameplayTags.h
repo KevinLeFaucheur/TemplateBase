@@ -66,6 +66,11 @@ static  void InitializeNativeGameplayTags();
  FGameplayTag Damage_Dark;
  
  TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+   	
+ /*
+  * Abilities
+  */
+ FGameplayTag Abilities_Attack;
  
 /*
  * Side Effects

@@ -22,7 +22,9 @@ class TEMPLATEBASE_API ICombatInterface
 
 public:
 	virtual int32 GetCharacterLevel();
-	virtual FVector GetCombatSocketLocation();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FVector GetCombatSocketLocation();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void UpdateFacingTarget(const FVector& Target);
