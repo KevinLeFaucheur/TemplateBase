@@ -22,6 +22,12 @@ AAICharacter::AAICharacter()
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
 	HealthBar->SetupAttachment(GetRootComponent());
+
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
+	bUseControllerRotationYaw = false;
+
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 }
 
 void AAICharacter::PossessedBy(AController* NewController)
@@ -33,6 +39,10 @@ void AAICharacter::PossessedBy(AController* NewController)
 	BaseAIController = Cast<ABaseAIController>(NewController);
 	BaseAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	BaseAIController->RunBehaviorTree(BehaviorTree);
+	BaseAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), false);
+
+	const bool bIsRanged = CharacterClass == ECharacterClass::Ranger || CharacterClass == ECharacterClass::Mage;
+	BaseAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsRanged"), bIsRanged);
 }
 
 void AAICharacter::BeginPlay()
@@ -90,6 +100,7 @@ void AAICharacter::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewC
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+	BaseAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
 }
 
 int32 AAICharacter::GetCharacterLevel()

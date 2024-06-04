@@ -49,7 +49,11 @@ protected:
 	float Level = 1.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Effects")
-	bool bDestroyOnEffectRemoval = false;
+	bool bDestroyOnEffectApplication = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Effects")
+	bool bApplyEffectsToEnemies = true;
+	
 	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveEffectHandles;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Effects")
