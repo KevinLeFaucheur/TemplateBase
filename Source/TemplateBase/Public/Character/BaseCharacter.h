@@ -29,15 +29,21 @@ public:
 	//~ Player Interface
 
 	//~ Combat Interface
-	virtual FVector GetCombatSocketLocation_Implementation() override;
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
 	//~ Combat Interface
+
+	UPROPERTY(EditAnywhere, Category="Character|Montages")
+	TArray<FTaggedMontage> AttackMontages;
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
 
-	UPROPERTY(BlueprintReadOnly, Category="Character")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character")
 	float BaseWalkSpeed = 250.f;
 
 protected:
@@ -67,7 +73,15 @@ protected:
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
 	UPROPERTY(EditAnywhere, Category="Character")
-	FName CombatSocketName;
+	FName WeaponSocketName;
+	
+	UPROPERTY(EditAnywhere, Category="Character")
+	FName LeftHandSocketName;
+	
+	UPROPERTY(EditAnywhere, Category="Character")
+	FName RightHandSocketName;
+
+	bool bDead = false;
 
 	/*
 	 * Dissolve Material
@@ -97,4 +111,5 @@ private:
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	
 };

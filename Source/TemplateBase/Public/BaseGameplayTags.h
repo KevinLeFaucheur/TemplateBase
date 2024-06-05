@@ -78,6 +78,15 @@ static  void InitializeNativeGameplayTags();
  FGameplayTag Effects_HitReact;
  
  /*
+  * Side Effects
+  */
+ FGameplayTag Montage_Attack_Weapon;
+ FGameplayTag Montage_Attack_LeftHand;
+ FGameplayTag Montage_Attack_RightHand;
+ FGameplayTag Montage_Attack_Fang;
+ FGameplayTag Montage_Attack_Tail;
+ 
+ /*
   * Input Tags
   */
  FGameplayTag InputTag_LMB;

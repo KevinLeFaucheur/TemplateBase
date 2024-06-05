@@ -2,6 +2,7 @@
 
 #include "Character/BaseCharacter.h"
 #include "AbilitySystemComponent.h"
+#include "BaseGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "TemplateBase/TemplateBase.h"
@@ -70,12 +71,23 @@ void ABaseCharacter::PlayHitReactMontage()
 /*
  * Combat Interface
  */
-FVector ABaseCharacter::GetCombatSocketLocation_Implementation()
+FVector ABaseCharacter::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
 	// TODO: Implements this for both weapons or just hands
-	// check(Weapon);
-	// return Weapon->GetSocketLocation(CombatSocketName);
-	return GetMesh()->GetSocketLocation(CombatSocketName);
+	const FBaseGameplayTags&GameplayTags = FBaseGameplayTags::Get();
+	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon) && IsValid(Weapon))
+	{
+		return Weapon->GetSocketLocation(WeaponSocketName);
+	}
+	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_LeftHand))
+	{
+		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+	}
+	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_RightHand))
+	{
+		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	return FVector();
 }
 
 UAnimMontage* ABaseCharacter::GetHitReactMontage_Implementation()
@@ -102,8 +114,27 @@ void ABaseCharacter::MulticastHandleDeath_Implementation()
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
+	bDead = true;
 }
 
+bool ABaseCharacter::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* ABaseCharacter::GetAvatar_Implementation()
+{
+	return this;
+}
+
+TArray<FTaggedMontage> ABaseCharacter::GetAttackMontages_Implementation()
+{
+	return AttackMontages;
+}
+
+/*
+ * Visual Effects
+ */
 void ABaseCharacter::Dissolve()
 {
 	TArray<UMaterialInstanceDynamic*> DynamicInstances;

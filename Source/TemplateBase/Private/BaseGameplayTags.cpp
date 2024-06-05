@@ -70,12 +70,20 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	 * Abilities
 	 */
 	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Attack"), FString("Melee Attack"));
-
 	
 	/*
 	 * Side Effects
 	 */
 	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"), FString("Hit Reacting Effect"));
+		
+	/*
+	 * Combat Sockets
+	 */
+	GameplayTags.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon"), FString("Attack with Weapon Socket"));
+	GameplayTags.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.LeftHand"), FString("Attack with Left Hand Socket"));
+	GameplayTags.Montage_Attack_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.RightHand"), FString("Attack with Right Hand Socket"));
+	GameplayTags.Montage_Attack_Fang = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Fang"), FString("Attack with Fang Socket"));
+	GameplayTags.Montage_Attack_Tail = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Tail"), FString("Attack with Tail Socket"));
 	
 	/*
 	 * Input Tags

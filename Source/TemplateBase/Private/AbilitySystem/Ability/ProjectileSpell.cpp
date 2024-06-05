@@ -12,7 +12,8 @@ void UProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
 	if(!GetAvatarActorFromActorInfo()->HasAuthority()) return;
 
-	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo());
+	// TODO: Data driven Socket
+	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), FBaseGameplayTags::Get().Montage_Attack_LeftHand);
 	const FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 	// Rotation.Pitch = 0.f; // Parallel to the ground if needed
 

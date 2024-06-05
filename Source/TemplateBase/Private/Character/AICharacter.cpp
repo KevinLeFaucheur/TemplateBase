@@ -100,9 +100,7 @@ void AAICharacter::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewC
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()->MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
-	// TODO: Investigate for client side BaseAIController
-	// if(!HasAuthority()) return;
-	if(BaseAIController) BaseAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
+	if(BaseAIController && BaseAIController->GetBlackboardComponent()) BaseAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
 }
 
 /*

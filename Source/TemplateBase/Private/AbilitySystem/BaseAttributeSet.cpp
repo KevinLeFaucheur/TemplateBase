@@ -111,8 +111,12 @@ void UBaseAttributeSet::ShowDamageText(const FEffectProperties& Props, const flo
 {
 	if(Props.SourceCharacter != Props.TargetCharacter)
 	{
-		// if (APlayerCharacterController* PC = Cast<APlayerCharacterController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
 		if (APlayerCharacterController* PC = Cast<APlayerCharacterController>(Props.SourceCharacter->Controller))
+		{
+			PC->ClientShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
+			return;
+		}
+		if (APlayerCharacterController* PC = Cast<APlayerCharacterController>(Props.TargetCharacter->Controller))
 		{
 			PC->ClientShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 		}
