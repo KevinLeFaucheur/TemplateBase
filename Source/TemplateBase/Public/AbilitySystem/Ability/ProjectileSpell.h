@@ -17,7 +17,7 @@ class TEMPLATEBASE_API UProjectileSpell : public UDamageGameplayAbility
 
 protected:
 	UFUNCTION(BlueprintCallable, Category="GAS|Abilities")
-	void SpawnProjectile(const FVector& ProjectileTargetLocation);
+	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& CombatSocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
 	
 	virtual void ActivateAbility(
 		const FGameplayAbilitySpecHandle Handle,

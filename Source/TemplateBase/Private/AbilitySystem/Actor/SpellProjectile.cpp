@@ -58,6 +58,7 @@ void ASpellProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompo
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 		// LoopingSoundComponent->Stop();
+		bHit = true;
 	}
 	
 	if(HasAuthority())
@@ -81,6 +82,7 @@ void ASpellProjectile::Destroyed()
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 		// LoopingSoundComponent->Stop();
+		bHit = true;
 	}
 	Super::Destroyed();
 }

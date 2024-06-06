@@ -71,6 +71,7 @@ static  void InitializeNativeGameplayTags();
   * Abilities
   */
  FGameplayTag Abilities_Attack;
+ FGameplayTag Abilities_Summon;
  
 /*
  * Side Effects
@@ -78,13 +79,21 @@ static  void InitializeNativeGameplayTags();
  FGameplayTag Effects_HitReact;
  
  /*
-  * Side Effects
+  * Combat Sockets
   */
- FGameplayTag Montage_Attack_Weapon;
- FGameplayTag Montage_Attack_LeftHand;
- FGameplayTag Montage_Attack_RightHand;
- FGameplayTag Montage_Attack_Fang;
- FGameplayTag Montage_Attack_Tail;
+ FGameplayTag CombatSocket_Weapon;
+ FGameplayTag CombatSocket_LeftHand;
+ FGameplayTag CombatSocket_RightHand;
+ FGameplayTag CombatSocket_Fang;
+ FGameplayTag CombatSocket_Tail;
+  
+ /*
+  * Montages
+  */
+ FGameplayTag Montage_Attack_1;
+ FGameplayTag Montage_Attack_2;
+ FGameplayTag Montage_Attack_3;
+ FGameplayTag Montage_Attack_4;
  
  /*
   * Input Tags

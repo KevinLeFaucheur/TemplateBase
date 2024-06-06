@@ -5,6 +5,7 @@
 #include "BaseGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "TemplateBase/TemplateBase.h"
 
 ABaseCharacter::ABaseCharacter()
@@ -75,17 +76,21 @@ FVector ABaseCharacter::GetCombatSocketLocation_Implementation(const FGameplayTa
 {
 	// TODO: Implements this for both weapons or just hands
 	const FBaseGameplayTags&GameplayTags = FBaseGameplayTags::Get();
-	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon) && IsValid(Weapon))
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Weapon) && IsValid(Weapon))
 	{
 		return Weapon->GetSocketLocation(WeaponSocketName);
 	}
-	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_LeftHand))
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_LeftHand))
 	{
 		return GetMesh()->GetSocketLocation(LeftHandSocketName);
 	}
-	if(MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_RightHand))
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_RightHand))
 	{
 		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Tail))
+	{
+		return GetMesh()->GetSocketLocation(TailSocketName);
 	}
 	return FVector();
 }
@@ -113,6 +118,7 @@ void ABaseCharacter::MulticastHandleDeath_Implementation()
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	if(DeathSound) UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
 	Dissolve();
 	bDead = true;
 }
@@ -130,6 +136,33 @@ AActor* ABaseCharacter::GetAvatar_Implementation()
 TArray<FTaggedMontage> ABaseCharacter::GetAttackMontages_Implementation()
 {
 	return AttackMontages;
+}
+
+FTaggedMontage ABaseCharacter::GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag)
+{
+	for (FTaggedMontage TaggedMontage : AttackMontages)
+	{
+		if(TaggedMontage.MontageTag == MontageTag)
+		{
+			return TaggedMontage;
+		}
+	}
+	return FTaggedMontage();
+}
+
+UNiagaraSystem* ABaseCharacter::GetImpactEffect_Implementation()
+{
+	return ImpactEffect;
+}
+
+int32 ABaseCharacter::GetMinionCount_Implementation()
+{
+	return MinionCount;
+}
+
+void ABaseCharacter::IncrementMinionCount_Implementation(const int32 Amount)
+{
+	MinionCount += Amount;
 }
 
 /*

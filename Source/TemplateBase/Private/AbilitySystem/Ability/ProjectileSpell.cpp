@@ -1,21 +1,23 @@
 // Retropsis @ 2024
 
 #include "AbilitySystem/Ability/ProjectileSpell.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "AbilitySystem/Actor/SpellProjectile.h"
 #include "Interaction/CombatInterface.h"
 
-void UProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
+void UProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& CombatSocketTag, bool bOverridePitch, float PitchOverride)
 {
 	if(!GetAvatarActorFromActorInfo()->HasAuthority()) return;
 
 	// TODO: Data driven Socket
-	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), FBaseGameplayTags::Get().Montage_Attack_LeftHand);
-	const FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-	// Rotation.Pitch = 0.f; // Parallel to the ground if needed
+	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), CombatSocketTag);
+	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+	if(bOverridePitch)
+	{
+		Rotation.Pitch = PitchOverride; // Parallel to the ground if needed
+	}
 
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(SocketLocation);

@@ -9,6 +9,7 @@
 #include "Interaction/CombatInterface.h"
 #include "BaseCharacter.generated.h"
 
+class UNiagaraSystem;
 class UGameplayAbility;
 class UGameplayEffect;
 class UAttributeSet;
@@ -35,6 +36,10 @@ public:
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
+	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) override;
+	virtual UNiagaraSystem* GetImpactEffect_Implementation() override;
+	virtual 	int32 GetMinionCount_Implementation() override;
+	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	//~ Combat Interface
 
 	UPROPERTY(EditAnywhere, Category="Character|Montages")
@@ -80,8 +85,16 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category="Character")
 	FName RightHandSocketName;
+	
+	UPROPERTY(EditAnywhere, Category="Character")
+	FName TailSocketName;
 
 	bool bDead = false;
+
+	/*
+	 * Minions
+	 */
+	int32 MinionCount = 0;
 
 	/*
 	 * Dissolve Material
@@ -99,6 +112,12 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
+	TObjectPtr<UNiagaraSystem> ImpactEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
+	TObjectPtr<USoundBase> DeathSound;
 
 private:
 	UPROPERTY(EditAnywhere, Category="GAS|Abilities")
