@@ -127,6 +127,7 @@ int32 AAICharacter::GetCharacterLevel()
 void AAICharacter::Die()
 {
 	SetLifeSpan(LifeSpan);
+	if(BaseAIController) BaseAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
 	Super::Die();
 }
 
