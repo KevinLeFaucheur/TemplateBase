@@ -7,6 +7,8 @@
 #include "UI/Controller/BaseWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
+class UBaseAbilitySystemComponent;
+class UAbilityInfo;
 class UBaseUserWidget;
 
 struct FOnAttributeChangeData;
@@ -43,6 +45,7 @@ class TEMPLATEBASE_API UOverlayWidgetController : public UBaseWidgetController
 public:
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
+	void OnInitializeStartupAbilities(UBaseAbilitySystemComponent* BaseAbilitySystemComponent);
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FOnAttributeChangedSignature OnHealthChanged;
@@ -62,6 +65,9 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|WidgetData")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|WidgetData")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
 
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);

@@ -4,9 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "BaseAbilitySystemComponent.h"
+#include "BaseAbilitySystemComponent.h"
 #include "BaseAbilitySystemComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* Asset Tags*/)
+DECLARE_MULTICAST_DELEGATE_OneParam(FAbilitiesGiven, UBaseAbilitySystemComponent*)
 
 /**
  * 
@@ -24,6 +27,8 @@ public:
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 
 	FEffectAssetTags EffectAssetTags;
+	FAbilitiesGiven AbilitiesGiven;
+	bool bStartupAbilitiesGiven = false;
 
 protected:
 	UFUNCTION(Client, Reliable)

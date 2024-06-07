@@ -1,4 +1,5 @@
 // Retropsis @ 2024
+// Retropsis @ 2024
 
 #include "BaseGameplayTags.h"
 #include "GameplayTagsManager.h"
@@ -70,7 +71,8 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	 * Abilities
 	 */
 	GameplayTags.Abilities_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Attack"), FString("Melee Attack"));
-	GameplayTags.Abilities_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Summon"), FString("Melee Summon"));
+	GameplayTags.Abilities_Summon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Summon"), FString("Ability Summon"));
+	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Fire.FireBolt"), FString("Fire Elemental Ability FireBolt"));
 	
 	/*
 	 * Side Effects
