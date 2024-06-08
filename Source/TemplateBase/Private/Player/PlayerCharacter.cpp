@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacter.h"
-
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
@@ -16,6 +15,7 @@
 #include "Player/CharacterAnimInstance.h"
 #include "Player/PlayerCharacterController.h"
 #include "Player/PlayerCharacterState.h"
+#include "NiagaraComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -45,6 +45,10 @@ APlayerCharacter::APlayerCharacter()
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagaraComponent");
+	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
+	LevelUpNiagaraComponent->bAutoActivate = false;
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -372,6 +376,20 @@ int32 APlayerCharacter::GetSpellPointReward_Implementation(int32 Level) const
 	return PlayerCharacterState->LevelUpInfo->LevelUpInformation[Level].SpellPointAward;
 }
 
+int32 APlayerCharacter::GetAttributePoints_Implementation() const
+{
+	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	return PlayerCharacterState->GetAttributePoints();
+}
+
+int32 APlayerCharacter::GetSpellPoints_Implementation() const
+{
+	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	return PlayerCharacterState->GetSpellPoints();
+}
+
 void APlayerCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 {
 	APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
@@ -381,14 +399,16 @@ void APlayerCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 
 void APlayerCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
 {
-	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
 	check(PlayerCharacterState);
+	PlayerCharacterState->AddToAttributePoints(InAttributePoints);
 }
 
 void APlayerCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
 {
-	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
 	check(PlayerCharacterState);
+	PlayerCharacterState->AddToSpellPoints(InSpellPoints);
 }
 
 int32 APlayerCharacter::FindLevelForXP_Implementation(int32 InXP) const
@@ -408,7 +428,19 @@ void APlayerCharacter::AddToXP_Implementation(int32 InXP)
 
 void APlayerCharacter::LevelUp_Implementation()
 {
-	Super::LevelUp_Implementation();
+	MulticastLevelUp();
+}
+
+void APlayerCharacter::MulticastLevelUp_Implementation() const
+{
+	if(IsValid(LevelUpNiagaraComponent))
+	{
+		const FVector CameraLocation = FollowCamera->GetComponentLocation();
+		const FVector NiagaraSystemLocation = LevelUpNiagaraComponent->GetComponentLocation();
+		const FRotator ToCameraRotation =  (CameraLocation - NiagaraSystemLocation).Rotation();
+		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }
 
 /*

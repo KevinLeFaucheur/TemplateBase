@@ -101,7 +101,7 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UBaseAbilitySystemCo
 void UOverlayWidgetController::OnXPChanged(int32 NewXP) const
 {
 	const APlayerCharacterState* PlayerCharacterState = CastChecked<APlayerCharacterState>(PlayerState);
-	const ULevelUpInfo* LevelUpInfo = PlayerCharacterState->LevelUpInfo;
+	const UPlayerLevelUpInfo* LevelUpInfo = PlayerCharacterState->LevelUpInfo;
 	checkf(LevelUpInfo, TEXT("Unable to find LevelUpInfon please fill out Player State"));
 
 	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);

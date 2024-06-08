@@ -26,7 +26,7 @@ public:
  * 
  */
 UCLASS()
-class TEMPLATEBASE_API ULevelUpInfo : public UDataAsset
+class TEMPLATEBASE_API UPlayerLevelUpInfo : public UDataAsset
 {
 	GENERATED_BODY()
 

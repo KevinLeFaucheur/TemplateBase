@@ -8,7 +8,7 @@
 #include "GameFramework/PlayerState.h"
 #include "PlayerCharacterState.generated.h"
 
-class ULevelUpInfo;
+class UPlayerLevelUpInfo;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
@@ -28,9 +28,11 @@ public:
 
 	FOnPlayerStatChanged OnXPChanged;
 	FOnPlayerStatChanged OnLevelChanged;
+	FOnPlayerStatChanged OnAttributePointsChanged;
+	FOnPlayerStatChanged OnSpellPointsChanged;
 
 	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<ULevelUpInfo> LevelUpInfo;
+	TObjectPtr<UPlayerLevelUpInfo> LevelUpInfo;
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -46,6 +48,12 @@ private:
 	UPROPERTY(ReplicatedUsing=OnRep_XP, VisibleAnywhere)
 	int32 XP = 1;
 	
+	UPROPERTY(ReplicatedUsing=OnRep_AttributePoints, VisibleAnywhere)
+	int32 AttributePoints = 0;
+	
+	UPROPERTY(ReplicatedUsing=OnRep_SpellPoints, VisibleAnywhere)
+	int32 SpellPoints = 1;
+	
 	UPROPERTY(VisibleAnywhere)
 	ECharacterClass CharacterClass = ECharacterClass::Novice;
 
@@ -54,14 +62,26 @@ private:
 	
 	UFUNCTION()
 	void OnRep_XP(int32 OldXP);
+
+	UFUNCTION()
+	void OnRep_AttributePoints(int32 OldAttributePoints);
+	
+	UFUNCTION()
+	void OnRep_SpellPoints(int32 OldSpellPoints);
 	
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
-	void AddToLevel(int32 InLevel);
-	void SetLevel(int32 InLevel);
 	FORCEINLINE int32 GetXP() const { return XP; }
+	FORCEINLINE int32 GetAttributePoints() const { return AttributePoints; }
+	FORCEINLINE int32 GetSpellPoints() const { return SpellPoints; }
+	
+	void AddToLevel(int32 InLevel);
 	void AddToXP(int32 InXP);
+	void AddToAttributePoints(int32 InAttributePoints);
+	void AddToSpellPoints(int32 InSpellPoints);
+	
+	void SetLevel(int32 InLevel);
 	void SetXP(int32 InXP);
 };

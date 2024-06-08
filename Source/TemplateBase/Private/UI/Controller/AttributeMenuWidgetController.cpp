@@ -2,8 +2,11 @@
 
 
 #include "UI/Controller/AttributeMenuWidgetController.h"
+
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AbilitySystem/Data/AttributeInfo.h"
+#include "Player/PlayerCharacterState.h"
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
@@ -19,6 +22,14 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 			}
 		);
 	}
+	
+	APlayerCharacterState* PlayerCharacterState = CastChecked<APlayerCharacterState>(PlayerState);
+	PlayerCharacterState->OnAttributePointsChanged.AddLambda(
+		[this] (int32 Points)
+		{
+			OnAttributePointsChangedDelegate.Broadcast(Points);
+		}
+	);
 }
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
@@ -29,6 +40,17 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	for (auto& Info : AttributeInfo.Get()->AttributeInformation)
 	{
 		BroadcastAttributeInfo(Info.AttributeTag);
+	}
+	
+	APlayerCharacterState* PlayerCharacterState = CastChecked<APlayerCharacterState>(PlayerState);
+	OnAttributePointsChangedDelegate.Broadcast(PlayerCharacterState->GetAttributePoints());
+}
+
+void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	if (UBaseAbilitySystemComponent* BaseASC = CastChecked<UBaseAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		BaseASC->UpgradeAttribute(AttributeTag);
 	}
 }
 

@@ -48,6 +48,18 @@ void APlayerCharacterState::AddToXP(int32 InXP)
 	OnXPChanged.Broadcast(XP);
 }
 
+void APlayerCharacterState::AddToAttributePoints(int32 InAttributePoints)
+{
+	AttributePoints += InAttributePoints;
+	OnAttributePointsChanged.Broadcast(AttributePoints);
+}
+
+void APlayerCharacterState::AddToSpellPoints(int32 InSpellPoints)
+{
+	SpellPoints += InSpellPoints;
+	OnSpellPointsChanged.Broadcast(SpellPoints);
+}
+
 void APlayerCharacterState::SetXP(int32 InXP)
 {
 	XP = InXP;
@@ -57,6 +69,16 @@ void APlayerCharacterState::SetXP(int32 InXP)
 void APlayerCharacterState::OnRep_XP(int32 OldXP)
 {
 	OnXPChanged.Broadcast(XP);
+}
+
+void APlayerCharacterState::OnRep_AttributePoints(int32 OldAttributePoints)
+{
+	OnAttributePointsChanged.Broadcast(AttributePoints);
+}
+
+void APlayerCharacterState::OnRep_SpellPoints(int32 OldSpellPoints)
+{
+	OnSpellPointsChanged.Broadcast(SpellPoints);
 }
 
 UAbilitySystemComponent* APlayerCharacterState::GetAbilitySystemComponent() const

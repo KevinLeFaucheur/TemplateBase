@@ -7,6 +7,7 @@
 #include "Character/CharacterData.h"
 #include "PlayerCharacter.generated.h"
 
+class UNiagaraComponent;
 class UEquipmentComponent;
 class ATool;
 class UWidgetComponent;
@@ -55,6 +56,8 @@ public:
 	virtual int32 GetXP_Implementation() const override;
 	virtual int32 GetAttributePointReward_Implementation(int32 Level) const override;
 	virtual int32 GetSpellPointReward_Implementation(int32 Level) const override;
+	virtual int32 GetAttributePoints_Implementation() const override;
+	virtual int32 GetSpellPoints_Implementation() const override;
 	virtual int32 FindLevelForXP_Implementation(int32 InXP) const override;
 	virtual void AddToXP_Implementation(int32 InXP) override;
 	virtual void AddToAttributePoints_Implementation(int32 InAttributePoints) override;
@@ -78,9 +81,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> OverheadWidget;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Effects")
+	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
+
 protected:
 	void AimOffset(float DeltaTime);
 	void SimProxiesTurn();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastLevelUp() const;
 	
 private:
 	virtual void InitAbilityActorInfo() override;
