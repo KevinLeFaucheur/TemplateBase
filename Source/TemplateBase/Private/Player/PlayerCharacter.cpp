@@ -4,6 +4,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Equipment/EquipmentComponent.h"
@@ -348,6 +349,53 @@ int32 APlayerCharacter::GetCharacterLevel_Implementation()
 	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
 	check(PlayerCharacterState);
 	return PlayerCharacterState->GetPlayerLevel();
+}
+
+int32 APlayerCharacter::GetXP_Implementation() const
+{
+	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	return PlayerCharacterState->GetXP();
+}
+
+int32 APlayerCharacter::GetAttributePointReward_Implementation(int32 Level) const
+{
+	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	return PlayerCharacterState->LevelUpInfo->LevelUpInformation[Level].AttributePointAward;
+}
+
+int32 APlayerCharacter::GetSpellPointReward_Implementation(int32 Level) const
+{
+	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	return PlayerCharacterState->LevelUpInfo->LevelUpInformation[Level].SpellPointAward;
+}
+
+void APlayerCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
+{
+	APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	PlayerCharacterState->AddToLevel(InPlayerLevel);
+}
+
+void APlayerCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
+{
+	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+}
+
+void APlayerCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
+{
+	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+}
+
+int32 APlayerCharacter::FindLevelForXP_Implementation(int32 InXP) const
+{
+	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	return PlayerCharacterState->LevelUpInfo->FindLevelForXP(InXP);
 }
 
 void APlayerCharacter::AddToXP_Implementation(int32 InXP)

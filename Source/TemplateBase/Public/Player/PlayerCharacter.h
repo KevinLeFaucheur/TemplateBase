@@ -52,7 +52,14 @@ public:
 	
 	//~ Player Interface
 	virtual void PlayHitReactMontage() override;
+	virtual int32 GetXP_Implementation() const override;
+	virtual int32 GetAttributePointReward_Implementation(int32 Level) const override;
+	virtual int32 GetSpellPointReward_Implementation(int32 Level) const override;
+	virtual int32 FindLevelForXP_Implementation(int32 InXP) const override;
 	virtual void AddToXP_Implementation(int32 InXP) override;
+	virtual void AddToAttributePoints_Implementation(int32 InAttributePoints) override;
+	virtual void AddToPlayerLevel_Implementation(int32 InPlayerLevel) override;
+	virtual void AddToSpellPoints_Implementation(int32 InSpellPoints) override;
 	virtual void LevelUp_Implementation() override;
 	//~ Player Interface
 

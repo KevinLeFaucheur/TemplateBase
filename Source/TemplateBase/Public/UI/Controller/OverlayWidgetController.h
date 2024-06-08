@@ -33,6 +33,7 @@ struct FUIWidgetRow : public FTableRowBase
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FBaseAbilityInfo&, Info);
 
@@ -63,15 +64,24 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FOnAttributeChangedSignature OnMaxManaChanged;
-	
-	UPROPERTY(BlueprintAssignable, Category="GAS|Experience")
-	FOnAttributeChangedSignature OnXPPercentChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
 	FMessageWidgetRowSignature MessageWidgetRow;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Abilities")
 	FAbilityInfoSignature AbilityInfoDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
+	FOnAttributeChangedSignature OnXPPercentChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
+	FOnPlayerStatChangedSignature OnPlayerLevelChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
+	FOnPlayerStatChangedSignature OnAttributePointsChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
+	FOnPlayerStatChangedSignature OnSpellPointsChanged;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|WidgetData")
