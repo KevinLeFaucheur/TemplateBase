@@ -45,11 +45,16 @@ public:
 	void ServerEquipButtonPressed();
 	
 	//~ Combat Interface
-	virtual int32 GetCharacterLevel() override;
+	virtual int32 GetCharacterLevel_Implementation() override;
 	//~ Combat Interface
 
 	void PlayFireMontage(bool bAiming);
+	
+	//~ Player Interface
 	virtual void PlayHitReactMontage() override;
+	virtual void AddToXP_Implementation(int32 InXP) override;
+	virtual void LevelUp_Implementation() override;
+	//~ Player Interface
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastHitReact();

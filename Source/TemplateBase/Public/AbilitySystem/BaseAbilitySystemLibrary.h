@@ -50,7 +50,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
 	static void GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
 
+	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary"/*, meta=(WorldContext="WorldContextObject")*/)
+	static bool IsHostile(AActor* FirstActor, AActor* SecondActor);
+
 	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
-	static bool IsHostile(AActor* FirstActor, AActor* SecondActor); 
+	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel);
 	
 };

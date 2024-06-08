@@ -40,6 +40,7 @@ public:
 	virtual UNiagaraSystem* GetImpactEffect_Implementation() override;
 	virtual 	int32 GetMinionCount_Implementation() override;
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
+	virtual ECharacterClass GetCharacterClass_Implementation() override;
 	//~ Combat Interface
 
 	UPROPERTY(EditAnywhere, Category="Character|Montages")
@@ -59,6 +60,9 @@ protected:
 	virtual void InitializeDefaultAttributes() const;
 	void AddCharacterAbilities();
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character")
+	ECharacterClass CharacterClass = ECharacterClass::Warrior;
+	
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
@@ -119,9 +123,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
 	TObjectPtr<USoundBase> DeathSound;
 
-private:
+private:	
 	UPROPERTY(EditAnywhere, Category="GAS|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	
+	UPROPERTY(EditAnywhere, Category="GAS|Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 
 	// TODO: Putting this back to CharacterAnimInstance, though enemies need it too
 	UPROPERTY(EditAnywhere, Category="Character|Montages")

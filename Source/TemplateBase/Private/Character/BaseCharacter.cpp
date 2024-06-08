@@ -62,6 +62,7 @@ void ABaseCharacter::AddCharacterAbilities()
 	if(!HasAuthority()) return;
 
 	ASC->AddCharacterAbilities(StartupAbilities);
+	ASC->AddCharacterPassiveAbilities(StartupPassiveAbilities);
 }
 
 void ABaseCharacter::PlayHitReactMontage()
@@ -163,6 +164,11 @@ int32 ABaseCharacter::GetMinionCount_Implementation()
 void ABaseCharacter::IncrementMinionCount_Implementation(const int32 Amount)
 {
 	MinionCount += Amount;
+}
+
+ECharacterClass ABaseCharacter::GetCharacterClass_Implementation()
+{
+	return CharacterClass;
 }
 
 /*

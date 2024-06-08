@@ -22,13 +22,46 @@ void APlayerCharacterState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APlayerCharacterState, Level);
+	DOREPLIFETIME(APlayerCharacterState, XP);
+}
+
+void APlayerCharacterState::AddToLevel(int32 InLevel)
+{
+	Level += InLevel;
+	OnLevelChanged.Broadcast(Level);
+}
+
+void APlayerCharacterState::SetLevel(int32 InLevel)
+{
+	Level = InLevel;
+	OnLevelChanged.Broadcast(Level);
 }
 
 void APlayerCharacterState::OnRep_Level(int32 OldLevel)
 {
+	OnLevelChanged.Broadcast(Level);
+}
+
+void APlayerCharacterState::AddToXP(int32 InXP)
+{
+	XP += InXP;
+	OnXPChanged.Broadcast(XP);
+}
+
+void APlayerCharacterState::SetXP(int32 InXP)
+{
+	XP = InXP;
+	OnXPChanged.Broadcast(XP);
+}
+
+void APlayerCharacterState::OnRep_XP(int32 OldXP)
+{
+	OnXPChanged.Broadcast(XP);
 }
 
 UAbilitySystemComponent* APlayerCharacterState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
 }
+
+

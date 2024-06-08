@@ -343,11 +343,24 @@ void APlayerCharacter::HideCharacterIfCameraClose()
 /*
  * Combat Interface
  */
-int32 APlayerCharacter::GetCharacterLevel()
+int32 APlayerCharacter::GetCharacterLevel_Implementation()
 {
 	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
 	check(PlayerCharacterState);
 	return PlayerCharacterState->GetPlayerLevel();
+}
+
+void APlayerCharacter::AddToXP_Implementation(int32 InXP)
+{
+	
+	APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	PlayerCharacterState->AddToXP(InXP);
+}
+
+void APlayerCharacter::LevelUp_Implementation()
+{
+	Super::LevelUp_Implementation();
 }
 
 /*

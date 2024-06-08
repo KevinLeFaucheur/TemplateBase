@@ -52,6 +52,11 @@ static  void InitializeNativeGameplayTags();
  FGameplayTag Attributes_Resistance_Holy;
  FGameplayTag Attributes_Resistance_Dark;
  FGameplayTag Attributes_Resistance_Physical;
+
+ /*
+  * Meta Attributes
+  */
+ FGameplayTag Attributes_Meta_IncomingXP;
   	
  /*
   * Damage Types

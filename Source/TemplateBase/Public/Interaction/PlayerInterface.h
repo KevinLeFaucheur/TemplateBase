@@ -23,6 +23,9 @@ class TEMPLATEBASE_API IPlayerInterface
 public:
 	virtual void PlayHitReactMontage() {};
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
-public:
+	UFUNCTION(BlueprintNativeEvent)
+	void AddToXP(int32 InXP);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void LevelUp();
 };

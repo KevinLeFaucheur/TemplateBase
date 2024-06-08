@@ -119,7 +119,7 @@ void AAICharacter::SetCombatTarget_Implementation(AActor* InCombatTarget)
 /*
  * Combat Interface
  */
-int32 AAICharacter::GetCharacterLevel()
+int32 AAICharacter::GetCharacterLevel_Implementation()
 {
 	return Level;
 }
