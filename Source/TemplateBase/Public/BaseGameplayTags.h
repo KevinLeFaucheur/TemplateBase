@@ -73,6 +73,11 @@ static  void InitializeNativeGameplayTags();
  FGameplayTag Abilities_Attack;
  FGameplayTag Abilities_Summon;
  FGameplayTag Abilities_Fire_FireBolt;
+
+ /*
+  * Abilities Cooldowns
+  */
+ FGameplayTag Cooldown_Fire_FireBolt;
  
 /*
  * Side Effects

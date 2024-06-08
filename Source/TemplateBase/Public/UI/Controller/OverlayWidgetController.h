@@ -7,6 +7,7 @@
 #include "UI/Controller/BaseWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
+struct FBaseAbilityInfo;
 class UBaseAbilitySystemComponent;
 class UAbilityInfo;
 class UBaseUserWidget;
@@ -33,6 +34,7 @@ struct FUIWidgetRow : public FTableRowBase
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FBaseAbilityInfo&, Info);
 
 /**
  * 
@@ -61,6 +63,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
 	FMessageWidgetRowSignature MessageWidgetRow;
+
+	UPROPERTY(BlueprintAssignable, Category="GAS|Abilities")
+	FAbilityInfoSignature AbilityInfoDelegate;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|WidgetData")
