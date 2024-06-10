@@ -77,7 +77,17 @@ static  void InitializeNativeGameplayTags();
   */
  FGameplayTag Abilities_Attack;
  FGameplayTag Abilities_Summon;
+ FGameplayTag Abilities_HitReact;
  FGameplayTag Abilities_Fire_FireBolt;
+ 
+ FGameplayTag Abilities_Status_Locked;
+ FGameplayTag Abilities_Status_Eligible;
+ FGameplayTag Abilities_Status_Unlocked;
+ FGameplayTag Abilities_Status_Equipped;
+ 
+ FGameplayTag Abilities_Type_Offensive;
+ FGameplayTag Abilities_Type_Passive;
+ FGameplayTag Abilities_Type_None;
 
  /*
   * Abilities Cooldowns
@@ -121,6 +131,11 @@ static  void InitializeNativeGameplayTags();
  FGameplayTag InputTag_8;
  FGameplayTag InputTag_9;
  FGameplayTag InputTag_0;
+ FGameplayTag InputTag_Passive_1;
+ FGameplayTag InputTag_Passive_2;
+ FGameplayTag InputTag_Passive_3;
+ FGameplayTag InputTag_Passive_4;
+ FGameplayTag InputTag_Passive_5;
  
 protected:
 
