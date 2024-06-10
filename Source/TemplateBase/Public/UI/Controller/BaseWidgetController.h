@@ -5,10 +5,16 @@
 #include "CoreMinimal.h"
 #include "BaseWidgetController.generated.h"
 
+class UAbilityInfo;
+class UBaseAttributeSet;
+class UBaseAbilitySystemComponent;
+class APlayerCharacterState;
+class APlayerCharacterController;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FBaseAbilityInfo&, Info);
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
@@ -48,6 +54,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues() {}
 	virtual void BindCallbacksToDependencies() {}
+	void BroadcastAbilityInfo();
+
+	UPROPERTY(BlueprintAssignable, Category="GAS|Abilities")
+	FAbilityInfoSignature AbilityInfoDelegate;
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
@@ -61,4 +71,24 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
+	
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<APlayerCharacterController> PlayerCharacterController;
+	
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<APlayerCharacterState> PlayerCharacterState;
+	
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<UBaseAbilitySystemComponent> BaseAbilitySystemComponent;
+	
+	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
+	TObjectPtr<UBaseAttributeSet> BaseAttributeSet;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|WidgetData")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
+
+	APlayerCharacterController* GetPlayerCharacterController();
+	APlayerCharacterState* GetPlayerCharacterState();
+	UBaseAbilitySystemComponent* GetBaseAbilitySystemComponent();
+	UBaseAttributeSet* GetBaseAttributeSet();
 };

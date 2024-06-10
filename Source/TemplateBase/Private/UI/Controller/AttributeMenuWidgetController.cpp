@@ -10,7 +10,6 @@
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
-	// UBaseAttributeSet* AS = CastChecked<UBaseAttributeSet>(AttributeSet);
 	check(AttributeInfo);
 	
 	for (auto& Info : AttributeInfo.Get()->AttributeInformation)
@@ -23,8 +22,7 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 		);
 	}
 	
-	APlayerCharacterState* PlayerCharacterState = CastChecked<APlayerCharacterState>(PlayerState);
-	PlayerCharacterState->OnAttributePointsChanged.AddLambda(
+	GetPlayerCharacterState()->OnAttributePointsChanged.AddLambda(
 		[this] (int32 Points)
 		{
 			OnAttributePointsChangedDelegate.Broadcast(Points);
@@ -34,16 +32,13 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
-	// UBaseAttributeSet* AS = CastChecked<UBaseAttributeSet>(AttributeSet);
 	check(AttributeInfo);
 
 	for (auto& Info : AttributeInfo.Get()->AttributeInformation)
 	{
 		BroadcastAttributeInfo(Info.AttributeTag);
 	}
-	
-	APlayerCharacterState* PlayerCharacterState = CastChecked<APlayerCharacterState>(PlayerState);
-	OnAttributePointsChangedDelegate.Broadcast(PlayerCharacterState->GetAttributePoints());
+	OnAttributePointsChangedDelegate.Broadcast(GetPlayerCharacterState()->GetAttributePoints());
 }
 
 void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
