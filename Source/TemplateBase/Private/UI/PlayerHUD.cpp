@@ -5,6 +5,7 @@
 #include "UI/BaseUserWidget.h"
 #include "UI/Controller/AttributeMenuWidgetController.h"
 #include "UI/Controller/OverlayWidgetController.h"
+#include "UI/Controller/SpellMenuWidgetController.h"
 
 void APlayerHUD::DrawHUD()
 {
@@ -78,6 +79,17 @@ UAttributeMenuWidgetController* APlayerHUD::GetAttributeMenuWidgetController(con
 		AttributeMenuWidgetController->BindCallbacksToDependencies();
 	}
 	return AttributeMenuWidgetController;
+}
+
+USpellMenuWidgetController* APlayerHUD::GetSpellMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if(SpellMenuWidgetController == nullptr)
+	{
+		SpellMenuWidgetController = NewObject<USpellMenuWidgetController>(this, SpellMenuWidgetControllerClass);
+		SpellMenuWidgetController->SetWidgetControllerParams(WCParams);
+		SpellMenuWidgetController->BindCallbacksToDependencies();
+	}
+	return SpellMenuWidgetController;
 }
 
 /*

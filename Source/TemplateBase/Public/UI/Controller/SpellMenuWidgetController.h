@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class TEMPLATEBASE_API USpellMenuWidgetController : public UBaseWidgetController
 {
 	GENERATED_BODY()

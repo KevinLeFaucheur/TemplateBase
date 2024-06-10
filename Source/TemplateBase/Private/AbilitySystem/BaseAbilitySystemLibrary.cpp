@@ -1,7 +1,6 @@
 // Retropsis @ 2024
 
 #include "AbilitySystem/BaseAbilitySystemLibrary.h"
-
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/AbilityTypes.h"
 #include "Engine/OverlapResult.h"
@@ -14,16 +13,11 @@
 
 UOverlayWidgetController* UBaseAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
-	if (APlayerController* PC  = WorldContextObject->GetWorld()->GetFirstPlayerController())
+	FWidgetControllerParams WCParams;
+	APlayerHUD* PlayerHUD = nullptr;
+	if(MakeWidgetControllerParams(WorldContextObject, WCParams, PlayerHUD))
 	{
-		if(APlayerHUD* PlayerHUD = Cast<APlayerHUD>(PC->GetHUD()))
-		{
-			APlayerCharacterState* PS = PC->GetPlayerState<APlayerCharacterState>();
-			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
-			UAttributeSet* AS = PS->GetAttributeSet();
-			const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
-			return PlayerHUD->GetOverlayWidgetController(WidgetControllerParams);
-		}
+		return PlayerHUD->GetOverlayWidgetController(WCParams);
 	}
 	return nullptr;
 }
@@ -31,18 +25,43 @@ UOverlayWidgetController* UBaseAbilitySystemLibrary::GetOverlayWidgetController(
 UAttributeMenuWidgetController* UBaseAbilitySystemLibrary::GetAttributeMenuWidgetController(
 	const UObject* WorldContextObject)
 {
-	if (APlayerController* PC  = WorldContextObject->GetWorld()->GetFirstPlayerController())
+	FWidgetControllerParams WCParams;
+	APlayerHUD* PlayerHUD = nullptr;
+	if(MakeWidgetControllerParams(WorldContextObject, WCParams, PlayerHUD))
 	{
-		if(APlayerHUD* PlayerHUD = Cast<APlayerHUD>(PC->GetHUD()))
-		{
-			APlayerCharacterState* PS = PC->GetPlayerState<APlayerCharacterState>();
-			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
-			UAttributeSet* AS = PS->GetAttributeSet();
-			const FWidgetControllerParams WidgetControllerParams(PC, PS, ASC, AS);
-			return PlayerHUD->GetAttributeMenuWidgetController(WidgetControllerParams);
-		}
+		return PlayerHUD->GetAttributeMenuWidgetController(WCParams);
 	}
 	return nullptr;
+}
+
+USpellMenuWidgetController* UBaseAbilitySystemLibrary::GetSpellMenuWidgetController(const UObject* WorldContextObject)
+{
+	FWidgetControllerParams WCParams;
+	APlayerHUD* PlayerHUD = nullptr;
+	if(MakeWidgetControllerParams(WorldContextObject, WCParams, PlayerHUD))
+	{
+		return PlayerHUD->GetSpellMenuWidgetController(WCParams);
+	}
+	return nullptr;
+}
+
+bool UBaseAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldContextObject, FWidgetControllerParams& OutWCParams, APlayerHUD*& OutPlayerHUD)
+{
+	if (const APlayerController* PC  = WorldContextObject->GetWorld()->GetFirstPlayerController())
+	{
+		OutPlayerHUD = Cast<APlayerHUD>(PC->GetHUD());
+		if(OutPlayerHUD)
+		{
+			const APlayerCharacterState* PS = PC->GetPlayerState<APlayerCharacterState>();
+			
+			OutWCParams.PlayerController = WorldContextObject->GetWorld()->GetFirstPlayerController();
+			OutWCParams.PlayerState = PC->GetPlayerState<APlayerCharacterState>();
+			OutWCParams.AbilitySystemComponent = PS->GetAbilitySystemComponent();
+			OutWCParams.AttributeSet = PS->GetAttributeSet();
+			return true;
+		}
+	}
+	return false;
 }
 
 void UBaseAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
