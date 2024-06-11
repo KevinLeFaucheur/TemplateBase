@@ -24,8 +24,9 @@ void UBaseWidgetController::BroadcastAbilityInfo()
 		 [this] (const FGameplayAbilitySpec& AbilitySpec)
 		{
 			FBaseAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(BaseAbilitySystemComponent->GetAbilityTagFromSpec(AbilitySpec));
-			 Info.InputTag = BaseAbilitySystemComponent->GetInputTagFromSpec(AbilitySpec);
-			 AbilityInfoDelegate.Broadcast(Info);
+			Info.InputTag = BaseAbilitySystemComponent->GetInputTagFromSpec(AbilitySpec);
+		 	Info.StatusTag = BaseAbilitySystemComponent->GetStatusTagFromSpec(AbilitySpec);
+			AbilityInfoDelegate.Broadcast(Info);
 		}
 	);
 	GetBaseAbilitySystemComponent()->ForEachAbility(BroadcastDelegate);

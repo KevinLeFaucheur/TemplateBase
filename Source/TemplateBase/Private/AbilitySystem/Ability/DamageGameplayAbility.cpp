@@ -27,3 +27,15 @@ FTaggedMontage UDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TAr
 	}
 	return FTaggedMontage();
 }
+
+float UDamageGameplayAbility::GetMinDamageByDamageType(float InLevel, const FGameplayTag& DamageType)
+{
+	checkf(DamageTypes.Contains(DamageType), TEXT("Gameplay Ability [%s] does not contain Dmaaget Type [%s]"), *GetNameSafe(this), *DamageType.ToString());
+	return DamageTypes[DamageType].DamageMin.GetValueAtLevel(InLevel);
+}
+
+float UDamageGameplayAbility::GetMaxDamageByDamageType(float InLevel, const FGameplayTag& DamageType)
+{
+	checkf(DamageTypes.Contains(DamageType), TEXT("Gameplay Ability [%s] does not contain Dmaaget Type [%s]"), *GetNameSafe(this), *DamageType.ToString());
+	return DamageTypes[DamageType].DamageMax.GetValueAtLevel(InLevel);
+}

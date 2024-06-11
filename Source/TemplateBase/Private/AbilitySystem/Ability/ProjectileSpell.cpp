@@ -7,6 +7,7 @@
 #include "AbilitySystem/Actor/SpellProjectile.h"
 #include "Interaction/CombatInterface.h"
 
+
 void UProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& CombatSocketTag, bool bOverridePitch, float PitchOverride)
 {
 	if(!GetAvatarActorFromActorInfo()->HasAuthority()) return;

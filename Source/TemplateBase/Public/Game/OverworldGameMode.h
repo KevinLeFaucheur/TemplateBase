@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "OverworldGameMode.generated.h"
 
+class UAbilityInfo;
 class UCharacterClassInfo;
 /**
  * 
@@ -18,4 +19,7 @@ class TEMPLATEBASE_API AOverworldGameMode : public AGameModeBase
 public:
 	UPROPERTY(EditDefaultsOnly, Category="Character")
 	TObjectPtr<UCharacterClassInfo> CharacterClassInfo;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Character")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
 };

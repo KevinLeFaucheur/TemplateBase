@@ -395,6 +395,11 @@ void APlayerCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
 	APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
 	check(PlayerCharacterState);
 	PlayerCharacterState->AddToLevel(InPlayerLevel);
+
+	if (UBaseAbilitySystemComponent* BaseASC = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent()))
+	{
+		BaseASC->UpdateAbilityStatuses(PlayerCharacterState->GetPlayerLevel());
+	}
 }
 
 void APlayerCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)

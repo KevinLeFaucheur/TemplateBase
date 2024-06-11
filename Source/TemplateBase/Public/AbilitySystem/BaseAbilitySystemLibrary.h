@@ -7,6 +7,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "BaseAbilitySystemLibrary.generated.h"
 
+class UCharacterClassInfo;
+class UAbilityInfo;
 struct FWidgetControllerParams;
 struct FGameplayEffectContextHandle;
 class APlayerHUD;
@@ -43,6 +45,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
+	
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	static UAbilityInfo* GetAbilityInfo(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
 	static bool IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle);
