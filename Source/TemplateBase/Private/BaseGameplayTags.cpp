@@ -81,6 +81,11 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.StatusEffect_Poison = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Poison"), FString("Status Effect"));
 	GameplayTags.StatusEffect_Silence = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Silence"), FString("Status Effect"));
 
+	GameplayTags.StatusEffect_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Chance"), FString("Status Effect Chance"));
+	GameplayTags.StatusEffect_Duration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Duration"), FString("Status Effect Duration"));
+	GameplayTags.StatusEffect_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Damage"), FString("Status Effect Damage"));
+	GameplayTags.StatusEffect_Frequency = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Frequency"), FString("Status Effect Frequency"));
+	
 	// TODO: Should work differently
 	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Fire, GameplayTags.StatusEffect_Burn);
 	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Lightning, GameplayTags.StatusEffect_Stun);

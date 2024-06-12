@@ -4,21 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/BaseGameplayAbility.h"
-#include "ScalableFloat.h"
+#include "AbilitySystem/AbilityTypes.h"
 #include "Interaction/CombatInterface.h"
 #include "DamageGameplayAbility.generated.h"
-
-USTRUCT(BlueprintType)
-struct FDamageRange
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Meta")
-	FScalableFloat DamageMin = FScalableFloat();
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Meta")
-	FScalableFloat DamageMax = FScalableFloat();
-};
 
 /**
  * 
@@ -32,18 +20,32 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor);
 
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
+
 protected:
 	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Abilities")
 	// TMap<FGameplayTag, FDamageRange> DamageTypes;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Abilities", meta=(Categories="Damage"))
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage", meta=(Categories="Damage"))
 	FGameplayTag DamageType;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Meta")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
 	FDamageRange DamageRange;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Abilities")
-	TSubclassOf<UGameplayEffect> DamageEffectClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
+	float StatusEffectChance = 20.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
+	float StatusEffectDamage = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
+	float StatusEffectFrequency = 1.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
+	float StatusEffectDuration = 5.f;
 
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;

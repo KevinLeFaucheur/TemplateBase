@@ -4,7 +4,43 @@
 
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
+#include "ScalableFloat.h"
 #include "AbilityTypes.generated.h"
+
+class UGameplayEffect;
+
+USTRUCT(BlueprintType)
+struct FDamageRange
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Meta")
+	FScalableFloat DamageMin = FScalableFloat();
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Meta")
+	FScalableFloat DamageMax = FScalableFloat();
+};
+
+USTRUCT(BlueprintType)
+struct FDamageEffectParams
+{
+	GENERATED_BODY()
+
+	FDamageEffectParams() {}
+
+	UPROPERTY() TObjectPtr<UObject> WorldContextObject = nullptr;
+	UPROPERTY() TSubclassOf<UGameplayEffect> DamageEffectClass = nullptr;
+	UPROPERTY() TObjectPtr<UAbilitySystemComponent> SourceAbilitySystemComponent = nullptr;
+	UPROPERTY() TObjectPtr<UAbilitySystemComponent> TargetAbilitySystemComponent = nullptr;
+	UPROPERTY() FDamageRange BaseDamageRange = FDamageRange();
+	// UPROPERTY() float BaseDamage = 0.f;
+	UPROPERTY() float AbilityLevel = 1.f;
+	UPROPERTY() FGameplayTag DamageType = FGameplayTag();;
+	UPROPERTY() float StatusEffectChance = 0.f;
+	UPROPERTY() float StatusEffectDamage = 0.f;
+	UPROPERTY() float StatusEffectFrequency = 0.f;
+	UPROPERTY() float StatusEffectDuration = 0.f;
+};
 
 USTRUCT(BlueprintType)
 struct FBaseGameplayEffectContext : public FGameplayEffectContext

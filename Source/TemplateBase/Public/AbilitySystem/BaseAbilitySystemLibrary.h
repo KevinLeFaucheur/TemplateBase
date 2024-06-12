@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilityTypes.h"
 #include "Data/CharacterClassInfo.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "BaseAbilitySystemLibrary.generated.h"
@@ -67,7 +68,9 @@ public:
 	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary"/*, meta=(WorldContext="WorldContextObject")*/)
 	static bool IsHostile(AActor* FirstActor, AActor* SecondActor);
 
-	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary")
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
+	
 	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel);
 	
 };
