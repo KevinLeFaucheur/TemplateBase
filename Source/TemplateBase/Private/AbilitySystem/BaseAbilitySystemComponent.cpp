@@ -147,6 +147,25 @@ FGameplayTag UBaseAbilitySystemComponent::GetStatusTagFromSpec(const FGameplayAb
 	return FGameplayTag();
 }
 
+FGameplayTag UBaseAbilitySystemComponent::GetStatusFromAbilityTag(const FGameplayTag& AbilityTag)
+{
+	if(const FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		return GetStatusTagFromSpec(*AbilitySpec);
+	}
+	return FGameplayTag();
+}
+
+FGameplayTag UBaseAbilitySystemComponent::GetInputTagFromAbilityTag(const FGameplayTag& AbilityTag)
+{
+	if(const FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		return GetInputTagFromSpec(*AbilitySpec);
+	}
+	return FGameplayTag();
+}
+
+
 FGameplayAbilitySpec* UBaseAbilitySystemComponent::GetSpecFromAbilityTag(const FGameplayTag& AbilityTag)
 {
 	FScopedAbilityListLock ActiveScopeLock(*this);
@@ -206,8 +225,38 @@ void UBaseAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 	}
 }
 
+void UBaseAbilitySystemComponent::ServerEquipAbility_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& SlotTag)
+{
+	if(FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+		const FGameplayTag& PreviousSlot = GetInputTagFromSpec(*AbilitySpec);
+		const FGameplayTag& Status = GetStatusTagFromSpec(*AbilitySpec);
+
+		if(Status == GameplayTags.Abilities_Status_Equipped ||  Status == GameplayTags.Abilities_Status_Unlocked)
+		{
+			ClearAbilitiesOfSlot(SlotTag); // Clear Abilities From this input slot tag to make it available
+			ClearSlot(AbilitySpec);
+			AbilitySpec->DynamicAbilityTags.AddTag(SlotTag);
+			if(Status.MatchesTagExact(GameplayTags.Abilities_Status_Unlocked))
+			{
+				AbilitySpec->DynamicAbilityTags.RemoveTag(GameplayTags.Abilities_Status_Unlocked);
+				AbilitySpec->DynamicAbilityTags.AddTag(GameplayTags.Abilities_Status_Equipped);
+			}
+			MarkAbilitySpecDirty(*AbilitySpec);
+		}
+		ClientEquipAbility(AbilityTag, GameplayTags.Abilities_Status_Equipped, SlotTag, PreviousSlot);
+	}
+}
+
+void UBaseAbilitySystemComponent::ClientEquipAbility_Implementation(const FGameplayTag& AbilityTag,
+	const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot)
+{
+	AbilityEquipped.Broadcast(AbilityTag, Status, Slot, PreviousSlot);
+}
+
 bool UBaseAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
-	FString& OutNextLevelDescription)
+                                                              FString& OutNextLevelDescription)
 {
 	if(const FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
 	{
@@ -219,8 +268,43 @@ bool UBaseAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 		}
 	}
 	const UAbilityInfo* AbilityInfo = UBaseAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
-	OutDescription = UBaseGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoForTag(AbilityTag).LevelRequirement);
+	if(!AbilityTag.IsValid() || AbilityTag.MatchesTagExact(FBaseGameplayTags::Get().Abilities_None))
+	{
+		OutDescription = FString();
+	}
+	else
+	{
+		OutDescription = UBaseGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoForTag(AbilityTag).LevelRequirement);
+	}
 	OutNextLevelDescription = FString();
+	return false;
+}
+
+void UBaseAbilitySystemComponent::ClearSlot(FGameplayAbilitySpec* AbilitySpec)
+{
+	const FGameplayTag Slot = GetInputTagFromSpec(*AbilitySpec);
+	AbilitySpec->DynamicAbilityTags.RemoveTag(Slot);
+	MarkAbilitySpecDirty(*AbilitySpec);
+}
+
+void UBaseAbilitySystemComponent::ClearAbilitiesOfSlot(const FGameplayTag& Slot)
+{
+	FScopedAbilityListLock ActiveScopeLock(*this);
+	for (FGameplayAbilitySpec& Spec : GetActivatableAbilities())
+	{
+		if(AbilityHasSlot(&Spec, Slot))
+		{
+			ClearSlot(&Spec);	
+		}
+	}
+}
+
+bool UBaseAbilitySystemComponent::AbilityHasSlot(FGameplayAbilitySpec* AbilitySpec, const FGameplayTag& Slot)
+{
+	for (FGameplayTag Tag : AbilitySpec->DynamicAbilityTags)
+	{
+		if(Tag.MatchesTagExact(Slot)) return true;
+	}
 	return false;
 }
 

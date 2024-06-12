@@ -40,6 +40,9 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 			}
 		}
 	);
+
+	GetBaseAbilitySystemComponent()->AbilityEquipped.AddUObject(this, &USpellMenuWidgetController::OnAbilityEquipped);
+	
 	GetPlayerCharacterState()->OnSpellPointsChanged.AddLambda(
 		[this] (int32 SpellPoints)
 		{
@@ -61,6 +64,13 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 
 void USpellMenuWidgetController::SpellSlotSelected(const FGameplayTag& AbilityTag)
 {
+	if(bWaitingForEquipSelection)
+	{
+		const FGameplayTag SelectedAbilityType = AbilityInfo->FindAbilityInfoForTag(AbilityTag).AbilityType;
+		StopWaitingForEquipSelection.Broadcast(SelectedAbilityType);
+		bWaitingForEquipSelection = false;
+	}
+	
 	const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
 	const int32 SpellPoints = GetPlayerCharacterState()->GetSpellPoints();
 	FGameplayTag AbilityStatus;
@@ -96,6 +106,20 @@ void USpellMenuWidgetController::SpendPointButtonPressed()
 	if(GetBaseAbilitySystemComponent()) GetBaseAbilitySystemComponent()->ServerSpendSpellPoint(SelectedAbility.Ability);
 }
 
+void USpellMenuWidgetController::SpellSlotDeselect()
+{
+	if(bWaitingForEquipSelection)
+	{
+		const FGameplayTag SelectedAbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
+		StopWaitingForEquipSelection.Broadcast(SelectedAbilityType);
+		bWaitingForEquipSelection = false;
+	}
+	SelectedAbility.Ability = FBaseGameplayTags::Get().Abilities_None;
+	SelectedAbility.Status = FBaseGameplayTags::Get().Abilities_Status_Locked;
+	
+	OnSpellSlotSelected.Broadcast(false, false, FString(), FString());
+}
+
 void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints,
                                                      bool& bShouldEnableSpendPointButton, bool& bShouldEnableEquipButton)
 {
@@ -117,4 +141,51 @@ void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& Ability
 		bShouldEnableEquipButton = true;
 		bShouldEnableSpendPointButton = SpellPoints > 0;
 	}
+}
+
+void USpellMenuWidgetController::EquipButtonPressed()
+{
+	const FGameplayTag AbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
+	WaitForEquipSelection.Broadcast(AbilityType);
+	bWaitingForEquipSelection = true;
+
+	const FGameplayTag SelectedStatus = GetBaseAbilitySystemComponent()->GetStatusFromAbilityTag(SelectedAbility.Ability);
+	if(SelectedStatus.MatchesTagExact(FBaseGameplayTags::Get().Abilities_Status_Equipped))
+	{
+		SelectedSlot = GetBaseAbilitySystemComponent()->GetInputTagFromAbilityTag(SelectedAbility.Ability);
+	}
+}
+
+void USpellMenuWidgetController::SpellRowSlotPressed(const FGameplayTag& SlotTag, const FGameplayTag& AbilityType)
+{
+	if(!bWaitingForEquipSelection) return;
+
+	// Check if Ability is compatible with the slot type (offensive vs passive)
+	const FGameplayTag& SelectedAbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
+	if(!SelectedAbilityType.MatchesTagExact(AbilityType)) return;
+
+	GetBaseAbilitySystemComponent()->ServerEquipAbility(SelectedAbility.Ability, SlotTag);
+}
+
+void USpellMenuWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot)
+{
+	bWaitingForEquipSelection = false;
+
+	const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+	FBaseAbilityInfo LastSlotInfo;
+	LastSlotInfo.StatusTag = GameplayTags.Abilities_Status_Unlocked;
+	LastSlotInfo.InputTag = PreviousSlot;
+	LastSlotInfo.AbilityTag = GameplayTags.Abilities_None;
+
+	// Broadcast empty slot info if Previous slot is valid slot, for equipping an already equipped spell
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+	
+	FBaseAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	Info.StatusTag = Status;
+	Info.InputTag = Slot;
+	AbilityInfoDelegate.Broadcast(Info);
+
+	StopWaitingForEquipSelection.Broadcast(AbilityInfo->FindAbilityInfoForTag(AbilityTag).AbilityType);
+	SpellSlotReassigned.Broadcast(AbilityTag);
+	SpellSlotDeselect();
 }

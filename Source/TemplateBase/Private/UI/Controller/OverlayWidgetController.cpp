@@ -1,6 +1,8 @@
 // Retropsis @ 2024
 
 #include "UI/Controller/OverlayWidgetController.h"
+
+#include "BaseGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
@@ -51,6 +53,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	);
 	if (GetBaseAbilitySystemComponent())
 	{
+		GetBaseAbilitySystemComponent()->AbilityEquipped.AddUObject(this, &UOverlayWidgetController::OnAbilityEquipped);
 		if(GetBaseAbilitySystemComponent()->bStartupAbilitiesGiven)
 		{
 			BroadcastAbilityInfo();
@@ -98,4 +101,22 @@ void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 		
 		OnXPPercentChanged.Broadcast(XPBarPercent);
 	}
+}
+
+void UOverlayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status,
+	const FGameplayTag& Slot, const FGameplayTag& PreviousSlot) const
+{
+	const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+	FBaseAbilityInfo LastSlotInfo;
+	LastSlotInfo.StatusTag = GameplayTags.Abilities_Status_Unlocked;
+	LastSlotInfo.InputTag = PreviousSlot;
+	LastSlotInfo.AbilityTag = GameplayTags.Abilities_None;
+
+	// Broadcast empty slot info if Previous slot is valid slot, for equipping an already equipped spell
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+	
+	FBaseAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	Info.StatusTag = Status;
+	Info.InputTag = Slot;
+	AbilityInfoDelegate.Broadcast(Info);
 }
