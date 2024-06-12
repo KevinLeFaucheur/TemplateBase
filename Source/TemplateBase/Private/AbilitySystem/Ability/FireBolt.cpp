@@ -5,8 +5,10 @@
 
 FString UFireBolt::GetDescription(int32 Level)
 {
-	const int32 MinDamage = GetMinDamageByDamageType(Level, FBaseGameplayTags::Get().Damage_Fire);
-	const int32 MaxDamage = GetMaxDamageByDamageType(Level, FBaseGameplayTags::Get().Damage_Fire);
+	// const int32 MinDamage = GetMinDamageByDamageType(Level, FBaseGameplayTags::Get().Damage_Fire);
+	// const int32 MaxDamage = GetMaxDamageByDamageType(Level, FBaseGameplayTags::Get().Damage_Fire);
+	const int32 MinDamage = DamageRange.DamageMin.GetValueAtLevel(Level);
+	const int32 MaxDamage = DamageRange.DamageMax.GetValueAtLevel(Level);
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
 	const float Cooldown = GetCooldown(Level);
 	if(Level == 1)
@@ -39,8 +41,10 @@ FString UFireBolt::GetDescription(int32 Level)
 
 FString UFireBolt::GetNextLevelDescription(int32 Level)
 {
-	const int32 MinDamage = GetMinDamageByDamageType(Level, FBaseGameplayTags::Get().Damage_Fire);
-	const int32 MaxDamage = GetMaxDamageByDamageType(Level, FBaseGameplayTags::Get().Damage_Fire);
+	// const int32 MinDamage = GetMinDamageByDamageType(Level, FBaseGameplayTags::Get().Damage_Fire);
+	// const int32 MaxDamage = GetMaxDamageByDamageType(Level, FBaseGameplayTags::Get().Damage_Fire);
+	const int32 MinDamage = DamageRange.DamageMin.GetValueAtLevel(Level);
+	const int32 MaxDamage = DamageRange.DamageMax.GetValueAtLevel(Level);
 	const float ManaCost = FMath::Abs(GetManaCost(Level));
 	const float Cooldown = GetCooldown(Level);
 	

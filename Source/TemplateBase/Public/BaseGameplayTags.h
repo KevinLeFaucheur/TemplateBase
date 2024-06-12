@@ -71,7 +71,18 @@ static  void InitializeNativeGameplayTags();
  FGameplayTag Damage_Dark;
  
  TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
-   	
+   	  	
+ /*
+  * Status Effects
+  */
+FGameplayTag StatusEffect_Burn;
+ FGameplayTag StatusEffect_Stun;
+ FGameplayTag StatusEffect_Poison;
+ FGameplayTag StatusEffect_Sleep;
+ FGameplayTag StatusEffect_Silence;
+ 
+ TMap<FGameplayTag, FGameplayTag> DamageTypesToStatusEffects;
+ 
  /*
   * Abilities
   */

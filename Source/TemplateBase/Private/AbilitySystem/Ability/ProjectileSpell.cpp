@@ -45,13 +45,19 @@ void UProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, 
 
 	const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
 
-	for (TTuple<FGameplayTag, FDamageRange>& Pair : DamageTypes)
-	{
-		const float ScaledMagnitudeMin = Pair.Value.DamageMin.GetValueAtLevel(GetAbilityLevel());
-		const float ScaledMagnitudeMax = Pair.Value.DamageMax.GetValueAtLevel(GetAbilityLevel());
-		const float Magnitude = FMath::FRandRange(ScaledMagnitudeMin, ScaledMagnitudeMax);
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, Magnitude);	
-	}
+	// for (TTuple<FGameplayTag, FDamageRange>& Pair : DamageTypes)
+	// {
+	// 	const float ScaledMagnitudeMin = Pair.Value.DamageMin.GetValueAtLevel(GetAbilityLevel());
+	// 	const float ScaledMagnitudeMax = Pair.Value.DamageMax.GetValueAtLevel(GetAbilityLevel());
+	// 	const float Magnitude = FMath::FRandRange(ScaledMagnitudeMin, ScaledMagnitudeMax);
+	// 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, Magnitude);	
+	// }
+	
+	const float ScaledMagnitudeMin = DamageRange.DamageMin.GetValueAtLevel(GetAbilityLevel());
+	const float ScaledMagnitudeMax = DamageRange.DamageMax.GetValueAtLevel(GetAbilityLevel());
+	const float Magnitude = FMath::FRandRange(ScaledMagnitudeMin, ScaledMagnitudeMax);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageType, Magnitude);
+	
 	Projectile->DamageEffectSpecHandle = SpecHandle;
 	Projectile->FinishSpawning(SpawnTransform);
 }

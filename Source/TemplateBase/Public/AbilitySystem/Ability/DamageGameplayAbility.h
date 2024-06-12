@@ -33,8 +33,11 @@ public:
 	void CauseDamage(AActor* TargetActor);
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Abilities")
-	TMap<FGameplayTag, FDamageRange> DamageTypes;
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Abilities")
+	// TMap<FGameplayTag, FDamageRange> DamageTypes;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Abilities", meta=(Categories="Damage"))
+	FGameplayTag DamageType;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Meta")
 	FDamageRange DamageRange;

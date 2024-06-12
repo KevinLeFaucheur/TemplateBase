@@ -71,7 +71,23 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Lightning, GameplayTags.Attributes_Resistance_Lightning);
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Holy, GameplayTags.Attributes_Resistance_Holy);
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Dark, GameplayTags.Attributes_Resistance_Dark);
+   	  	
+	/*
+	 * Status Effects
+	 */
+	GameplayTags.StatusEffect_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Burn"), FString("Status Effect from Fire"));
+	GameplayTags.StatusEffect_Stun = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Stun"), FString("Status Effect from Ice"));
+	GameplayTags.StatusEffect_Sleep = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Sleep"), FString("Status Effect"));
+	GameplayTags.StatusEffect_Poison = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Poison"), FString("Status Effect"));
+	GameplayTags.StatusEffect_Silence = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Silence"), FString("Status Effect"));
 
+	// TODO: Should work differently
+	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Fire, GameplayTags.StatusEffect_Burn);
+	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Lightning, GameplayTags.StatusEffect_Stun);
+	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Ice, GameplayTags.StatusEffect_Silence);
+	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Physical, GameplayTags.StatusEffect_Poison);
+	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Wind, GameplayTags.StatusEffect_Sleep);
+	
 	/*
 	 * Abilities
 	 */
