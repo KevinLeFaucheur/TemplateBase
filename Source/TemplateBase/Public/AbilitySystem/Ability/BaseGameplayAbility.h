@@ -15,7 +15,7 @@ class TEMPLATEBASE_API UBaseGameplayAbility : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category="GAS|Input")
+	UPROPERTY(EditDefaultsOnly, Category="GAS|Input", meta=(Categories="InputTag"))
 	FGameplayTag StartupInputTag;
 
 	virtual FString GetDescription(int32 Level);

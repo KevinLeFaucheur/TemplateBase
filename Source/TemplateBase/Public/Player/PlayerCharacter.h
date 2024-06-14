@@ -90,6 +90,9 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUp() const;
+
+	UPROPERTY(BlueprintReadWrite, Category="PlayerCharacter")
+	bool bIsCasting = false;
 	
 private:
 	virtual void InitAbilityActorInfo() override;
@@ -130,6 +133,7 @@ public:
 	FVector GetHitTarget() const;
 	bool IsEquipped();
 	bool IsAiming();
+	bool IsCasting();
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return SpringArm; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }

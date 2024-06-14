@@ -16,6 +16,11 @@ class TEMPLATEBASE_API UExecCalc_Damage : public UGameplayEffectExecutionCalcula
 
 public:
 	UExecCalc_Damage();
+	void DetermineStatusEffect(
+		const FGameplayEffectCustomExecutionParameters& ExecutionParams,
+	    const FGameplayEffectSpec& Spec,
+	    FAggregatorEvaluateParameters EvaluationParameters,
+	    const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& TagsToDefs) const;
 
 	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
 };

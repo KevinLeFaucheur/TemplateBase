@@ -91,6 +91,7 @@ void APlayerCharacter::InitAbilityActorInfo()
 	Cast<UBaseAbilitySystemComponent>(PlayerCharacterState->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AbilitySystemComponent = PlayerCharacterState->GetAbilitySystemComponent();
 	AttributeSet = PlayerCharacterState->GetAttributeSet();
+	OnASCRegistered.Broadcast(AbilitySystemComponent);
 
 	if (APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(GetController()))
 	{
@@ -465,6 +466,11 @@ bool APlayerCharacter::IsEquipped()
 bool APlayerCharacter::IsAiming()
 {
 	return (EquipmentComponent && EquipmentComponent->bAiming);
+}
+
+bool APlayerCharacter::IsCasting()
+{
+	return bIsCasting;
 }
 
 FVector APlayerCharacter::GetHitTarget() const

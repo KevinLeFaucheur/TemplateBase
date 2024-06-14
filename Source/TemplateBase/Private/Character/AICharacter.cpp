@@ -89,6 +89,7 @@ void AAICharacter::InitAbilityActorInfo()
 	{
 		InitializeDefaultAttributes();
 	}
+	OnASCRegistered.Broadcast(AbilitySystemComponent);
 }
 
 void AAICharacter::InitializeDefaultAttributes() const
@@ -124,10 +125,10 @@ int32 AAICharacter::GetCharacterLevel_Implementation()
 	return Level;
 }
 
-void AAICharacter::Die()
+void AAICharacter::Die(const FVector& DeathImpulse)
 {
 	SetLifeSpan(LifeSpan);
 	if(BaseAIController) BaseAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
-	Super::Die();
+	Super::Die(DeathImpulse);
 }
 

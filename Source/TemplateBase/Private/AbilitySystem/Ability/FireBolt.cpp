@@ -2,6 +2,10 @@
 
 #include "AbilitySystem/Ability/FireBolt.h"
 #include "BaseGameplayTags.h"
+#include "AbilitySystem/BaseAbilitySystemLibrary.h"
+#include "AbilitySystem/Actor/SpellProjectile.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 FString UFireBolt::GetDescription(int32 Level)
 {
@@ -58,4 +62,47 @@ FString UFireBolt::GetNextLevelDescription(int32 Level)
 		"<Damage>%d-%d</>"
 		"<Default> fire damage with a chance to burn.</>\n\n"
 		), Level, ManaCost, Cooldown, FMath::Min(Level, NumProjectiles), MinDamage, MaxDamage);
+}
+
+void UFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& CombatSocketTag,
+	bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
+{
+	if(!GetAvatarActorFromActorInfo()->HasAuthority()) return;
+
+	// TODO: Data driven Socket
+	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), CombatSocketTag);
+	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+	if(bOverridePitch) Rotation.Pitch = PitchOverride;
+
+	const int32 EffectiveNumProjectiles = FMath::Min(NumProjectiles, GetAbilityLevel());	
+	TArray<FRotator> Rotations = UBaseAbilitySystemLibrary::EvenlySpacedRotators(Rotation.Vector(), FVector::UpVector, ProjectileSpread, EffectiveNumProjectiles);
+	for (const FRotator& Rot : Rotations)
+	{
+		FTransform SpawnTransform;
+		SpawnTransform.SetLocation(SocketLocation);
+		SpawnTransform.SetRotation(Rot.Quaternion());
+		
+		ASpellProjectile* Projectile = GetWorld()->SpawnActorDeferred<ASpellProjectile>(
+			SpellProjectileClass,
+			SpawnTransform,
+			GetOwningActorFromActorInfo(),
+			Cast<APawn>(GetAvatarActorFromActorInfo()),
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+		Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+		// TODO: Decide what to do with a NULL HomingTarget (aiming at the sky)
+		if(HomingTarget && HomingTarget->Implements<UCombatInterface>())
+		{
+			Projectile->ProjectileMovementComponent->HomingTargetComponent = HomingTarget->GetRootComponent();
+		}
+		else
+		{
+			Projectile->HomingTargetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
+			Projectile->HomingTargetSceneComponent->SetWorldLocation(ProjectileTargetLocation);
+			Projectile->ProjectileMovementComponent->HomingTargetComponent = Projectile->HomingTargetSceneComponent;
+		}
+		Projectile->ProjectileMovementComponent->HomingAccelerationMagnitude = FMath::FRandRange(HomingAccelerationMin, HomingAccelerationMax);
+		Projectile->ProjectileMovementComponent->bIsHomingProjectile = bLaunchHomingProjectiles;
+		Projectile->FinishSpawning(SpawnTransform);
+	}
 }

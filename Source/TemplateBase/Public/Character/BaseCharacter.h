@@ -9,6 +9,7 @@
 #include "Interaction/CombatInterface.h"
 #include "BaseCharacter.generated.h"
 
+class UStatusEffectNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayAbility;
 class UGameplayEffect;
@@ -32,7 +33,7 @@ public:
 	//~ Combat Interface
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
@@ -41,13 +42,18 @@ public:
 	virtual 	int32 GetMinionCount_Implementation() override;
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
+	virtual FOnASCRegistered GetOnASCRegistered() override;
+	virtual FOnDeath GetOnDeathDelegate() override;
 	//~ Combat Interface
+
+	FOnASCRegistered OnASCRegistered;
+	FOnDeath OnDeath;
 
 	UPROPERTY(EditAnywhere, Category="Character|Montages")
 	TArray<FTaggedMontage> AttackMontages;
 
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastHandleDeath();
+	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character")
 	float BaseWalkSpeed = 250.f;
@@ -94,6 +100,9 @@ protected:
 	FName TailSocketName;
 
 	bool bDead = false;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStatusEffectNiagaraComponent> BurnStatusEffectComponent;
 
 	/*
 	 * Minions

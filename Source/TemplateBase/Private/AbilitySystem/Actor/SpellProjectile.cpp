@@ -1,7 +1,6 @@
 // Retropsis @ 2024
 
 #include "AbilitySystem/Actor/SpellProjectile.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Components/SphereComponent.h"
@@ -45,44 +44,46 @@ void ASpellProjectile::BeginPlay()
 	}
 }
 
+void ASpellProjectile::OnHit()
+{
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	bHit = true;
+}
+
 void ASpellProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!DamageEffectSpecHandle.IsValid()) return;
-	if(!DamageEffectSpecHandle.Data.IsValid() || DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor) return;
-	if (OtherActor == GetInstigator()) return;
-	if(!UBaseAbilitySystemLibrary::IsHostile(DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser(), OtherActor)) return;
-
-	if(!bHit)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		// LoopingSoundComponent->Stop();
-		bHit = true;
-	}
+	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+	if(SourceAvatarActor == OtherActor) return;
+	if(!UBaseAbilitySystemLibrary::IsHostile(SourceAvatarActor, OtherActor)) return;
+	if(!bHit) OnHit();
 	
 	if(HasAuthority())
 	{
 		if(UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+			DamageEffectParams.DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
+			
+			const bool bAirborne = FMath::RandRange(1, 100) < DamageEffectParams.AirborneChance;
+			if(bAirborne)
+			{
+				FRotator Rotation = GetActorRotation();
+				Rotation.Pitch = 45.f;
+				const FVector AirborneDirection = Rotation.Vector();
+				DamageEffectParams.AirborneForce = AirborneDirection * DamageEffectParams.AirborneForceMagnitude;
+			}
+			
+			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+			UBaseAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
 		Destroy();
 	}
-	else
-	{
-		bHit = true;
-	}
+	else bHit = true;
 }
 
 void ASpellProjectile::Destroyed()
 {
-	if(!bHit && !HasAuthority())
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-		// LoopingSoundComponent->Stop();
-		bHit = true;
-	}
+	if(!bHit && !HasAuthority()) OnHit();
 	Super::Destroyed();
 }

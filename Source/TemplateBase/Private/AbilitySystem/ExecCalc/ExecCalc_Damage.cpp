@@ -25,8 +25,6 @@ struct BaseDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(LightningResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(HolyResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DarkResistance);
-
-	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
 	
 	BaseDamageStatics()
 	{
@@ -44,22 +42,6 @@ struct BaseDamageStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, LightningResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, HolyResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, DarkResistance, Target, false);
-
-		const FBaseGameplayTags& GameplayTags = FBaseGameplayTags::Get();
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_Armor, ArmorDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_ArmorPenetration, ArmorPenetrationDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_BlockChance, BlockChanceDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitChance, CriticalHitChanceDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitDamage, CriticalHitDamageDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitResistance, CriticalHitResistanceDef);
-		
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Physical, PhysicalResistanceDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Fire, FireResistanceDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Ice, IceResistanceDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Wind, WindResistanceDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Lightning, LightningResistanceDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Holy, HolyResistanceDef);
-		TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Dark, DarkResistanceDef);
 	}
 };
 
@@ -88,8 +70,26 @@ UExecCalc_Damage::UExecCalc_Damage()
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
-	FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
+                                              FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
+	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
+
+	const FBaseGameplayTags& GameplayTags = FBaseGameplayTags::Get();
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_Armor, DamageStatics().ArmorDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_ArmorPenetration, DamageStatics().ArmorPenetrationDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_BlockChance, DamageStatics().BlockChanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitChance, DamageStatics().CriticalHitChanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitDamage, DamageStatics().CriticalHitDamageDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitResistance, DamageStatics().CriticalHitResistanceDef);
+		
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Physical, DamageStatics().PhysicalResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Fire, DamageStatics().FireResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Ice, DamageStatics().IceResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Wind, DamageStatics().WindResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Lightning, DamageStatics().LightningResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Holy, DamageStatics().HolyResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Dark, DamageStatics().DarkResistanceDef);
+	
 	const UAbilitySystemComponent* SourceASC =  ExecutionParams.GetSourceAbilitySystemComponent();
 	const UAbilitySystemComponent* TargetASC =  ExecutionParams.GetTargetAbilitySystemComponent();
 
@@ -116,6 +116,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
+	// Status Effects
+	DetermineStatusEffect(ExecutionParams, Spec, EvaluationParameters, TagsToCaptureDefs);
+
 	/*
 	 * Get Damage Set By Caller Magnitude
 	 */
@@ -125,9 +128,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		const FGameplayTag ResistanceTag = Pair.Value;
 		const FGameplayTag DamageTypeTag = Pair.Key;
 		
-		checkf(BaseDamageStatics().TagsToCaptureDefs.Contains(ResistanceTag), TEXT("TagsToCaptureDefs doesn't contain Tag [%s]: "), *ResistanceTag.ToString());
+		checkf(TagsToCaptureDefs.Contains(ResistanceTag), TEXT("TagsToCaptureDefs doesn't contain Tag [%s]: "), *ResistanceTag.ToString());
 		
-		const FGameplayEffectAttributeCaptureDefinition CaptureDef = BaseDamageStatics().TagsToCaptureDefs[ResistanceTag];
+		const FGameplayEffectAttributeCaptureDefinition CaptureDef = TagsToCaptureDefs[ResistanceTag];
 
 		float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key, false);
 		
@@ -199,4 +202,40 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	
 	const FGameplayModifierEvaluatedData EvaluatedData(UBaseAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
+}
+
+void UExecCalc_Damage::DetermineStatusEffect(const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FGameplayEffectSpec& Spec, FAggregatorEvaluateParameters EvaluationParameters,
+		const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& TagsToDefs) const
+{
+	const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+	for (TTuple<FGameplayTag, FGameplayTag> Pair : GameplayTags.DamageTypesToStatusEffects)
+	{
+		const FGameplayTag& DamageType = Pair.Key;
+		const FGameplayTag& StatusEffectType = Pair.Value;
+		const float TypeDamage = Spec.GetSetByCallerMagnitude(DamageType, false, -1.f);
+		if(TypeDamage > -.5f) // .5f padding for floating point imprecision
+		{
+			const float SourceStatusEffectChance = Spec.GetSetByCallerMagnitude(GameplayTags.StatusEffect_Chance, false, -1.f);
+			float TargetStatusEffectResistance = 0.f;
+			const FGameplayTag& ResistanceTag = GameplayTags.DamageTypesToResistances[DamageType];
+			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(TagsToDefs[ResistanceTag], EvaluationParameters, TargetStatusEffectResistance);
+			TargetStatusEffectResistance = FMath::Max<float>(0.f, TargetStatusEffectResistance);
+			const float EffectiveStatusEffectChance = SourceStatusEffectChance * ( 100 - TargetStatusEffectResistance ) / 100.f;
+			const bool bStatusEffect = FMath::RandRange(1, 100) < EffectiveStatusEffectChance;
+			if(bStatusEffect)
+			{
+				FGameplayEffectContextHandle ContextHandle = Spec.GetContext();
+				UBaseAbilitySystemLibrary::SetIsSuccessfulStatusEffect(ContextHandle, true);
+				UBaseAbilitySystemLibrary::SetDamageType(ContextHandle, DamageType);
+
+				const float StatusEffectDamage = Spec.GetSetByCallerMagnitude(GameplayTags.StatusEffect_Damage, false, -1.f);
+				const float StatusEffectDuration = Spec.GetSetByCallerMagnitude(GameplayTags.StatusEffect_Duration, false, -1.f);
+				const float StatusEffectFrequency = Spec.GetSetByCallerMagnitude(GameplayTags.StatusEffect_Frequency, false, -1.f);
+
+				UBaseAbilitySystemLibrary::SetStatusEffectDamage(ContextHandle, StatusEffectDamage);
+				UBaseAbilitySystemLibrary::SetStatusEffectDuration(ContextHandle, StatusEffectDuration);
+				UBaseAbilitySystemLibrary::SetStatusEffectFrequency(ContextHandle, StatusEffectFrequency);
+			}
+		}
+	}
 }

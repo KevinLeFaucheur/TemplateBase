@@ -43,9 +43,37 @@ bool FBaseGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 		{
 			RepBits |= 1 << 8;
 		}
+		if (bIsSuccessfulStatusEffect)
+		{
+			RepBits |= 1 << 9;
+		}
+		if (StatusEffectDamage > 0.f)
+		{
+			RepBits |= 1 << 10;
+		}
+		if (StatusEffectDuration > 0.f)
+		{
+			RepBits |= 1 << 11;
+		}
+		if (StatusEffectFrequency > 0.f)
+		{
+			RepBits |= 1 << 12;
+		}
+		if (DamageType.IsValid())
+		{
+			RepBits |= 1 << 13;
+		}
+		if (!DeathImpulse.IsZero())
+		{
+			RepBits |= 1 << 14;
+		}
+		if (!AirborneForce.IsZero())
+		{
+			RepBits |= 1 << 15;
+		}
 	}
 
-	Ar.SerializeBits(&RepBits, 9);
+	Ar.SerializeBits(&RepBits, 16);
 
 	if (RepBits & (1 << 0))
 	{
@@ -94,6 +122,41 @@ bool FBaseGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	if (RepBits & (1 << 8))
 	{
 		Ar << bIsCriticalHit;
+	}
+	if (RepBits & (1 << 9))
+	{
+		Ar << bIsSuccessfulStatusEffect;
+	}
+	if (RepBits & (1 << 10))
+	{
+		Ar << StatusEffectDamage;
+	}
+	if (RepBits & (1 << 11))
+	{
+		Ar << StatusEffectDuration;
+	}
+	if (RepBits & (1 << 12))
+	{
+		Ar << StatusEffectFrequency;
+	}
+	if (RepBits & (1 << 13))
+	{
+		if (Ar.IsLoading())
+		{
+			if (!DamageType.IsValid())
+			{
+				DamageType = MakeShared<FGameplayTag>();
+			}
+		}
+		DamageType.Get()->NetSerialize(Ar, Map, bOutSuccess);
+	}
+	if (RepBits & (1 << 14))
+	{
+		DeathImpulse.NetSerialize(Ar, Map ,bOutSuccess);
+	}
+	if (RepBits & (1 << 15))
+	{
+		AirborneForce.NetSerialize(Ar, Map ,bOutSuccess);
 	}
 
 	if (Ar.IsLoading())

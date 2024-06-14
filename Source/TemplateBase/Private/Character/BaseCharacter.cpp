@@ -4,6 +4,7 @@
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "AbilitySystem/StatusEffect/StatusEffectNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "TemplateBase/TemplateBase.h"
@@ -22,6 +23,10 @@ ABaseCharacter::ABaseCharacter()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	BurnStatusEffectComponent = CreateDefaultSubobject<UStatusEffectNiagaraComponent>("BurnStatusEffectComponent");
+	BurnStatusEffectComponent->SetupAttachment(GetRootComponent());
+	BurnStatusEffectComponent->StatusEffectTag = FBaseGameplayTags::Get().StatusEffect_Burn;
 }
 
 void ABaseCharacter::BeginPlay()
@@ -101,27 +106,30 @@ UAnimMontage* ABaseCharacter::GetHitReactMontage_Implementation()
 	return HitReactMontage;
 }
 
-void ABaseCharacter::Die()
+void ABaseCharacter::Die(const FVector& DeathImpulse)
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
-	MulticastHandleDeath();
+	MulticastHandleDeath(DeathImpulse);
 }
 
-void ABaseCharacter::MulticastHandleDeath_Implementation()
+void ABaseCharacter::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	Weapon->AddImpulse(DeathImpulse);
 
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetEnableGravity(true);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	GetMesh()->AddImpulse(DeathImpulse, NAME_None, true);
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	if(DeathSound) UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
 	Dissolve();
 	bDead = true;
+	OnDeath.Broadcast(this);
 }
 
 bool ABaseCharacter::IsDead_Implementation() const
@@ -169,6 +177,16 @@ void ABaseCharacter::IncrementMinionCount_Implementation(const int32 Amount)
 ECharacterClass ABaseCharacter::GetCharacterClass_Implementation()
 {
 	return CharacterClass;
+}
+
+FOnASCRegistered ABaseCharacter::GetOnASCRegistered()
+{
+	return OnASCRegistered;
+}
+
+FOnDeath ABaseCharacter::GetOnDeathDelegate()
+{
+	return OnDeath;
 }
 
 /*

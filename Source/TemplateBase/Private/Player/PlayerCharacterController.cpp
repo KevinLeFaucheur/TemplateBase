@@ -3,9 +3,9 @@
 #include "Player/PlayerCharacterController.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "BaseGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
-#include "Blueprint/UserWidget.h"
 #include "Player/PlayerCharacter.h"
 #include "Player/Input/BaseEnhancedInputComponent.h"
 #include "UI/DamageTextComponent.h"
@@ -44,6 +44,7 @@ void APlayerCharacterController::SetupInputComponent()
 
 void APlayerCharacterController::Move(const FInputActionValue& Value)
 {
+	if(GetASC() && GetASC()->HasMatchingGameplayTag(FBaseGameplayTags::Get().Player_Block_InputPressed)) return;
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (APawn* ControlledPawn = GetPawn<APawn>())
@@ -111,19 +112,21 @@ void APlayerCharacterController::AimButtonReleased()
 
 void APlayerCharacterController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(11, 5.f, FColor::Red, *InputTag.ToString());
+	if(GetASC() && GetASC()->HasMatchingGameplayTag(FBaseGameplayTags::Get().Player_Block_InputPressed)) return;
+	if(GetASC() == nullptr) return;
+	GetASC()->AbilityInputTagPressed(InputTag);
 }
 
 void APlayerCharacterController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(12, 5.f, FColor::Green, *InputTag.ToString());
+	if(GetASC() && GetASC()->HasMatchingGameplayTag(FBaseGameplayTags::Get().Player_Block_InputReleased)) return;
 	if(GetASC() == nullptr) return;
 	GetASC()->AbilityInputTagReleased(InputTag);
 }
 
 void APlayerCharacterController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(13, 5.f, FColor::Blue, *InputTag.ToString());
+	if(GetASC() && GetASC()->HasMatchingGameplayTag(FBaseGameplayTags::Get().Player_Block_InputHeld)) return;
 	if(GetASC() == nullptr) return;
 	GetASC()->AbilityInputTagHeld(InputTag);
 }

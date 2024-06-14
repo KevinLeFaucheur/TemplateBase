@@ -1,6 +1,9 @@
 // Retropsis @ 2024
 
 #include "Equipment/EquipmentComponent.h"
+
+#include "AbilitySystemComponent.h"
+#include "BaseGameplayTags.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Equipment/Tool.h"
@@ -147,6 +150,10 @@ void UEquipmentComponent::FireIntervalEnd()
  */
 void UEquipmentComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 {
+	if(PlayerCharacter->GetAbilitySystemComponent() && PlayerCharacter->GetAbilitySystemComponent()->HasMatchingGameplayTag(FBaseGameplayTags::Get().Player_Block_CursorTrace))
+	{
+		return;
+	}
 	FVector2D ViewportSize;
 	if(GEngine && GEngine->GameViewport)
 	{

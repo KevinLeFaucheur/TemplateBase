@@ -161,4 +161,12 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.InputTag_Passive_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Passive.3"), FString("Passive 3"));
 	GameplayTags.InputTag_Passive_4 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Passive.4"), FString("Passive 4"));
 	GameplayTags.InputTag_Passive_5 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("InputTag.Passive.5"), FString("Passive 5"));
+
+	/*
+	* Player Tags
+	*/
+	GameplayTags.Player_Block_InputPressed = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputPressed"), FString("Block input pressed from player"));
+	GameplayTags.Player_Block_InputHeld = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputHeld"), FString("Block input pressed from player"));
+	GameplayTags.Player_Block_InputReleased = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.InputReleased"), FString("Block input pressed from player"));
+	GameplayTags.Player_Block_CursorTrace = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Player.Block.CursorTrace"), FString("Block trace under cursor"));
 }

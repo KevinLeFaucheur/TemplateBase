@@ -71,6 +71,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	bool bRotateRootBone;
 
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	bool bIsCasting;
+
 	/*
 	 * Montages
 	 */

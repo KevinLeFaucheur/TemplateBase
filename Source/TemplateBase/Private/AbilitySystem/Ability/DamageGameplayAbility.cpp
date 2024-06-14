@@ -39,6 +39,23 @@ FDamageEffectParams UDamageGameplayAbility::MakeDamageEffectParamsFromClassDefau
 	Params.StatusEffectDamage = StatusEffectDamage;
 	Params.StatusEffectDuration = StatusEffectDuration;
 	Params.StatusEffectFrequency = StatusEffectFrequency;
+	Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
+	Params.AirborneForceMagnitude = AirborneForceMagnitude;
+	Params.AirborneChance = AirborneChance;
+
+	if(IsValid(TargetActor))
+	{
+		FRotator Rotation = (TargetActor->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation()).Rotation();
+		Rotation.Pitch = 45.f;
+		const FVector ToTarget = Rotation.Vector();
+		Params.DeathImpulse = ToTarget * DeathImpulseMagnitude;
+		// Params.AirborneForce = ToTarget * AirborneForceMagnitude;
+
+		if (FMath::RandRange(1, 100) < Params.AirborneChance)
+		{
+			Params.AirborneForce = ToTarget * AirborneForceMagnitude;        
+		}
+	}
 
 	return Params;
 }
