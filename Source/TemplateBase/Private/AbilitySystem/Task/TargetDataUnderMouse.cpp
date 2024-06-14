@@ -3,6 +3,7 @@
 #include "AbilitySystem/Task/TargetDataUnderMouse.h"
 
 #include "AbilitySystemComponent.h"
+#include "TemplateBase/TemplateBase.h"
 
 UTargetDataUnderMouse* UTargetDataUnderMouse::CreateTargetDataUnderMouse(UGameplayAbility* OwningAbility)
 {
@@ -38,7 +39,7 @@ void UTargetDataUnderMouse::SendMouseCursorData()
 	FVector2D ViewportSize;
 	GetWorld()->GetGameViewport()->GetViewportSize(ViewportSize);
 	const FVector2D ViewportCenter(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
-	PlayerController->GetHitResultAtScreenPosition(ViewportCenter, ECC_Visibility, false, CursorHit);
+	PlayerController->GetHitResultAtScreenPosition(ViewportCenter, ECC_Target, false, CursorHit);
 	// PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 
 	if(!CursorHit.bBlockingHit) CursorHit.Location = CursorHit.TraceEnd;

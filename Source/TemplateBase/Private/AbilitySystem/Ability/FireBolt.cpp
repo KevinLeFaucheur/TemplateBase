@@ -5,7 +5,6 @@
 #include "AbilitySystem/BaseAbilitySystemLibrary.h"
 #include "AbilitySystem/Actor/SpellProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 FString UFireBolt::GetDescription(int32 Level)
 {

@@ -91,7 +91,7 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUp() const;
 
-	UPROPERTY(BlueprintReadWrite, Category="PlayerCharacter")
+	UPROPERTY(Replicated, BlueprintReadWrite, Category="PlayerCharacter")
 	bool bIsCasting = false;
 	
 private:

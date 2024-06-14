@@ -55,6 +55,7 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME_CONDITION(APlayerCharacter, OverlappingTool, COND_OwnerOnly);
+	DOREPLIFETIME(APlayerCharacter, bIsCasting);
 }
 
 void APlayerCharacter::PostInitializeComponents()

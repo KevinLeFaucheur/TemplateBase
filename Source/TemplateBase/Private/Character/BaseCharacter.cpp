@@ -101,6 +101,11 @@ FVector ABaseCharacter::GetCombatSocketLocation_Implementation(const FGameplayTa
 	return FVector();
 }
 
+USkeletalMeshComponent* ABaseCharacter::GetWeapon_Implementation()
+{
+	return Weapon;
+}
+
 UAnimMontage* ABaseCharacter::GetHitReactMontage_Implementation()
 {
 	return HitReactMontage;
