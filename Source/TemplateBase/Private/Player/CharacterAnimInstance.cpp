@@ -35,6 +35,7 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	EquippedTool = PlayerCharacter->GetEquippedTool();
 	bRotateRootBone = PlayerCharacter->ShouldRotateRootBone();
 	bIsCasting = PlayerCharacter->IsCasting();
+	bIsStunned = PlayerCharacter->IsStunned();
 
 	/* YawOffset */
 	const FRotator AimRotation = PlayerCharacter->GetBaseAimRotation();

@@ -23,7 +23,19 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void TraceFirstTarget(const FVector& BeamTargetLocation);
+
+	UFUNCTION(BlueprintCallable)
+	void StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PrimaryTargetDied(AActor* DeadActor);
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void AdditionalTargetDied(AActor* DeadActor);
+	
+	virtual FString GetDescription(int32 Level) override;
+	virtual FString GetNextLevelDescription(int32 Level) override;
+
 protected:
 	UPROPERTY(BlueprintReadWrite, Category="Ability|Beam")
 	FVector MouseHitLocation;
@@ -36,5 +48,8 @@ protected:
 	
 	UPROPERTY(BlueprintReadWrite, Category="Ability|Beam")
 	TObjectPtr<ACharacter> OwnerCharacter;
+
+	UPROPERTY(EditDefaultsOnly, Category="Ability|Beam")
+	int32 MaxNumHitTargets = 5;
 private:
 };

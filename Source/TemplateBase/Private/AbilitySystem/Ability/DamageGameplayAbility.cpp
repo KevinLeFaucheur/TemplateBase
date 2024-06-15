@@ -60,6 +60,13 @@ FDamageEffectParams UDamageGameplayAbility::MakeDamageEffectParamsFromClassDefau
 	return Params;
 }
 
+float UDamageGameplayAbility::GetDamageAtLevel() const
+{
+	const float MinDamage = DamageRange.DamageMin.GetValueAtLevel(GetAbilityLevel());
+	const float MaxDamage = DamageRange.DamageMax.GetValueAtLevel(GetAbilityLevel());
+	return FMath::FRandRange(MinDamage, MaxDamage);
+}
+
 FTaggedMontage UDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const
 {
 	if (TaggedMontages.Num() > 0)

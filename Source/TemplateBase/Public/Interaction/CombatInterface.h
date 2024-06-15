@@ -88,11 +88,17 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ECharacterClass GetCharacterClass();
 
-	virtual FOnASCRegistered GetOnASCRegistered() = 0;
-	virtual FOnDeath GetOnDeathDelegate() = 0;
+	virtual FOnASCRegistered& GetOnASCRegistered() = 0;
+	virtual FOnDeath& GetOnDeathDelegate() = 0;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetIsCasting(bool bInIsCasting);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool IsElectrocuted() const;
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetIsElectrocuted(bool bInIsElectrocuted);
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:

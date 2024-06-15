@@ -110,9 +110,12 @@ void UBaseAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		}
 		else
 		{
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FBaseGameplayTags::Get().Effects_HitReact);
-			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			if(Props.TargetCharacter->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsElectrocuted(Props.TargetCharacter))
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FBaseGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
 
 			const FVector& AirborneForce = UBaseAbilitySystemLibrary::GetAirborneForce(Props.EffectContextHandle);
 			if(!AirborneForce.IsNearlyZero())
@@ -181,11 +184,30 @@ void UBaseAttributeSet::HandleIncomingStatusEffect(const FEffectProperties& Prop
 	Effect->StackLimitCount = 1;
 	// Effect->InheritableOwnedTagsContainer.AddTag(DamageType);
 
+	// 5.3+ adding to CombinedTags
 	FInheritedTagContainer TagContainer = FInheritedTagContainer();
 	UTargetTagsGameplayEffectComponent& Component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
 	TagContainer.Added.AddTag(GameplayTags.DamageTypesToStatusEffects[DamageType]);
-	TagContainer.CombinedTags.AddTag(GameplayTags.DamageTypesToStatusEffects[DamageType]);
+	// TagContainer.CombinedTags.AddTag(GameplayTags.DamageTypesToStatusEffects[DamageType]);
+
+	const FGameplayTag StatusEffectTag = GameplayTags.DamageTypesToStatusEffects[DamageType];
+	if(StatusEffectTag.MatchesTagExact(GameplayTags.StatusEffect_Stun))
+	{
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_CursorTrace);
+		// TagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
+		
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputHeld);
+		// TagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputHeld);
+
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputPressed);
+		// TagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputPressed);
+
+		TagContainer.Added.AddTag(GameplayTags.Player_Block_InputReleased);
+		// TagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputReleased);
+	}
+	// Applying the TagContainer to Component
 	Component.SetAndApplyTargetTagChanges(TagContainer);
+	// 5.3 End
 
 	int32 Index = Effect->Modifiers.Num();
 	Effect->Modifiers.Add(FGameplayModifierInfo());

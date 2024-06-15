@@ -2,6 +2,7 @@
 
 #include "Player/PlayerCharacter.h"
 #include "AbilitySystemComponent.h"
+#include "BaseGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "Camera/CameraComponent.h"
@@ -16,6 +17,7 @@
 #include "Player/PlayerCharacterController.h"
 #include "Player/PlayerCharacterState.h"
 #include "NiagaraComponent.h"
+#include "AbilitySystem/StatusEffect/StatusEffectNiagaraComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -93,6 +95,7 @@ void APlayerCharacter::InitAbilityActorInfo()
 	AbilitySystemComponent = PlayerCharacterState->GetAbilitySystemComponent();
 	AttributeSet = PlayerCharacterState->GetAttributeSet();
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().StatusEffect_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &APlayerCharacter::StunTagChanged);
 
 	if (APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(GetController()))
 	{
@@ -451,6 +454,44 @@ void APlayerCharacter::MulticastLevelUp_Implementation() const
 }
 
 /*
+ * Status Effects
+ */
+void APlayerCharacter::OnRep_IsStunned()
+{
+	if(UBaseAbilitySystemComponent* BaseASC = Cast<UBaseAbilitySystemComponent>(GetAbilitySystemComponent()))
+	{
+		const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+		FGameplayTagContainer BlockedTags;
+		BlockedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputHeld);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputPressed);
+		BlockedTags.AddTag(GameplayTags.Player_Block_InputReleased);
+		if(bIsStunned)
+		{
+			BaseASC->AddLooseGameplayTags(BlockedTags);
+			StunStatusEffectComponent->Activate();
+		}
+		else
+		{
+			BaseASC->RemoveLooseGameplayTags(BlockedTags);
+			StunStatusEffectComponent->Deactivate();
+		}
+	}
+}
+
+void APlayerCharacter::OnRep_IsBurning()
+{
+	if(bIsBurning)
+	{
+		BurnStatusEffectComponent->Activate();
+	}
+	else
+	{
+		BurnStatusEffectComponent->Deactivate();
+	}
+}
+
+/*
  * GETTERS
  */
 ATool* APlayerCharacter::GetEquippedTool()
@@ -472,6 +513,11 @@ bool APlayerCharacter::IsAiming()
 bool APlayerCharacter::IsCasting()
 {
 	return bIsCasting;
+}
+
+bool APlayerCharacter::IsStunned()
+{
+	return bIsStunned;
 }
 
 FVector APlayerCharacter::GetHitTarget() const

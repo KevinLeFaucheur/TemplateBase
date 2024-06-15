@@ -91,6 +91,9 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUp() const;
 
+	virtual void OnRep_IsStunned() override;
+	virtual void OnRep_IsBurning() override;
+	
 	UPROPERTY(Replicated, BlueprintReadWrite, Category="PlayerCharacter")
 	bool bIsCasting = false;
 	
@@ -134,6 +137,7 @@ public:
 	bool IsEquipped();
 	bool IsAiming();
 	bool IsCasting();
+	bool IsStunned();
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return SpringArm; }
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }

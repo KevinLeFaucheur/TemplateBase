@@ -74,6 +74,9 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	bool bIsCasting;
 
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	bool bIsStunned;
+
 	/*
 	 * Montages
 	 */

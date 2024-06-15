@@ -6,7 +6,9 @@
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/StatusEffect/StatusEffectNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 #include "TemplateBase/TemplateBase.h"
 
 ABaseCharacter::ABaseCharacter()
@@ -27,6 +29,19 @@ ABaseCharacter::ABaseCharacter()
 	BurnStatusEffectComponent = CreateDefaultSubobject<UStatusEffectNiagaraComponent>("BurnStatusEffectComponent");
 	BurnStatusEffectComponent->SetupAttachment(GetRootComponent());
 	BurnStatusEffectComponent->StatusEffectTag = FBaseGameplayTags::Get().StatusEffect_Burn;
+	
+	StunStatusEffectComponent = CreateDefaultSubobject<UStatusEffectNiagaraComponent>("StunStatusEffectComponent");
+	StunStatusEffectComponent->SetupAttachment(GetRootComponent());
+	StunStatusEffectComponent->StatusEffectTag = FBaseGameplayTags::Get().StatusEffect_Stun;
+}
+
+void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ABaseCharacter, bIsStunned);
+	DOREPLIFETIME(ABaseCharacter, bIsBurning);
+	DOREPLIFETIME(ABaseCharacter, bIsElectrocuted);
 }
 
 void ABaseCharacter::BeginPlay()
@@ -111,6 +126,12 @@ UAnimMontage* ABaseCharacter::GetHitReactMontage_Implementation()
 	return HitReactMontage;
 }
 
+void ABaseCharacter::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsStunned = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
+}
+
 void ABaseCharacter::Die(const FVector& DeathImpulse)
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
@@ -134,6 +155,8 @@ void ABaseCharacter::MulticastHandleDeath_Implementation(const FVector& DeathImp
 	if(DeathSound) UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
 	Dissolve();
 	bDead = true;
+	BurnStatusEffectComponent->Deactivate();
+	StunStatusEffectComponent->Deactivate();
 	OnDeath.Broadcast(this);
 }
 
@@ -184,14 +207,24 @@ ECharacterClass ABaseCharacter::GetCharacterClass_Implementation()
 	return CharacterClass;
 }
 
-FOnASCRegistered ABaseCharacter::GetOnASCRegistered()
+FOnASCRegistered& ABaseCharacter::GetOnASCRegistered()
 {
 	return OnASCRegistered;
 }
 
-FOnDeath ABaseCharacter::GetOnDeathDelegate()
+FOnDeath& ABaseCharacter::GetOnDeathDelegate()
 {
 	return OnDeath;
+}
+
+bool ABaseCharacter::IsElectrocuted_Implementation() const
+{
+	return bIsElectrocuted;
+}
+
+void ABaseCharacter::SetIsElectrocuted_Implementation(bool bInIsElectrocuted)
+{
+	bIsElectrocuted = bInIsElectrocuted;
 }
 
 /*

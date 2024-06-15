@@ -25,6 +25,7 @@ public:
 	ABaseCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	//~ Player Interface
 	virtual void PlayHitReactMontage() override;
@@ -43,8 +44,10 @@ public:
 	virtual 	int32 GetMinionCount_Implementation() override;
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
-	virtual FOnASCRegistered GetOnASCRegistered() override;
-	virtual FOnDeath GetOnDeathDelegate() override;
+	virtual FOnASCRegistered& GetOnASCRegistered() override;
+	virtual FOnDeath& GetOnDeathDelegate() override;
+	virtual bool IsElectrocuted_Implementation() const override;
+	virtual void SetIsElectrocuted_Implementation(bool bInIsElectrocuted) override;
 	//~ Combat Interface
 
 	FOnASCRegistered OnASCRegistered;
@@ -59,6 +62,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character")
 	float BaseWalkSpeed = 250.f;
 
+	UPROPERTY(ReplicatedUsing=OnRep_IsStunned, BlueprintReadOnly)
+	bool bIsStunned = false;
+	
+	UPROPERTY(ReplicatedUsing=OnRep_IsBurning, BlueprintReadOnly)
+	bool bIsBurning = false;
+	
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	bool bIsElectrocuted = false;
+
+	UFUNCTION()
+	virtual void OnRep_IsStunned() {}
+	
+	UFUNCTION()
+	virtual void OnRep_IsBurning() {}
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() {}
@@ -66,6 +84,9 @@ protected:
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& GameplayEffectClass, float Level) const;
 	virtual void InitializeDefaultAttributes() const;
 	void AddCharacterAbilities();
+
+	UFUNCTION()
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
@@ -104,6 +125,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStatusEffectNiagaraComponent> BurnStatusEffectComponent;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStatusEffectNiagaraComponent> StunStatusEffectComponent;
 
 	/*
 	 * Minions
