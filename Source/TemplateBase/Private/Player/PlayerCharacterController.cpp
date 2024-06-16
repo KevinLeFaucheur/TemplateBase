@@ -6,9 +6,12 @@
 #include "BaseGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "Actor/MagicCircle.h"
+#include "Components/DecalComponent.h"
 #include "Player/PlayerCharacter.h"
 #include "Player/Input/BaseEnhancedInputComponent.h"
 #include "UI/DamageTextComponent.h"
+
 
 void APlayerCharacterController::BeginPlay()
 {
@@ -40,6 +43,12 @@ void APlayerCharacterController::SetupInputComponent()
 
 		EnhancedInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 	}
+}
+
+void APlayerCharacterController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+	UpdateMagicCircleLocation();
 }
 
 void APlayerCharacterController::Move(const FInputActionValue& Value)
@@ -149,5 +158,32 @@ void APlayerCharacterController::ClientShowDamageNumber_Implementation(float Dam
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
+	}
+}
+
+void APlayerCharacterController::UpdateMagicCircleLocation()
+{
+	if(IsValid(MagicCircle) && PlayerCharacter)
+	{
+		MagicCircle->SetActorLocation(PlayerCharacter->GetHitTarget());
+	}
+}
+
+void APlayerCharacterController::ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial)
+{
+	if(bShow)
+	{
+		if(!IsValid(MagicCircle) && PlayerCharacter)
+		{
+			MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass, PlayerCharacter->GetHitTarget(), FRotator::ZeroRotator);
+			if(DecalMaterial)
+			{
+				MagicCircle->MagicCircleDecal->SetMaterial(0, DecalMaterial);
+			}
+		}
+	}
+	else
+	{
+		if(IsValid(MagicCircle)) MagicCircle->Destroy();
 	}
 }

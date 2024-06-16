@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerController.h"
 #include "PlayerCharacterController.generated.h"
 
+class AMagicCircle;
 class UDamageTextComponent;
 class UBaseAbilitySystemComponent;
 class APlayerCharacter;
@@ -23,6 +24,8 @@ class TEMPLATEBASE_API APlayerCharacterController : public APlayerController
 	GENERATED_BODY()
 
 public:
+	virtual void PlayerTick(float DeltaTime) override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
 
@@ -46,9 +49,12 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputAction> AimAction;
-
+	
 	UFUNCTION(Client, Reliable)
 	void ClientShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial = nullptr);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -82,4 +88,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AMagicCircle> MagicCircleClass;
+
+	UPROPERTY()
+	TObjectPtr<AMagicCircle> MagicCircle;
+
+	void UpdateMagicCircleLocation();
+	
 };

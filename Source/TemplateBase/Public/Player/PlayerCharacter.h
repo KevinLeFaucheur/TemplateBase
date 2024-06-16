@@ -64,6 +64,7 @@ public:
 	virtual void AddToPlayerLevel_Implementation(int32 InPlayerLevel) override;
 	virtual void AddToSpellPoints_Implementation(int32 InSpellPoints) override;
 	virtual void LevelUp_Implementation() override;
+	virtual void ToggleMagicCircle_Implementation(bool bShow, UMaterialInterface* DecalMaterial) override;
 	//~ Player Interface
 
 	UFUNCTION(NetMulticast, Unreliable)

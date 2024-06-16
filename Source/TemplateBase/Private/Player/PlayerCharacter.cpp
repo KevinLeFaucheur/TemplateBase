@@ -453,6 +453,15 @@ void APlayerCharacter::MulticastLevelUp_Implementation() const
 	}
 }
 
+void APlayerCharacter::ToggleMagicCircle_Implementation(bool bShow, UMaterialInterface* DecalMaterial)
+{
+	if (APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(GetController()))
+	{
+		PlayerCharacterController->ToggleMagicCircle(bShow, DecalMaterial);
+		// PlayerCharacterController->bShowMouseCursor = !bShow;
+	}
+}
+
 /*
  * Status Effects
  */
@@ -481,14 +490,8 @@ void APlayerCharacter::OnRep_IsStunned()
 
 void APlayerCharacter::OnRep_IsBurning()
 {
-	if(bIsBurning)
-	{
-		BurnStatusEffectComponent->Activate();
-	}
-	else
-	{
-		BurnStatusEffectComponent->Deactivate();
-	}
+	if(bIsBurning) BurnStatusEffectComponent->Activate();
+	else BurnStatusEffectComponent->Deactivate();
 }
 
 /*
