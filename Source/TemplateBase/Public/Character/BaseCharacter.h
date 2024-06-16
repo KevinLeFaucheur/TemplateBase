@@ -9,6 +9,7 @@
 #include "Interaction/CombatInterface.h"
 #include "BaseCharacter.generated.h"
 
+class UPassiveNiagaraComponent;
 class UStatusEffectNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayAbility;
@@ -167,6 +168,18 @@ private:
 	// TODO: Putting this back to CharacterAnimInstance, though enemies need it too
 	UPROPERTY(EditAnywhere, Category="Character|Montages")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> BarrierNiagaraComponent;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> HealthDrainNiagaraComponent;
+	
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> ManaDrainNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> EffectAttachComponent;
 
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;

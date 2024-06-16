@@ -149,9 +149,17 @@ void UBaseAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
 		const int32 NumLevelUps = NewLevel - CurrentLevel;
 		if(NumLevelUps > 0)
 		{
-			const int32 AttributePointReward = IPlayerInterface::Execute_GetAttributePointReward(Props.SourceCharacter, CurrentLevel);
-			const int32 SpellPointReward = IPlayerInterface::Execute_GetSpellPointReward(Props.SourceCharacter, CurrentLevel);
 			IPlayerInterface::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
+			
+			int32 AttributePointReward = 0;
+			int32 SpellPointReward = 0;
+
+			for (int i = 0; i < NumLevelUps; ++i)
+			{
+				SpellPointReward += IPlayerInterface::Execute_GetSpellPointReward(Props.SourceCharacter, CurrentLevel + i);
+				AttributePointReward += IPlayerInterface::Execute_GetAttributePointReward(Props.SourceCharacter, CurrentLevel + i);
+			}
+			
 			IPlayerInterface::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointReward);
 			IPlayerInterface::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointReward);
 

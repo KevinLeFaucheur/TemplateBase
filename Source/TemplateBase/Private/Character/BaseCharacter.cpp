@@ -4,6 +4,7 @@
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "AbilitySystem/Passive/PassiveNiagaraComponent.h"
 #include "AbilitySystem/StatusEffect/StatusEffectNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -26,13 +27,31 @@ ABaseCharacter::ABaseCharacter()
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
 	BurnStatusEffectComponent = CreateDefaultSubobject<UStatusEffectNiagaraComponent>("BurnStatusEffectComponent");
 	BurnStatusEffectComponent->SetupAttachment(GetRootComponent());
-	BurnStatusEffectComponent->StatusEffectTag = FBaseGameplayTags::Get().StatusEffect_Burn;
+	BurnStatusEffectComponent->StatusEffectTag = GameplayTags.StatusEffect_Burn;
 	
 	StunStatusEffectComponent = CreateDefaultSubobject<UStatusEffectNiagaraComponent>("StunStatusEffectComponent");
 	StunStatusEffectComponent->SetupAttachment(GetRootComponent());
-	StunStatusEffectComponent->StatusEffectTag = FBaseGameplayTags::Get().StatusEffect_Stun;
+	StunStatusEffectComponent->StatusEffectTag = GameplayTags.StatusEffect_Stun;
+
+	EffectAttachComponent = CreateDefaultSubobject<USceneComponent>("EffectAttachComponent");
+	EffectAttachComponent->SetupAttachment(GetRootComponent());
+	EffectAttachComponent->SetUsingAbsoluteRotation(true);
+	EffectAttachComponent->SetWorldRotation(FRotator::ZeroRotator);
+	
+	BarrierNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("BarrierNiagaraComponent");
+	BarrierNiagaraComponent->SetupAttachment(EffectAttachComponent);
+	BarrierNiagaraComponent->PassiveAbilityTag = GameplayTags.Abilities_Passive_Barrier;
+	
+	HealthDrainNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("HealthDrainNiagaraComponent");
+	HealthDrainNiagaraComponent->SetupAttachment(EffectAttachComponent);
+	HealthDrainNiagaraComponent->PassiveAbilityTag = GameplayTags.Abilities_Passive_HealthDrain;
+	
+	ManaDrainNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("ManaDrainNiagaraComponent");
+	ManaDrainNiagaraComponent->SetupAttachment(EffectAttachComponent);
+	ManaDrainNiagaraComponent->PassiveAbilityTag = GameplayTags.Abilities_Passive_ManaDrain;
 }
 
 void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
