@@ -1,15 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Player/PlayerCharacterController.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "BaseGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "Actor/MagicCircle.h"
 #include "Components/DecalComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/PlayerCharacter.h"
 #include "Player/Input/BaseEnhancedInputComponent.h"
+#include "TemplateBase/TemplateBase.h"
 #include "UI/DamageTextComponent.h"
 
 
@@ -48,7 +49,40 @@ void APlayerCharacterController::SetupInputComponent()
 void APlayerCharacterController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
+	CursorTrace();
 	UpdateMagicCircleLocation();
+}
+
+void APlayerCharacterController::CursorTrace()
+{
+	if(!IsValid(MagicCircle)) return;
+	if(PlayerCharacter->GetAbilitySystemComponent() && PlayerCharacter->GetAbilitySystemComponent()->HasMatchingGameplayTag(FBaseGameplayTags::Get().Player_Block_CursorTrace))
+	{
+		return;
+	}
+	
+	const ECollisionChannel TraceChannel = IsValid(MagicCircle) ? ECC_ExcludeTargets : ECC_Visibility;
+	FVector2D ViewportSize;
+	if(GEngine && GEngine->GameViewport) GEngine->GameViewport->GetViewportSize(ViewportSize);
+	
+	const FVector2D CrosshairLocation(ViewportSize.X / 2.f, ViewportSize.Y / 2.f);
+	FVector CrosshairWorldPosition;
+	FVector CrosshairWorldDirection;
+	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+		UGameplayStatics::GetPlayerController(this, 0),
+		CrosshairLocation,
+		CrosshairWorldPosition,
+		CrosshairWorldDirection
+	);
+
+	if(bScreenToWorld)
+	{
+		const FVector Start = CrosshairWorldPosition;
+		const FVector End = Start + CrosshairWorldDirection * TRACE_LENGTH;
+		GetWorld()->LineTraceSingleByChannel(CursorHit, Start, End, TraceChannel);
+
+		if(!CursorHit.bBlockingHit) CursorHit.ImpactPoint = End;
+	}
 }
 
 void APlayerCharacterController::Move(const FInputActionValue& Value)
@@ -163,9 +197,10 @@ void APlayerCharacterController::ClientShowDamageNumber_Implementation(float Dam
 
 void APlayerCharacterController::UpdateMagicCircleLocation()
 {
-	if(IsValid(MagicCircle) && PlayerCharacter)
+	if(IsValid(MagicCircle)/* && PlayerCharacter*/)
 	{
-		MagicCircle->SetActorLocation(PlayerCharacter->GetHitTarget());
+		MagicCircle->SetActorLocation(CursorHit.ImpactPoint);
+		// MagicCircle->SetActorLocation(PlayerCharacter->GetHitTarget());
 	}
 }
 
@@ -173,9 +208,10 @@ void APlayerCharacterController::ToggleMagicCircle(bool bShow, UMaterialInterfac
 {
 	if(bShow)
 	{
-		if(!IsValid(MagicCircle) && PlayerCharacter)
+		if(!IsValid(MagicCircle)/* && PlayerCharacter*/)
 		{
-			MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass, PlayerCharacter->GetHitTarget(), FRotator::ZeroRotator);
+			MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass, CursorHit.ImpactPoint, FRotator::ZeroRotator);
+			// MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass, PlayerCharacter->GetHitTarget(), FRotator::ZeroRotator);
 			if(DecalMaterial)
 			{
 				MagicCircle->MagicCircleDecal->SetMaterial(0, DecalMaterial);

@@ -8,6 +8,7 @@
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 
 struct BaseDamageStatics
 {
@@ -108,6 +109,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	}
 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
 	
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
@@ -133,12 +135,51 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		const FGameplayEffectAttributeCaptureDefinition CaptureDef = TagsToCaptureDefs[ResistanceTag];
 
 		float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key, false);
+		if(DamageTypeValue <= 0.f)
+		{
+			continue;
+		}
 		
 		float Resistance = 0.f;
 		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDef, EvaluationParameters, Resistance);
 		Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
 
 		DamageTypeValue *= ( 100.f - Resistance ) / 100.f;
+
+		// if (UBaseAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		// {
+		// 	DamageTypeValue = UBaseAbilitySystemLibrary::GetRadialDamageWithFalloff(
+		// 	   TargetAvatar,
+		// 	   DamageTypeValue,
+		// 	   0.f,
+		// 	   UBaseAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+		// 	   UBaseAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+		// 	   UBaseAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+		// 	   1.f);
+		// }
+		
+		if(UBaseAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		{
+			if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
+			{
+				CombatInterface->GetOnTakeDamage().AddLambda([&] (float DamageAmount)
+				{
+					DamageTypeValue = DamageAmount;
+				});
+			}
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				TargetAvatar,
+				DamageTypeValue,
+				0.f,
+				UBaseAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+				UBaseAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+				UBaseAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+				1.f,
+				UDamageType::StaticClass(),
+				TArray<AActor*>(),
+				SourceAvatar, nullptr);
+		}
+		
 		Damage += DamageTypeValue;
 	}
 
@@ -150,7 +191,6 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	//  Half damage if blocked
 	const bool bBlocked = FMath::RandRange(1, 100) < TargetBlockChance;
 
-	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
 	UBaseAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
 	
 	Damage = bBlocked ? Damage /  2.f : Damage;

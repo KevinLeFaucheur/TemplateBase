@@ -109,6 +109,14 @@ void ABaseCharacter::PlayHitReactMontage()
 	IPlayerInterface::PlayHitReactMontage();
 }
 
+float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	const float DamageTaken = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	OnTakeDamage.Broadcast(DamageTaken);
+	return DamageTaken;
+}
+
 /*
  * Combat Interface
  */
@@ -224,16 +232,6 @@ void ABaseCharacter::IncrementMinionCount_Implementation(const int32 Amount)
 ECharacterClass ABaseCharacter::GetCharacterClass_Implementation()
 {
 	return CharacterClass;
-}
-
-FOnASCRegistered& ABaseCharacter::GetOnASCRegistered()
-{
-	return OnASCRegistered;
-}
-
-FOnDeath& ABaseCharacter::GetOnDeathDelegate()
-{
-	return OnDeath;
 }
 
 bool ABaseCharacter::IsElectrocuted_Implementation() const

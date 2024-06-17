@@ -17,6 +17,7 @@ class UGameplayEffect;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
+
 UCLASS(Abstract)
 class TEMPLATEBASE_API ABaseCharacter : public ACharacter, public IPlayerInterface, public IAbilitySystemInterface, public ICombatInterface
 {
@@ -27,6 +28,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual float TakeDamage(float Damage, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	//~ Player Interface
 	virtual void PlayHitReactMontage() override;
@@ -45,15 +47,17 @@ public:
 	virtual 	int32 GetMinionCount_Implementation() override;
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
-	virtual FOnASCRegistered& GetOnASCRegistered() override;
-	virtual FOnDeath& GetOnDeathDelegate() override;
+	virtual FOnTakeDamage& GetOnTakeDamage() override { return OnTakeDamage; }
+	virtual FOnASCRegistered& GetOnASCRegistered() override { return OnASCRegistered; } 
+	virtual FOnDeath& GetOnDeathDelegate() override { return OnDeath; }
 	virtual bool IsElectrocuted_Implementation() const override;
 	virtual void SetIsElectrocuted_Implementation(bool bInIsElectrocuted) override;
 	//~ Combat Interface
 
+	FOnTakeDamage OnTakeDamage;
 	FOnASCRegistered OnASCRegistered;
 	FOnDeath OnDeath;
-
+	
 	UPROPERTY(EditAnywhere, Category="Character|Montages")
 	TArray<FTaggedMontage> AttackMontages;
 

@@ -21,7 +21,15 @@ public:
 	void CauseDamage(AActor* TargetActor);
 
 	UFUNCTION(BlueprintPure)
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(
+		AActor* TargetActor = nullptr,
+		FVector InRadialDamageOrigin = FVector::ZeroVector,
+		bool bOverrideAirborneDirection = false,
+		FVector AirborneDirectionOverride = FVector::ZeroVector,
+		bool bOverrideDeathImpulseDirection = false,
+		FVector DeathImpulseDirectionOverride = FVector::ZeroVector,
+		bool bOverridePitch = false,
+		float PitchOverride = 0.f) const;
 
 	UFUNCTION(BlueprintPure)
 	float GetDamageAtLevel() const;
@@ -52,13 +60,22 @@ protected:
 	float StatusEffectDuration = 5.f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
-	float DeathImpulseMagnitude = 8000.f;
+	float DeathImpulseMagnitude = 500.f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
-	float AirborneForceMagnitude = 8000.f;
+	float AirborneForceMagnitude = 500.f;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
 	float AirborneChance = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
+	bool bIsRadialDamage = false;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
+	float RadialDamageInnerRadius = 0.f;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|Damage")
+	float RadialDamageOuterRadius = 0.f;
 
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;

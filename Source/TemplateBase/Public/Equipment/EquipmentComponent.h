@@ -7,8 +7,6 @@
 #include "UI/PlayerHUD.h"
 #include "EquipmentComponent.generated.h"
 
-#define TRACE_LENGTH 80000.f
-
 class APlayerHUD;
 class APlayerCharacterController;
 class ATool;

@@ -14,6 +14,9 @@
 #include "UI/PlayerHUD.h"
 #include "UI/Controller/BaseWidgetController.h"
 
+/*
+ * Widget Controller
+ */
 UOverlayWidgetController* UBaseAbilitySystemLibrary::GetOverlayWidgetController(const UObject* WorldContextObject)
 {
 	FWidgetControllerParams WCParams;
@@ -67,6 +70,9 @@ bool UBaseAbilitySystemLibrary::MakeWidgetControllerParams(const UObject* WorldC
 	return false;
 }
 
+/*
+ * Initializing Ability System
+ */
 void UBaseAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
 {
 	const AActor* AvatarActor = ASC->GetAvatarActor();
@@ -137,7 +143,10 @@ int32 UBaseAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* Worl
 
 	return static_cast<int32>(XPReward);
 }
-
+	
+/*
+ * Effect Context Getters  
+ */
 bool UBaseAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)
 {
 	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -229,6 +238,48 @@ FVector UBaseAbilitySystemLibrary::GetAirborneForce(const FGameplayEffectContext
 	return FVector::ZeroVector;
 }
 
+bool UBaseAbilitySystemLibrary::IsRadialDamage(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return BaseEffectContext->IsRadialDamage();
+	}
+	return false;
+}
+
+float UBaseAbilitySystemLibrary::GetRadialDamageInnerRadius(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return BaseEffectContext->GetRadialDamageInnerRadius();
+	}
+	return 0.f;
+}
+
+float UBaseAbilitySystemLibrary::GetRadialDamageOuterRadius(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return BaseEffectContext->GetRadialDamageOuterRadius();
+	}
+	return 0.f;
+}
+
+FVector UBaseAbilitySystemLibrary::GetRadialDamageOrigin(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		if(BaseEffectContext->GetDamageType().IsValid())
+		{
+			return BaseEffectContext->GetRadialDamageOrigin();
+		}
+	}
+	return FVector::ZeroVector;
+}
+		
+/*
+ * Effect Context Setters  
+ */
 void UBaseAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool IsInBlockedHit)
 {
 	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -303,6 +354,45 @@ void UBaseAbilitySystemLibrary::SetAirborneForce(FGameplayEffectContextHandle& E
 	}
 }
 
+void UBaseAbilitySystemLibrary::SetIsRadialDamage(FGameplayEffectContextHandle& EffectContextHandle,
+	bool InIsRadialDamage)
+{
+	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		BaseEffectContext->SetIsRadialDamage(InIsRadialDamage);
+	}
+}
+
+void UBaseAbilitySystemLibrary::SetRadialDamageInnerRadius(FGameplayEffectContextHandle& EffectContextHandle,
+	float InInnerRadius)
+{
+	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		BaseEffectContext->SetRadialDamageInnerRadius(InInnerRadius);
+	}
+}
+
+void UBaseAbilitySystemLibrary::SetRadialDamageOuterRadius(FGameplayEffectContextHandle& EffectContextHandle,
+	float InOuterRadius)
+{
+	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		BaseEffectContext->SetRadialDamageOuterRadius(InOuterRadius);
+	}
+}
+
+void UBaseAbilitySystemLibrary::SetRadialDamageOrigin(FGameplayEffectContextHandle& EffectContextHandle,
+	const FVector& InRadialOrigin)
+{
+	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		BaseEffectContext->SetRadialDamageOrigin(InRadialOrigin);
+	}
+}
+
+/*
+ * Gameplay Mechanics
+ */
 void UBaseAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject,
                                                            TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius,
                                                            const FVector& SphereOrigin)
@@ -373,6 +463,12 @@ FGameplayEffectContextHandle UBaseAbilitySystemLibrary::ApplyDamageEffect(const 
 	EffectContextHandle.AddSourceObject(SourceAvatarActor);
 	SetDeathImpulse(EffectContextHandle, DamageEffectParams.DeathImpulse);
 	SetAirborneForce(EffectContextHandle, DamageEffectParams.AirborneForce);
+
+	SetIsRadialDamage(EffectContextHandle, DamageEffectParams.bIsRadialDamage);
+	SetRadialDamageInnerRadius(EffectContextHandle, DamageEffectParams.RadialDamageInnerRadius);
+	SetRadialDamageOuterRadius(EffectContextHandle, DamageEffectParams.RadialDamageOuterRadius);
+	SetRadialDamageOrigin(EffectContextHandle, DamageEffectParams.RadialDamageOrigin);
+	
 	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
 	
 	const float ScaledMagnitudeMin = DamageEffectParams.BaseDamageRange.DamageMin.Value;
@@ -424,3 +520,18 @@ TArray<FVector> UBaseAbilitySystemLibrary::EvenlySpacedVectors(const FVector& Fo
 	else Vectors.Add(Forward);
 	return Vectors;
 }
+
+// float UBaseAbilitySystemLibrary::GetRadialDamageWithFalloff(const AActor* TargetActor, float BaseDamage,
+// 	float MinimumDamage, const FVector& Origin, float DamageInnerRadius, float DamageOuterRadius, float DamageFalloff)
+// {
+// 	if (!TargetActor) return 0.f;
+//  
+// 	FRadialDamageParams RadialDamageParams;
+// 	RadialDamageParams.BaseDamage = BaseDamage;
+// 	RadialDamageParams.DamageFalloff = DamageFalloff;
+// 	RadialDamageParams.InnerRadius = DamageInnerRadius;
+// 	RadialDamageParams.OuterRadius = DamageOuterRadius;
+// 	RadialDamageParams.MinimumDamage = MinimumDamage;
+// 	float DamageScale = RadialDamageParams.GetDamageScale((Origin - TargetActor->GetActorLocation()).Length());
+// 	return BaseDamage * DamageScale;
+// }

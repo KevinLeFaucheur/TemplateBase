@@ -12,6 +12,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerCharacter.h"
 #include "Player/PlayerCharacterController.h"
+#include "TemplateBase/TemplateBase.h"
 
 UEquipmentComponent::UEquipmentComponent()
 {
@@ -182,7 +183,7 @@ void UEquipmentComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 		GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECC_Visibility);
 
 		if(!TraceHitResult.bBlockingHit) TraceHitResult.ImpactPoint = End;
-		if(TraceHitResult.GetActor() &&TraceHitResult.GetActor()->Implements<UPlayerInterface>())
+		if(TraceHitResult.GetActor() && TraceHitResult.GetActor()->Implements<UPlayerInterface>())
 		{
 			HUDPackage.Color = FLinearColor::Red;
 		}

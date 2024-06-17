@@ -59,6 +59,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	void CursorTrace();
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Jump();
@@ -94,7 +95,10 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<AMagicCircle> MagicCircle;
-
-	void UpdateMagicCircleLocation();
 	
+	FHitResult CursorHit;
+	void UpdateMagicCircleLocation();
+
+public:
+	FORCEINLINE FVector GetCursorHit() const { return CursorHit.ImpactPoint; }
 };
