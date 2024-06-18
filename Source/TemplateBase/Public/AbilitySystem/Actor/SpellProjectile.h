@@ -30,8 +30,12 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	void OnHit();
 	virtual void Destroyed() override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void OnHit();
+
+	bool IsValidOverlap(AActor* OtherActor);
 	
 	UFUNCTION()
 	virtual void OnSphereBeginOverlap(
@@ -41,6 +45,8 @@ protected:
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult);
+	
+	bool bHit = false;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category="GAS|Abilities")
@@ -60,8 +66,6 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;
-
-	bool bHit = false;
 
 public:	
 };

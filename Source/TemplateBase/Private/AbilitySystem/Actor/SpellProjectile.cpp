@@ -52,13 +52,19 @@ void ASpellProjectile::OnHit()
 	bHit = true;
 }
 
+bool ASpellProjectile::IsValidOverlap(AActor* OtherActor)
+{
+	if(!IsValid(DamageEffectParams.SourceAbilitySystemComponent)) return false;
+	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+	if(SourceAvatarActor == OtherActor) return false;
+	if(!UBaseAbilitySystemLibrary::IsHostile(SourceAvatarActor, OtherActor)) return false;
+
+	return true;
+}
+
 void ASpellProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(!IsValid(DamageEffectParams.SourceAbilitySystemComponent)) return;
-	
-	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
-	if(SourceAvatarActor == OtherActor) return;
-	if(!UBaseAbilitySystemLibrary::IsHostile(SourceAvatarActor, OtherActor)) return;
+	if(!IsValidOverlap(OtherActor)) return;
 	if(!bHit) OnHit();
 	
 	if(HasAuthority())

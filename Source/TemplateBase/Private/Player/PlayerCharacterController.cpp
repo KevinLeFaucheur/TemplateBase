@@ -49,13 +49,16 @@ void APlayerCharacterController::SetupInputComponent()
 void APlayerCharacterController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-	CursorTrace();
-	UpdateMagicCircleLocation();
+	
+	if(IsValid(MagicCircle))
+	{
+		CursorTrace();
+		UpdateMagicCircleLocation();
+	}
 }
 
 void APlayerCharacterController::CursorTrace()
 {
-	if(!IsValid(MagicCircle)) return;
 	if(PlayerCharacter->GetAbilitySystemComponent() && PlayerCharacter->GetAbilitySystemComponent()->HasMatchingGameplayTag(FBaseGameplayTags::Get().Player_Block_CursorTrace))
 	{
 		return;
@@ -197,29 +200,18 @@ void APlayerCharacterController::ClientShowDamageNumber_Implementation(float Dam
 
 void APlayerCharacterController::UpdateMagicCircleLocation()
 {
-	if(IsValid(MagicCircle)/* && PlayerCharacter*/)
-	{
-		MagicCircle->SetActorLocation(CursorHit.ImpactPoint);
-		// MagicCircle->SetActorLocation(PlayerCharacter->GetHitTarget());
-	}
+	if(IsValid(MagicCircle)) MagicCircle->SetActorLocation(CursorHit.ImpactPoint);
 }
 
 void APlayerCharacterController::ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial)
 {
 	if(bShow)
 	{
-		if(!IsValid(MagicCircle)/* && PlayerCharacter*/)
+		if(!IsValid(MagicCircle))
 		{
 			MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass, CursorHit.ImpactPoint, FRotator::ZeroRotator);
-			// MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass, PlayerCharacter->GetHitTarget(), FRotator::ZeroRotator);
-			if(DecalMaterial)
-			{
-				MagicCircle->MagicCircleDecal->SetMaterial(0, DecalMaterial);
-			}
+			if(DecalMaterial) MagicCircle->MagicCircleDecal->SetMaterial(0, DecalMaterial);
 		}
 	}
-	else
-	{
-		if(IsValid(MagicCircle)) MagicCircle->Destroy();
-	}
+	else if(IsValid(MagicCircle)) MagicCircle->Destroy();
 }

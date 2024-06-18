@@ -162,7 +162,21 @@ public:
 	static TArray<FVector> EvenlySpacedVectors(const FVector& Forward, const FVector& Axis, float Spread, int32 NumVectors);
 	
 	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel);
+
+	/*
+	 * Damage Effect Params
+	 */
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary")
+	static void SetIsRadialDamageEffectParam(UPARAM(ref) FDamageEffectParams& DamageEffectParams, bool IsRadialDamage, float InnerRadius, float OuterRadius, FVector Origin);
 	
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary")
+	static void SetAirborneDirection(UPARAM(ref) FDamageEffectParams& DamageEffectParams, FVector AirborneDirection, float Magnitude = 0.f);
+	
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary")
+	static void SetDeathImpulseDirection(UPARAM(ref) FDamageEffectParams& DamageEffectParams, FVector DeathImpulseDirection, float Magnitude = 0.f);
+
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary")
+	static void SetTargetAbilitysystemComponent(UPARAM(ref) FDamageEffectParams& DamageEffectParams, UAbilitySystemComponent* InTargetASC);
 };
 
 
