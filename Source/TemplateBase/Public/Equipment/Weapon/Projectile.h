@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/AbilityTypes.h"
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
 
@@ -17,9 +18,14 @@ class TEMPLATEBASE_API AProjectile : public AActor
 public:	
 	AProjectile();
 	virtual void Tick(float DeltaTime) override;
+	
+	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn))
+	FDamageEffectParams DamageEffectParams;
 
 protected:
 	virtual void BeginPlay() override;
+	
+	bool IsValidOverlap(AActor* OtherActor);
 
 	UFUNCTION()
 	virtual void OnHit(

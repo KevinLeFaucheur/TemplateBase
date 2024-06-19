@@ -41,6 +41,9 @@ void APlayerCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &APlayerCharacterController::FireButtonReleased);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &APlayerCharacterController::AimButtonPressed);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &APlayerCharacterController::AimButtonReleased);
+		
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &APlayerCharacterController::ReloadButtonPressed);
+		EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Started, this, &APlayerCharacterController::ThrowButtonPressed);
 
 		EnhancedInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 	}
@@ -156,6 +159,16 @@ void APlayerCharacterController::AimButtonReleased()
 	if (PlayerCharacter) PlayerCharacter->AimButtonReleased();
 }
 
+void APlayerCharacterController::ReloadButtonPressed()
+{
+	if (PlayerCharacter) PlayerCharacter->ReloadButtonPressed();
+}
+
+void APlayerCharacterController::ThrowButtonPressed()
+{
+	if (PlayerCharacter) PlayerCharacter->ThrowButtonPressed();
+}
+
 void APlayerCharacterController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	if(GetASC() && GetASC()->HasMatchingGameplayTag(FBaseGameplayTags::Get().Player_Block_InputPressed)) return;
@@ -201,6 +214,21 @@ void APlayerCharacterController::ClientShowDamageNumber_Implementation(float Dam
 void APlayerCharacterController::UpdateMagicCircleLocation()
 {
 	if(IsValid(MagicCircle)) MagicCircle->SetActorLocation(CursorHit.ImpactPoint);
+}
+
+void APlayerCharacterController::SetHUDAmmunition(int32 Ammo) const
+{
+	AmmunitionChanged.Broadcast(Ammo);
+}
+
+void APlayerCharacterController::SetHUDCarriedAmmunition(int32 Ammo) const
+{
+	CarriedAmmunitionChanged.Broadcast(Ammo);
+}
+
+void APlayerCharacterController::SetHUDGrenadeCount(int32 GrenadeCount) const
+{
+	GrenadeCountChanged.Broadcast(GrenadeCount);
 }
 
 void APlayerCharacterController::ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial)

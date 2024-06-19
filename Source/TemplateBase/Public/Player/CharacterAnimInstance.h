@@ -7,6 +7,7 @@
 #include "Character/CharacterData.h"
 #include "CharacterAnimInstance.generated.h"
 
+enum class EToolType : uint8;
 class ATool;
 class APlayerCharacter;
 /**
@@ -63,6 +64,9 @@ public:
 	ETurningInPlace TurningInPlace = ETurningInPlace::ETIP_NotTurning;
 	
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	ECombatState CombatState = ECombatState::ECS_Unoccupied;
+	
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	FRotator RightHandRotation;
 
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
@@ -77,17 +81,30 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	bool bIsStunned;
 
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	bool bUseFABRIK;
+
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	bool bUseAimOffset;
+
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	bool bTransformRightHand;
+
 	/*
 	 * Montages
 	 */
 	void PlayFireMontage(bool bIsAiming);
 	void PlayHitReactMontage();
+	void PlayReloadMontage(const EToolType ToolType);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
 	TObjectPtr<UAnimMontage> FireMontage;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
 	TObjectPtr<UAnimMontage> HitReactMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
+	TObjectPtr<UAnimMontage> ReloadMontage;
 	
 private:
 	FRotator CharacterRotationLastFrame;

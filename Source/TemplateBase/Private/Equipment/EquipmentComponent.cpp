@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Equipment/Tool.h"
+#include "Equipment/Data/WeapenData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -26,6 +27,8 @@ void UEquipmentComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UEquipmentComponent, EquippedTool);
 	DOREPLIFETIME(UEquipmentComponent, bAiming);
+	DOREPLIFETIME(UEquipmentComponent, CombatState);
+	DOREPLIFETIME_CONDITION(UEquipmentComponent, CarriedAmmunition, COND_OwnerOnly);
 }
 
 void UEquipmentComponent::BeginPlay()
@@ -39,6 +42,10 @@ void UEquipmentComponent::BeginPlay()
 			DefaultFOV = PlayerCharacter->GetFollowCamera()->FieldOfView;
 			CurrentFOV = DefaultFOV;
 		}
+	}
+	if(PlayerCharacter->HasAuthority())
+	{
+		InitializeCarriedAmmunition();
 	}
 }
 
@@ -58,6 +65,15 @@ void UEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	}
 }
 
+void UEquipmentComponent::SetHUDCarriedAmmunition()
+{
+	PlayerCharacterController = PlayerCharacterController == nullptr ? Cast<APlayerCharacterController>(PlayerCharacter->GetController()) : PlayerCharacterController;
+	if(PlayerCharacterController)
+	{
+		PlayerCharacterController->SetHUDCarriedAmmunition(CarriedAmmunition);	
+	}
+}
+
 /*
  * Equipping
  */
@@ -65,13 +81,20 @@ void UEquipmentComponent::EquipTool(ATool* ToolToEquip)
 {
 	if(PlayerCharacter == nullptr || ToolToEquip == nullptr) return;
 
+	if(EquippedTool) EquippedTool->Drop();
+	
 	EquippedTool = ToolToEquip;
 	EquippedTool->SetToolState(EToolState::ETS_Equipped);
 	EquippedTool->SetOwner(PlayerCharacter);
-	if(const USkeletalMeshSocket* HandSocket = PlayerCharacter->GetMesh()->GetSocketByName(FName("RightHandSocket")))
+	EquippedTool->SetHUDAmmunition();
+	AttachToolToSocket(EquippedTool, FName("RightHandSocket"));
+
+	if(CarriedAmmunitionMap.Contains(EquippedTool->GetToolType()))
 	{
-		HandSocket->AttachActor(EquippedTool, PlayerCharacter->GetMesh());
+		CarriedAmmunition = CarriedAmmunitionMap[EquippedTool->GetToolType()];
 	}
+	SetHUDCarriedAmmunition();
+	
 	PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
 	PlayerCharacter->bUseControllerRotationYaw = true;
 }
@@ -80,14 +103,34 @@ void UEquipmentComponent::OnRep_EquippedTool()
 {
 	if(EquippedTool && PlayerCharacter)
 	{
+		AttachToolToSocket(EquippedTool, FName("RightHandSocket"));
+		EquippedTool->SetToolState(EToolState::ETS_Equipped);
 		PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
 		PlayerCharacter->bUseControllerRotationYaw = true;
 	}	
 }
 
+void UEquipmentComponent::AttachToolToSocket(AActor* Tool, const FName& SocketName)
+{
+	if(const USkeletalMeshSocket* Socket = PlayerCharacter->GetMesh()->GetSocketByName(SocketName))
+	{
+		Socket->AttachActor(Tool, PlayerCharacter->GetMesh());
+	}
+}
+
 /*
  * Firing / Activation
- */
+*/
+bool UEquipmentComponent::CanActivate()
+{
+	if(!EquippedTool) return false;
+	if(EquippedTool->IsEmpty()) return false;
+	if(!bCanActivate) return false;
+	if(CombatState != ECombatState::ECS_Unoccupied) return false;
+
+	return true;
+}
+
 void UEquipmentComponent::FireButtonPressed(bool bPressed)
 {
 	bFireButtonPressed = bPressed;
@@ -99,13 +142,13 @@ void UEquipmentComponent::FireButtonPressed(bool bPressed)
 
 void UEquipmentComponent::ActivateTool()
 {
-	if(bCanFire)
+	if(CanActivate())
 	{
 		ServerActivate(HitTarget);
 
 		if(EquippedTool)
 		{
-			bCanFire = false;
+			bCanActivate = false;
 			CrosshairPerShotFactor = FMath::Clamp(CrosshairPerShotFactor + 0.2f, 0.f, 1.f);
 		}
 		FireIntervalStart();
@@ -120,7 +163,7 @@ void UEquipmentComponent::ServerActivate_Implementation(const FVector_NetQuantiz
 void UEquipmentComponent::MulticastActivate_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
 	if(EquippedTool == nullptr) return;
-	if(PlayerCharacter)
+	if(PlayerCharacter && CombatState == ECombatState::ECS_Unoccupied)
 	{
 		PlayerCharacter->PlayFireMontage(bAiming);
 		EquippedTool->Activate(TraceHitTarget);
@@ -129,7 +172,7 @@ void UEquipmentComponent::MulticastActivate_Implementation(const FVector_NetQuan
 
 /*
  * Automatic Fire / Activation
- */
+*/
 void UEquipmentComponent::FireIntervalStart()
 {
 	if(EquippedTool == nullptr || PlayerCharacter == nullptr) return;
@@ -139,10 +182,104 @@ void UEquipmentComponent::FireIntervalStart()
 void UEquipmentComponent::FireIntervalEnd()
 {
 	if(EquippedTool == nullptr) return;
-	bCanFire = true;
+	bCanActivate = true;
 	if(bFireButtonPressed && EquippedTool->bAutomatic)
 	{
 		ActivateTool();
+	}
+}
+
+/*
+ * Ammunition & Reload
+*/
+void UEquipmentComponent::Reload()
+{
+	if(CarriedAmmunition > 0 && CombatState != ECombatState::ECS_Reloading)
+	{
+		ServerReload();
+	}
+}
+
+void UEquipmentComponent::ServerReload_Implementation()
+{
+	if(PlayerCharacter == nullptr || EquippedTool == nullptr) return;
+	
+	CombatState = ECombatState::ECS_Reloading;
+	HandleReload();
+}
+
+void UEquipmentComponent::HandleReload()
+{
+	PlayerCharacter->PlayReloadMontage(EquippedTool->GetToolType());
+}
+
+void UEquipmentComponent::ReloadEnd()
+{
+	if(PlayerCharacter == nullptr) return;
+	if(PlayerCharacter->HasAuthority())
+	{
+		CombatState = ECombatState::ECS_Unoccupied;
+		UpdateAmmunition();
+	}
+	if(bFireButtonPressed) ActivateTool();
+}
+
+void UEquipmentComponent::UpdateAmmunition()
+{
+	if(PlayerCharacter == nullptr || EquippedTool == nullptr) return;
+	
+	const int32 ReloadAmount = AmountToReload();
+	if(CarriedAmmunitionMap.Contains(EquippedTool->GetToolType()))
+	{
+		CarriedAmmunitionMap[EquippedTool->GetToolType()] -= ReloadAmount;
+		CarriedAmmunition = CarriedAmmunitionMap[EquippedTool->GetToolType()];
+	}
+	SetHUDCarriedAmmunition();
+	EquippedTool->AddAmmunition(ReloadAmount);
+}
+
+int32 UEquipmentComponent::AmountToReload()
+{
+	const int32 RoomInMag = EquippedTool->GetAmmunitionCapacity() - EquippedTool->GetAmmunition();
+	if(CarriedAmmunitionMap.Contains(EquippedTool->GetToolType()))
+	{
+		const int32 AmountCarried =  CarriedAmmunitionMap[EquippedTool->GetToolType()];
+		const int32 Least = FMath::Min(RoomInMag, AmountCarried);
+		return FMath::Clamp(RoomInMag, 0, Least);
+	}
+	return 0;
+}
+
+void UEquipmentComponent::OnRep_CombatState()
+{
+	switch (CombatState) {
+	case ECombatState::ECS_Unoccupied:
+		if(bFireButtonPressed) ActivateTool();
+		break;
+	case ECombatState::ECS_Reloading:
+		HandleReload();
+		break;
+	default: ;
+	}
+}
+
+void UEquipmentComponent::InitializeCarriedAmmunition()
+{
+	CarriedAmmunitionMap.Emplace(EToolType::ETT_Handgun, StartingHandgunAmmunition);
+	CarriedAmmunitionMap.Emplace(EToolType::ETT_AssaultRifle, StartingAssaultRifleAmmunition);
+	CarriedAmmunitionMap.Emplace(EToolType::ETT_SubMachineGun, StartingSubMachineGunAmmunition);
+	CarriedAmmunitionMap.Emplace(EToolType::ETT_PumpAction, StartingShotgunAmmunition);
+	CarriedAmmunitionMap.Emplace(EToolType::ETT_BoltAction, StartingHighCaliberAmmunition);
+	CarriedAmmunitionMap.Emplace(EToolType::ETT_RocketLauncher, StartingRocketLauncherAmmunition);
+	CarriedAmmunitionMap.Emplace(EToolType::ETT_GrenadeLauncher, StartingGrenadeLauncherAmmunition);
+}
+
+void UEquipmentComponent::OnRep_CarriedAmmunition()
+{
+	PlayerCharacterController = PlayerCharacterController == nullptr ? Cast<APlayerCharacterController>(PlayerCharacter->GetController()) : PlayerCharacterController;
+	if(PlayerCharacterController)
+	{
+		PlayerCharacterController->SetHUDCarriedAmmunition(CarriedAmmunition);	
 	}
 }
 

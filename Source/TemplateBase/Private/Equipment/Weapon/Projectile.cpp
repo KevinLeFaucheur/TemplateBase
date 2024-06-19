@@ -1,6 +1,9 @@
 // Retropsis @ 2024
 
 #include "Equipment/Weapon/Projectile.h"
+
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/BaseAbilitySystemLibrary.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Interaction/PlayerInterface.h"
@@ -48,8 +51,17 @@ void AProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+bool AProjectile::IsValidOverlap(AActor* OtherActor)
+{
+	if(!IsValid(DamageEffectParams.SourceAbilitySystemComponent)) return false;
+	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+	if(SourceAvatarActor == OtherActor) return false;
+	if(!UBaseAbilitySystemLibrary::IsHostile(SourceAvatarActor, OtherActor)) return false;
+
+	return true;
+}
+
+void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	if(IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(OtherActor))
 	{

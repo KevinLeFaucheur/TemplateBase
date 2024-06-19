@@ -337,6 +337,35 @@ void APlayerCharacter::CrouchButtonPressed()
 }
 
 /*
+ * Reloading
+ */
+void APlayerCharacter::ReloadButtonPressed()
+{
+	if(EquipmentComponent) EquipmentComponent->Reload();
+}
+
+void APlayerCharacter::ReloadEnd()
+{
+	if(EquipmentComponent) EquipmentComponent->ReloadEnd();
+}
+
+void APlayerCharacter::PlayReloadMontage(const EToolType ToolType)
+{
+	if(UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->PlayReloadMontage(ToolType);
+	}
+}
+
+/*
+ * Throwing
+ */
+void APlayerCharacter::ThrowButtonPressed()
+{
+	// if(EquipmentComponent) EquipmentComponent->Throw();
+}
+
+/*
  * QoL
  */
 void APlayerCharacter::HideCharacterIfCameraClose()
@@ -521,6 +550,18 @@ bool APlayerCharacter::IsCasting()
 bool APlayerCharacter::IsStunned()
 {
 	return bIsStunned;
+}
+
+ECombatState APlayerCharacter::GetCombatState() const
+{
+	if(EquipmentComponent == nullptr) return ECombatState::ECS_MAX;
+	return EquipmentComponent->CombatState;
+}
+
+void APlayerCharacter::SetCombatState(const ECombatState NewState)
+{
+	if(EquipmentComponent == nullptr) return;
+	EquipmentComponent->CombatState = NewState;
 }
 
 FVector APlayerCharacter::GetHitTarget() const

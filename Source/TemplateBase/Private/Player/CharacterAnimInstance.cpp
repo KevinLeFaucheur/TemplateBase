@@ -50,8 +50,8 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	
 	if(!PlayerCharacter->HasAuthority())
 	{
-		GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, FString::Printf(TEXT("AimRotation: %f"), AimRotation.Yaw));
-		GEngine->AddOnScreenDebugMessage(2, 1.f, FColor::Green, FString::Printf(TEXT("MovementRotation: %f"), MovementRotation.Yaw));
+		// GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, FString::Printf(TEXT("AimRotation: %f"), AimRotation.Yaw));
+		// GEngine->AddOnScreenDebugMessage(2, 1.f, FColor::Green, FString::Printf(TEXT("MovementRotation: %f"), MovementRotation.Yaw));
 	}
 
 	/* Lean */
@@ -91,6 +91,9 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 		/* */
 	}
+	bUseFABRIK = PlayerCharacter->GetCombatState() != ECombatState::ECS_Reloading;
+	bUseAimOffset = PlayerCharacter->GetCombatState() != ECombatState::ECS_Reloading;
+	bTransformRightHand = PlayerCharacter->GetCombatState() != ECombatState::ECS_Reloading;
 }
 
 /*
@@ -106,6 +109,56 @@ void UCharacterAnimInstance::PlayFireMontage(bool bIsAiming)
 	}
 }
 
+void UCharacterAnimInstance::PlayReloadMontage(const EToolType ToolType)
+{
+	if(ReloadMontage)
+	{
+		Montage_Play(ReloadMontage);
+		FName SectionName;
+		switch (ToolType) {
+		case EToolType::ETT_Handgun:
+			SectionName = FName("Handgun");
+			break;
+		case EToolType::ETT_SubMachineGun:
+			SectionName = FName("Handgun");
+			break;
+		case EToolType::ETT_AssaultRifle:
+			SectionName = FName("AssaultRifle");
+			break;
+		case EToolType::ETT_BoltAction:
+			SectionName = FName("AssaultRifle");
+			break;
+		case EToolType::ETT_PumpAction:
+			SectionName = FName("AssaultRifle");
+			break;
+		case EToolType::ETT_RocketLauncher:
+			SectionName = FName("AssaultRifle");
+			break;
+		case EToolType::ETT_GrenadeLauncher:
+			SectionName = FName("AssaultRifle");
+			break;
+		default: ;
+		}
+		Montage_JumpToSection(SectionName);
+	}
+
+	FOnMontageEnded MontageCompleted;
+	MontageCompleted.BindWeakLambda(this, [this](UAnimMontage* AnimMontage, bool bInterrupted)
+	{
+		if (bInterrupted)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("We were interrupted"));
+			if (PlayerCharacter->HasAuthority()) PlayerCharacter->SetCombatState(ECombatState::ECS_Unoccupied);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("We completed"));
+			PlayerCharacter->ReloadEnd();
+		}
+	});
+	Montage_SetEndDelegate(MontageCompleted, ReloadMontage);
+}
+
 void UCharacterAnimInstance::PlayHitReactMontage()
 {
 	if(HitReactMontage)
@@ -113,5 +166,21 @@ void UCharacterAnimInstance::PlayHitReactMontage()
 		Montage_Play(HitReactMontage);
 		const FName SectionName("FromFront");
 		Montage_JumpToSection(SectionName);
+
+		FOnMontageEnded MontageCompleted;
+		MontageCompleted.BindWeakLambda(this, [this](UAnimMontage* AnimMontage, bool bInterrupted)
+		{
+			if (bInterrupted)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("We were interrupted"));
+				if (PlayerCharacter->HasAuthority()) PlayerCharacter->SetCombatState(ECombatState::ECS_Unoccupied);
+			}
+			else
+			{
+				// UE_LOG(LogTemp, Warning, TEXT("We completed"));
+				// PlayerCharacter->ReloadEnd();
+			}
+		});
+		Montage_SetEndDelegate(MontageCompleted, HitReactMontage);
 	}
 }

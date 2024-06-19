@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Character/CharacterData.h"
 #include "Components/ActorComponent.h"
 #include "UI/PlayerHUD.h"
 #include "EquipmentComponent.generated.h"
 
+enum class EToolType : uint8;
 class APlayerHUD;
 class APlayerCharacterController;
 class ATool;
@@ -21,17 +23,23 @@ public:
 	friend class APlayerCharacter;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	void SetHUDCarriedAmmunition();
 	void EquipTool(ATool* ToolToEquip);
+	void Reload();
+	
+	UFUNCTION(BlueprintCallable)
+	void ReloadEnd();
+	void UpdateAmmunition();
 
 protected:
 	virtual void BeginPlay() override;
-	void SetAiming(bool bIsAiming);
 
-	UFUNCTION(Server, Reliable)
-	void ServerSetAiming(bool bIsAiming);
-
+	// Activating
 	UFUNCTION()
 	void OnRep_EquippedTool();
+	
+	void AttachToolToSocket(AActor* Tool, const FName& SocketName);
+	
 	void ActivateTool();
 
 	UFUNCTION(Server, Reliable)
@@ -40,14 +48,32 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastActivate(const FVector_NetQuantize& TraceHitTarget);
 
-	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
+	// Reloading
+	UFUNCTION(Server, Reliable)
+	void ServerReload();
 
+	void HandleReload();
+
+	int32 AmountToReload();
+	
+	// Aiming
+	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
 	void SetHUDCrosshairs(float DeltaTime);
+	void SetAiming(bool bIsAiming);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetAiming(bool bIsAiming);
 
 private:
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 	UPROPERTY() APlayerCharacterController* PlayerCharacterController;
 	UPROPERTY() APlayerHUD* PlayerHUD;
+
+	UPROPERTY(ReplicatedUsing=OnRep_CombatState)
+	ECombatState CombatState = ECombatState::ECS_Unoccupied;
+
+	UFUNCTION()
+	void OnRep_CombatState();
 
 	UPROPERTY(ReplicatedUsing=OnRep_EquippedTool)
 	TObjectPtr<ATool> EquippedTool;
@@ -89,10 +115,10 @@ private:
 	float DefaultFOV;
 	float CurrentFOV;
 	
-	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Properties")
 	float MarksmanFOV = 30.f;
 	
-	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Properties")
 	float MarksmanInterpSpeed = 20.f;
 
 	void InterpFOV(float DeltaTime);
@@ -105,7 +131,40 @@ private:
 	void FireIntervalStart();
 	void FireIntervalEnd();
 
-	bool bCanFire = true;
+	bool bCanActivate = true;
+	bool CanActivate();
+
+	UPROPERTY(ReplicatedUsing=OnRep_CarriedAmmunition)
+	int32 CarriedAmmunition;
+
+	UFUNCTION()
+	void OnRep_CarriedAmmunition();
+
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Ammunition")
+	int32 StartingHandgunAmmunition = 12;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Ammunition")
+	int32 StartingSubMachineGunAmmunition = 30;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Ammunition")
+	int32 StartingAssaultRifleAmmunition = 30;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Ammunition")
+	int32 StartingGrenadeLauncherAmmunition = 8;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Ammunition")
+	int32 StartingRocketLauncherAmmunition = 4;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Ammunition")
+	int32 StartingShotgunAmmunition = 15;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Ammunition")
+	int32 StartingHighCaliberAmmunition = 8;
+
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Ammunition")
+	TMap<EToolType, int32> CarriedAmmunitionMap;
+
+	void InitializeCarriedAmmunition();
 	
 public:
 };

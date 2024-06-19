@@ -34,6 +34,7 @@ struct FUIWidgetRow : public FTableRowBase
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmunitionChanged, int32, NewValue);
 
 /**
  * 
@@ -76,6 +77,16 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
 	FOnPlayerStatChangedSignature OnSpellPointsChanged;
+
+	// TODO: Maybe better solution
+	UPROPERTY(BlueprintAssignable, Category="Equipment")
+	FOnAmmunitionChanged OnAmmunitionChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="Equipment")
+	FOnAmmunitionChanged OnCarriedAmmunitionChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="Equipment")
+	FOnAmmunitionChanged OnGrenadeCountChanged;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|WidgetData")

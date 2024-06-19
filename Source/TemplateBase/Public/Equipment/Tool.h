@@ -3,9 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/WeapenData.h"
 #include "GameFramework/Actor.h"
 #include "Tool.generated.h"
 
+enum class EToolType : uint8;
+class APlayerCharacterController;
+class APlayerCharacter;
 class ACasing;
 class UWidgetComponent;
 
@@ -31,6 +35,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	void ShowPickupWidget(bool bShowWidget);
 	virtual void Activate(const FVector& HitTarget);
+	virtual void Drop();
+	virtual void OnRep_Owner() override;
+	void AddAmmunition(int32 AmountToAdd);
+	void SetHUDAmmunition();
 
 	// TODO: Should be DataAsset/Table
 	/*
@@ -78,6 +86,12 @@ public:
 	UPROPERTY(EditAnywhere, Category="Equipment")
 	TSubclassOf<ACasing> CasingClass;
 
+	UPROPERTY(EditAnywhere, Category="Equipment|SFX")
+	TObjectPtr<USoundBase> EquipSound;
+
+	UPROPERTY(EditAnywhere, Category="Equipment|SFX")
+	TObjectPtr<USoundBase> DropSound;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -108,11 +122,31 @@ protected:
 	TObjectPtr<UWidgetComponent> PickupWidget;
 
 private:
+	UPROPERTY()
+	APlayerCharacterController* OwnerController;
+	
+	UPROPERTY()
+	APlayerCharacter* OwnerCharacter;
+
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	EToolType ToolType = EToolType::ETT_Handgun;
+	
 	UPROPERTY(ReplicatedUsing=OnRep_ToolState, VisibleAnywhere, Category="Equipment")
 	EToolState ToolState = EToolState::ETS_Initial;
 
 	UFUNCTION()
 	void OnRep_ToolState();
+
+	UPROPERTY(ReplicatedUsing=OnRep_Ammunition, EditDefaultsOnly, Category="Equipment")
+	int32 Ammunition;
+
+	UFUNCTION()
+	void OnRep_Ammunition();
+
+	void SpendAmmunition();
+
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	int32 AmmunitionCapacity;
 
 public:	
 	void SetToolState(const EToolState NewState);
@@ -120,4 +154,8 @@ public:
 	FORCEINLINE USkeletalMeshComponent* GetMesh() const { return Mesh; }
 	FORCEINLINE float GetMarksmanFOV() const { return MarksmanFOV; }
 	FORCEINLINE float GetMarksmanInterpSpeed() const { return MarksmanInterpSpeed; }
+	FORCEINLINE EToolType GetToolType() const { return ToolType; }
+	bool IsEmpty();
+	FORCEINLINE int32 GetAmmunition() const { return Ammunition; }
+	FORCEINLINE int32 GetAmmunitionCapacity() const { return AmmunitionCapacity; }
 };

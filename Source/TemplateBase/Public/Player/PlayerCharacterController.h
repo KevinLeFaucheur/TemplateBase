@@ -15,6 +15,9 @@ class APlayerCharacter;
 class UInputAction;
 class UInputConfig;
 class UInputMappingContext;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAmmunitionChangedSignature, int32 /* NewCount */);
+
 /**
  * 
  */
@@ -48,10 +51,23 @@ public:
 	TObjectPtr<UInputAction> FireAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> ReloadAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> ThrowAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputAction> AimAction;
 	
 	UFUNCTION(Client, Reliable)
 	void ClientShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
+	
+	void SetHUDAmmunition(int32 Ammo) const;
+	void SetHUDCarriedAmmunition(int32 Ammo) const;
+	void SetHUDGrenadeCount(int32 GrenadeCount) const;
+	FOnAmmunitionChangedSignature AmmunitionChanged;
+	FOnAmmunitionChangedSignature CarriedAmmunitionChanged;
+	FOnAmmunitionChangedSignature GrenadeCountChanged;
 
 	UFUNCTION(BlueprintCallable)
 	void ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial = nullptr);
@@ -70,6 +86,8 @@ protected:
 	void FireButtonReleased();
 	void AimButtonPressed();
 	void AimButtonReleased();
+	void ReloadButtonPressed();
+	void ThrowButtonPressed();
 
 private:
 	UPROPERTY()

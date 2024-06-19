@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Character/BaseCharacter.h"
 #include "Character/CharacterData.h"
+#include "Equipment/Tool.h"
 #include "PlayerCharacter.generated.h"
 
 class UNiagaraComponent;
@@ -41,6 +42,8 @@ public:
 	void AimButtonPressed();
 	void AimButtonReleased();
 	void EquipButtonPressed();
+	void ReloadButtonPressed();
+	void ThrowButtonPressed();
 
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
@@ -50,6 +53,8 @@ public:
 	//~ Combat Interface
 
 	void PlayFireMontage(bool bAiming);
+	void PlayReloadMontage(const EToolType ToolType);
+	void ReloadEnd();
 	
 	//~ Player Interface
 	virtual void PlayHitReactMontage() override;
@@ -145,5 +150,7 @@ public:
 	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
 	FORCEINLINE ETurningInPlace GetTurningInPlace() const { return TurningInPlace; }
 	FORCEINLINE bool ShouldRotateRootBone() const { return bRotateRootBone; }
+	ECombatState GetCombatState() const;
+	void SetCombatState(const ECombatState NewState);
 	
 };

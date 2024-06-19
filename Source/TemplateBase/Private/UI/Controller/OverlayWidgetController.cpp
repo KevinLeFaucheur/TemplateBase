@@ -7,6 +7,7 @@
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
+#include "Player/PlayerCharacterController.h"
 #include "Player/PlayerCharacterState.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
@@ -78,6 +79,21 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 				}
 			}
 		);
+	}
+	if(APlayerCharacterController* CharacterPlayerController = Cast<APlayerCharacterController>(PlayerController))
+	{
+		CharacterPlayerController->AmmunitionChanged.AddLambda([this](int32 NewCount)
+		{
+			OnAmmunitionChanged.Broadcast(NewCount);
+		});
+		CharacterPlayerController->CarriedAmmunitionChanged.AddLambda([this](int32 NewCount)
+		{
+			OnCarriedAmmunitionChanged.Broadcast(NewCount);
+		});
+		CharacterPlayerController->GrenadeCountChanged.AddLambda([this](int32 NewCount)
+		{
+			OnGrenadeCountChanged.Broadcast(NewCount);
+		});
 	}
 }
 
