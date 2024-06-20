@@ -18,15 +18,13 @@ class TEMPLATEBASE_API AProjectile : public AActor
 public:	
 	AProjectile();
 	virtual void Tick(float DeltaTime) override;
-	
-	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn))
-	FDamageEffectParams DamageEffectParams;
+	virtual void Destroyed() override;
 
 protected:
 	virtual void BeginPlay() override;
-	
 	bool IsValidOverlap(AActor* OtherActor);
-
+	void PlayImpactEffects();
+	
 	UFUNCTION()
 	virtual void OnHit(
 		UPrimitiveComponent* HitComponent,
@@ -34,17 +32,21 @@ protected:
 		UPrimitiveComponent* OtherComp,
 		FVector NormalImpulse,
 		const FHitResult& Hit
-	);
-
-public:
-	virtual void Destroyed() override;
-
-private:
-	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")
-	TObjectPtr<UBoxComponent> HitCollision;
-
+		);
+	
 	UPROPERTY(VisibleAnywhere, Category="Weapon|Projectile")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
+	
+	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn))
+	FDamageEffectParams DamageEffectParams;
+	
+	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")
+	TObjectPtr<UBoxComponent> HitCollision;
+	
+	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")
+	float InitialSpeed = 15000.f;
+
+private:
 
 	UPROPERTY(EditAnywhere, Category="Weapon|Projectile|Effects")
 	TObjectPtr<UParticleSystem> Tracer;
@@ -56,7 +58,4 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Weapon|Projectile|Effects")
 	TObjectPtr<USoundBase> ImpactSound;
-
-public:	
-
 };

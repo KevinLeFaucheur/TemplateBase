@@ -45,6 +45,7 @@ void ATool::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 void ATool::BeginPlay()
 {
 	Super::BeginPlay();
+	SetReplicateMovement(true);
 	
 	if (HasAuthority())
 	{
@@ -136,6 +137,19 @@ void ATool::SetHUDAmmunition()
 }
 
 /*
+ * Scatter
+ */
+FVector ATool::TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget)
+{
+	const FVector ToTargetNormalized = (HitTarget - TraceStart).GetSafeNormal();
+	const FVector SphereCenter = TraceStart + ToTargetNormalized * DistanceToSphere;
+
+	if (bDebugScatter) UKismetSystemLibrary::DrawDebugSphere(this, SphereCenter, SphereRadius, 112, FLinearColor::Red, 3.f);
+
+	return FVector::ZeroVector;
+}
+
+/*
  * Interaction
  */
 void ATool::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -176,12 +190,12 @@ void ATool::SetToolState(const EToolState NewState)
 		Mesh->SetEnableGravity(false);
 		Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		if(EquipSound) UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
-		// if(bUsePhysicsAsset)
-		// {
-		// 	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		// 	Mesh->SetEnableGravity(true);
-		// 	Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
-		// }
+		if(bUsePhysicsAsset)
+		{
+			Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			Mesh->SetEnableGravity(true);
+			Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		}
 		break;
 	case EToolState::ETS_Dropped:
 		AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -209,6 +223,12 @@ void ATool::OnRep_ToolState()
 		Mesh->SetEnableGravity(false);
 		Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		if(EquipSound) UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
+		if(bUsePhysicsAsset)
+		{
+			Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			Mesh->SetEnableGravity(true);
+			Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+		}
 		break;
 	case EToolState::ETS_Dropped:
 		Mesh->SetSimulatePhysics(true);

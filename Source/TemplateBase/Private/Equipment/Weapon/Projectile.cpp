@@ -1,11 +1,9 @@
 // Retropsis @ 2024
 
 #include "Equipment/Weapon/Projectile.h"
-
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemLibrary.h"
 #include "Components/BoxComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "Interaction/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "TemplateBase/TemplateBase.h"
@@ -24,12 +22,6 @@ AProjectile::AProjectile()
 	HitCollision->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 	HitCollision->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	HitCollision->SetCollisionResponseToChannel(ECC_SkeletalMesh, ECR_Block);
-
-	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
-	ProjectileMovementComponent->bRotationFollowsVelocity = true;
-	ProjectileMovementComponent->InitialSpeed = 15000.f;
-	ProjectileMovementComponent->MaxSpeed = 15000.f;
-	// ProjectileMovementComponent->ProjectileGravityScale = 1.f;
 }
 
 void AProjectile::BeginPlay()
@@ -70,10 +62,8 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	Destroy();
 }
 
-void AProjectile::Destroyed()
+void AProjectile::PlayImpactEffects()
 {
-	Super::Destroyed();
-	
 	if(ImpactParticles)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetActorTransform());
@@ -82,5 +72,11 @@ void AProjectile::Destroyed()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 	}
+}
+
+void AProjectile::Destroyed()
+{
+	Super::Destroyed();
+	PlayImpactEffects();
 }
 

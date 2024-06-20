@@ -96,6 +96,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	FVector TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget);
+
 	UFUNCTION()
 	void OnSphereBeginOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -147,6 +149,24 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	int32 AmmunitionCapacity;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	bool bUsePhysicsAsset = false;
+
+	/*
+	 * Scatter
+	*/
+	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	bool bUseScatter = false;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	bool bDebugScatter = false;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	float DistanceToSphere = 1000.f;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	float SphereRadius = 75.f;
 
 public:	
 	void SetToolState(const EToolState NewState);
