@@ -91,9 +91,9 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 		/* */
 	}
-	bUseFABRIK = PlayerCharacter->GetCombatState() != ECombatState::ECS_Reloading;
-	bUseAimOffset = PlayerCharacter->GetCombatState() != ECombatState::ECS_Reloading;
-	bTransformRightHand = PlayerCharacter->GetCombatState() != ECombatState::ECS_Reloading;
+	bUseFABRIK = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
+	bUseAimOffset = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
+	bTransformRightHand = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
 }
 
 /*
@@ -129,7 +129,7 @@ void UCharacterAnimInstance::PlayReloadMontage(const EToolType ToolType)
 			SectionName = FName("AssaultRifle");
 			break;
 		case EToolType::ETT_PumpAction:
-			SectionName = FName("AssaultRifle");
+			SectionName = FName("Shotgun");
 			break;
 		case EToolType::ETT_RocketLauncher:
 			SectionName = FName("AssaultRifle");
@@ -159,6 +159,11 @@ void UCharacterAnimInstance::PlayReloadMontage(const EToolType ToolType)
 	Montage_SetEndDelegate(MontageCompleted, ReloadMontage);
 }
 
+void UCharacterAnimInstance::JumpToReloadEnd(const FName& SectionName)
+{
+	if(ReloadMontage) Montage_JumpToSection(SectionName);
+}
+
 void UCharacterAnimInstance::PlayHitReactMontage()
 {
 	if(HitReactMontage)
@@ -182,5 +187,28 @@ void UCharacterAnimInstance::PlayHitReactMontage()
 			}
 		});
 		Montage_SetEndDelegate(MontageCompleted, HitReactMontage);
+	}
+}
+
+void UCharacterAnimInstance::PlayThrowMontage()
+{
+	if(ThrowMontage)
+	{
+		Montage_Play(ThrowMontage);
+		
+		// FOnMontageEnded MontageCompleted;
+		// MontageCompleted.BindWeakLambda(this, [this](UAnimMontage* AnimMontage, bool bInterrupted)
+		// {
+		// 	if (bInterrupted)
+		// 	{
+		// 		UE_LOG(LogTemp, Warning, TEXT("We were interrupted"));
+		// 		if (PlayerCharacter->HasAuthority()) PlayerCharacter->SetCombatState(ECombatState::ECS_Unoccupied);
+		// 	}
+		// 	else
+		// 	{
+		// 		// UE_LOG(LogTemp, Warning, TEXT("We completed"));
+		// 	}
+		// });
+		// Montage_SetEndDelegate(MontageCompleted, HitReactMontage);
 	}
 }

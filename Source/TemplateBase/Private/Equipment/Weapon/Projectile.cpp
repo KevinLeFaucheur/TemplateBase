@@ -2,6 +2,7 @@
 
 #include "Equipment/Weapon/Projectile.h"
 #include "AbilitySystemComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/BaseAbilitySystemLibrary.h"
 #include "Components/BoxComponent.h"
 #include "Interaction/PlayerInterface.h"
@@ -72,6 +73,38 @@ void AProjectile::PlayImpactEffects()
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 	}
+}
+
+void AProjectile::SpawnTrailSystem()
+{
+	if(TrailSystem) TrailComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+		TrailSystem, GetRootComponent(), FName(), GetActorLocation(), GetActorRotation(),
+		EAttachLocation::KeepWorldPosition, false);
+}
+
+void AProjectile::ApplyRadialDamage()
+{
+	// if(!IsValidOverlap(OtherActor)) return;
+	//
+	// if(HasAuthority())
+	// {
+	// 	if(UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+	// 	{
+	// 		DamageEffectParams.DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
+	// 		DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+	// 		UBaseAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
+	// 	}
+	// }
+}
+
+void AProjectile::DestroyTimerStart()
+{
+	GetWorldTimerManager().SetTimer(DestroyTimer, this, &AProjectile::DestroyTimerEnd, DestroyTime);
+}
+
+void AProjectile::DestroyTimerEnd()
+{
+	Destroy();
 }
 
 void AProjectile::Destroyed()

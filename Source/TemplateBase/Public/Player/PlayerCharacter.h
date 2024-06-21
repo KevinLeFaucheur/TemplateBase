@@ -53,8 +53,12 @@ public:
 	//~ Combat Interface
 
 	void PlayFireMontage(bool bAiming);
+	void PlayThrowMontage();
 	void PlayReloadMontage(const EToolType ToolType);
 	void ReloadEnd();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void ToggleScopeOverlay(bool bShow);
 	
 	//~ Player Interface
 	virtual void PlayHitReactMontage() override;

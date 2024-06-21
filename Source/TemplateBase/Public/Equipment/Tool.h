@@ -145,12 +145,18 @@ protected:
 	float SphereRadius = 75.f;
 
 	/*
+	 * Scope
+	 */
+	UPROPERTY(EditAnywhere, Category="Equipment|Mods")
+	bool bHasScope = false;
+
+	/*
 	 * Damage
 	*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment|Damage")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment|Damage")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment|Damage", meta=(Categories="Damage"))
 	FGameplayTag DamageType;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment|Damage")
@@ -186,6 +192,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	bool bUsePhysicsAsset = false;
 
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Reload")
+	FName ReloadEndSection = FName("ReloadEnd");
+
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Reload")
+	bool bCanInterruptReload = false;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Reload")
+	FName OffhandSocket = FName("OffhandSocket");
+	
 public:	
 	void SetToolState(const EToolState NewState);
 	FORCEINLINE USphereComponent* GetAreaSphere() { return AreaSphere; }
@@ -193,7 +208,12 @@ public:
 	FORCEINLINE float GetMarksmanFOV() const { return MarksmanFOV; }
 	FORCEINLINE float GetMarksmanInterpSpeed() const { return MarksmanInterpSpeed; }
 	FORCEINLINE EToolType GetToolType() const { return ToolType; }
-	bool IsEmpty();
+	FORCEINLINE bool IsEmpty() const { return Ammunition <= 0; };
+	FORCEINLINE bool IsFull() const { return Ammunition == AmmunitionCapacity; };
 	FORCEINLINE int32 GetAmmunition() const { return Ammunition; }
 	FORCEINLINE int32 GetAmmunitionCapacity() const { return AmmunitionCapacity; }
+	FORCEINLINE bool HasScope() const { return bHasScope; }
+	FORCEINLINE FName GetReloadEndSection() const { return ReloadEndSection; }
+	FORCEINLINE FName GetOffhandSocket() const { return OffhandSocket; }
+	FORCEINLINE bool CanInterruptReload() const { return bCanInterruptReload; }
 };

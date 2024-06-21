@@ -95,7 +95,9 @@ public:
 	 */
 	void PlayFireMontage(bool bIsAiming);
 	void PlayHitReactMontage();
+	void PlayThrowMontage();
 	void PlayReloadMontage(const EToolType ToolType);
+	void JumpToReloadEnd(const FName& SectionName);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
 	TObjectPtr<UAnimMontage> FireMontage;
@@ -106,8 +108,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
 	TObjectPtr<UAnimMontage> ReloadMontage;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
+	TObjectPtr<UAnimMontage> ThrowMontage;
+	
 private:
 	FRotator CharacterRotationLastFrame;
 	FRotator CharacterRotation;
 	FRotator DeltaRotation;
+
+public:
+	FORCEINLINE UAnimMontage* GetReloadMontage() const { return ReloadMontage; };
 };

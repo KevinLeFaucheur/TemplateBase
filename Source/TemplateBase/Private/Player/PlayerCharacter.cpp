@@ -301,6 +301,14 @@ void APlayerCharacter::PlayFireMontage(bool bAiming)
 	}
 }
 
+void APlayerCharacter::PlayThrowMontage()
+{
+	if(UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->PlayThrowMontage();
+	}
+}
+
 void APlayerCharacter::PlayHitReactMontage()
 {
 	MulticastHitReact();
@@ -362,7 +370,7 @@ void APlayerCharacter::PlayReloadMontage(const EToolType ToolType)
  */
 void APlayerCharacter::ThrowButtonPressed()
 {
-	// if(EquipmentComponent) EquipmentComponent->Throw();
+	if(EquipmentComponent) EquipmentComponent->Throw();
 }
 
 /*

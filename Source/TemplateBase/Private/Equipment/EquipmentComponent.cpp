@@ -1,7 +1,6 @@
 // Retropsis @ 2024
 
 #include "Equipment/EquipmentComponent.h"
-
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "Camera/CameraComponent.h"
@@ -11,9 +10,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/CharacterAnimInstance.h"
 #include "Player/PlayerCharacter.h"
 #include "Player/PlayerCharacterController.h"
-#include "TemplateBase/TemplateBase.h"
 
 UEquipmentComponent::UEquipmentComponent()
 {
@@ -65,36 +64,21 @@ void UEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	}
 }
 
-void UEquipmentComponent::SetHUDCarriedAmmunition()
-{
-	PlayerCharacterController = PlayerCharacterController == nullptr ? Cast<APlayerCharacterController>(PlayerCharacter->GetController()) : PlayerCharacterController;
-	if(PlayerCharacterController)
-	{
-		PlayerCharacterController->SetHUDCarriedAmmunition(CarriedAmmunition);	
-	}
-}
-
 /*
  * Equipping
  */
 void UEquipmentComponent::EquipTool(ATool* ToolToEquip)
 {
 	if(PlayerCharacter == nullptr || ToolToEquip == nullptr) return;
-
-	if(EquippedTool) EquippedTool->Drop();
+	if(CombatState != ECombatState::ECS_Unoccupied) return;
 	
+	DropEquippedTool();
 	EquippedTool = ToolToEquip;
 	EquippedTool->SetToolState(EToolState::ETS_Equipped);
 	EquippedTool->SetOwner(PlayerCharacter);
 	EquippedTool->SetHUDAmmunition();
 	AttachToolToSocket(EquippedTool, FName("RightHandSocket"));
-
-	if(CarriedAmmunitionMap.Contains(EquippedTool->GetToolType()))
-	{
-		CarriedAmmunition = CarriedAmmunitionMap[EquippedTool->GetToolType()];
-	}
-	SetHUDCarriedAmmunition();
-	
+	UpdateCarriedAmmunition();
 	PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
 	PlayerCharacter->bUseControllerRotationYaw = true;
 }
@@ -112,10 +96,16 @@ void UEquipmentComponent::OnRep_EquippedTool()
 
 void UEquipmentComponent::AttachToolToSocket(AActor* Tool, const FName& SocketName)
 {
+	if(PlayerCharacter == nullptr || PlayerCharacter->GetMesh() == nullptr || Tool == nullptr) return;
 	if(const USkeletalMeshSocket* Socket = PlayerCharacter->GetMesh()->GetSocketByName(SocketName))
 	{
 		Socket->AttachActor(Tool, PlayerCharacter->GetMesh());
 	}
+}
+
+void UEquipmentComponent::DropEquippedTool()
+{
+	if(EquippedTool) EquippedTool->Drop();
 }
 
 /*
@@ -126,6 +116,7 @@ bool UEquipmentComponent::CanActivate()
 	if(!EquippedTool) return false;
 	if(EquippedTool->IsEmpty()) return false;
 	if(!bCanActivate) return false;
+	if(CombatState == ECombatState::ECS_Reloading && EquippedTool->CanInterruptReload()) return true;
 	if(CombatState != ECombatState::ECS_Unoccupied) return false;
 
 	return true;
@@ -163,6 +154,13 @@ void UEquipmentComponent::ServerActivate_Implementation(const FVector_NetQuantiz
 void UEquipmentComponent::MulticastActivate_Implementation(const FVector_NetQuantize& TraceHitTarget)
 {
 	if(EquippedTool == nullptr) return;
+	if(PlayerCharacter && CombatState == ECombatState::ECS_Reloading && EquippedTool->CanInterruptReload())
+	{
+		PlayerCharacter->PlayFireMontage(bAiming);
+		EquippedTool->Activate(TraceHitTarget);
+		CombatState = ECombatState::ECS_Unoccupied;
+		return;
+	}
 	if(PlayerCharacter && CombatState == ECombatState::ECS_Unoccupied)
 	{
 		PlayerCharacter->PlayFireMontage(bAiming);
@@ -194,9 +192,17 @@ void UEquipmentComponent::FireIntervalEnd()
 */
 void UEquipmentComponent::Reload()
 {
-	if(CarriedAmmunition > 0 && CombatState != ECombatState::ECS_Reloading)
+	if(CarriedAmmunition > 0 && CombatState == ECombatState::ECS_Unoccupied)
 	{
 		ServerReload();
+	}
+}
+
+void UEquipmentComponent::ReloadSingle()
+{
+	if(PlayerCharacter && PlayerCharacter->HasAuthority())
+	{
+		UpdateSingleAmmunition();
 	}
 }
 
@@ -238,6 +244,28 @@ void UEquipmentComponent::UpdateAmmunition()
 	EquippedTool->AddAmmunition(ReloadAmount);
 }
 
+void UEquipmentComponent::UpdateSingleAmmunition()
+{
+	if(PlayerCharacter == nullptr || EquippedTool == nullptr) return;
+	if(CarriedAmmunitionMap.Contains(EquippedTool->GetToolType()))
+	{
+		CarriedAmmunitionMap[EquippedTool->GetToolType()] -= 1;
+		CarriedAmmunition = CarriedAmmunitionMap[EquippedTool->GetToolType()];
+	}
+	SetHUDCarriedAmmunition();
+	EquippedTool->AddAmmunition(1);
+	bCanActivate = true;
+	if(EquippedTool->IsFull() || CarriedAmmunition == 0) JumpToReloadEnd();
+}
+
+void UEquipmentComponent::JumpToReloadEnd() const
+{
+	if(UCharacterAnimInstance* CharacterAnimInstance = Cast<UCharacterAnimInstance>(PlayerCharacter->GetMesh()->GetAnimInstance()))
+	{
+		CharacterAnimInstance->JumpToReloadEnd(EquippedTool->GetReloadEndSection());
+	}
+}
+
 int32 UEquipmentComponent::AmountToReload()
 {
 	const int32 RoomInMag = EquippedTool->GetAmmunitionCapacity() - EquippedTool->GetAmmunition();
@@ -259,6 +287,13 @@ void UEquipmentComponent::OnRep_CombatState()
 	case ECombatState::ECS_Reloading:
 		HandleReload();
 		break;
+	case ECombatState::ECS_Throwing:
+		if(PlayerCharacter && !PlayerCharacter->IsLocallyControlled())
+		{
+			PlayerCharacter->PlayThrowMontage();
+			AttachToolToSocket(EquippedTool, EquippedTool->GetOffhandSocket());
+		}
+		break;
 	default: ;
 	}
 }
@@ -274,6 +309,25 @@ void UEquipmentComponent::InitializeCarriedAmmunition()
 	CarriedAmmunitionMap.Emplace(EToolType::ETT_GrenadeLauncher, StartingGrenadeLauncherAmmunition);
 }
 
+void UEquipmentComponent::UpdateCarriedAmmunition()
+{
+	if(EquippedTool == nullptr) return;
+	if(CarriedAmmunitionMap.Contains(EquippedTool->GetToolType()))
+	{
+		CarriedAmmunition = CarriedAmmunitionMap[EquippedTool->GetToolType()];
+	}
+	SetHUDCarriedAmmunition();
+}
+
+void UEquipmentComponent::SetHUDCarriedAmmunition()
+{
+	PlayerCharacterController = PlayerCharacterController == nullptr ? Cast<APlayerCharacterController>(PlayerCharacter->GetController()) : PlayerCharacterController;
+	if(PlayerCharacterController)
+	{
+		PlayerCharacterController->SetHUDCarriedAmmunition(CarriedAmmunition);	
+	}
+}
+
 void UEquipmentComponent::OnRep_CarriedAmmunition()
 {
 	PlayerCharacterController = PlayerCharacterController == nullptr ? Cast<APlayerCharacterController>(PlayerCharacter->GetController()) : PlayerCharacterController;
@@ -281,6 +335,13 @@ void UEquipmentComponent::OnRep_CarriedAmmunition()
 	{
 		PlayerCharacterController->SetHUDCarriedAmmunition(CarriedAmmunition);	
 	}
+
+	const bool bJumpToReloadEnd = CombatState == ECombatState::ECS_Reloading &&
+		EquippedTool != nullptr &&
+		EquippedTool->CanInterruptReload() &&
+		CarriedAmmunition == 0;
+	
+	if(bJumpToReloadEnd) JumpToReloadEnd();
 }
 
 /*
@@ -418,13 +479,46 @@ void UEquipmentComponent::InterpFOV(float DeltaTime)
 
 void UEquipmentComponent::SetAiming(bool bIsAiming)
 {
+	if(PlayerCharacter == nullptr || EquippedTool == nullptr) return;
 	bAiming = bIsAiming;
 	ServerSetAiming(bIsAiming);
-	if(PlayerCharacter) PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? AimWalkSpeed : BaseWalkSpeed;
+	PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? AimWalkSpeed : BaseWalkSpeed;
+	if(PlayerCharacter->IsLocallyControlled() && EquippedTool->HasScope()) PlayerCharacter->ToggleScopeOverlay(bIsAiming);
 }
 
 void UEquipmentComponent::ServerSetAiming_Implementation(bool bIsAiming)
 {
 	bAiming = bIsAiming;
 	if(PlayerCharacter) PlayerCharacter->GetCharacterMovement()->MaxWalkSpeed = bIsAiming ? AimWalkSpeed : BaseWalkSpeed;
+}
+
+/*
+ * Throwing
+ */
+void UEquipmentComponent::Throw()
+{
+	if(CombatState != ECombatState::ECS_Unoccupied) return;
+	CombatState = ECombatState::ECS_Throwing;
+	if(PlayerCharacter)
+	{
+		PlayerCharacter->PlayThrowMontage();
+		AttachToolToSocket(EquippedTool, EquippedTool->GetOffhandSocket());
+	}
+	if(PlayerCharacter && !PlayerCharacter->HasAuthority()) ServerThrow();
+}
+
+void UEquipmentComponent::ServerThrow_Implementation()
+{
+	CombatState = ECombatState::ECS_Throwing;
+	if(PlayerCharacter)
+	{
+		PlayerCharacter->PlayThrowMontage();
+		AttachToolToSocket(EquippedTool, EquippedTool->GetOffhandSocket());
+	}
+}
+
+void UEquipmentComponent::ThrowEnd()
+{
+	CombatState = ECombatState::ECS_Unoccupied;
+	AttachToolToSocket(EquippedTool, FName("RightHandSocket"));
 }

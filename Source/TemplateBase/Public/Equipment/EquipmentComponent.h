@@ -23,13 +23,25 @@ public:
 	friend class APlayerCharacter;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void SetHUDCarriedAmmunition();
+	void DropEquippedTool();
 	void EquipTool(ATool* ToolToEquip);
 	void Reload();
+
+	UFUNCTION(BlueprintCallable)
+	void ReloadSingle();
 	
 	UFUNCTION(BlueprintCallable)
 	void ReloadEnd();
+	
+	void JumpToReloadEnd() const;
+	
 	void UpdateAmmunition();
+	void UpdateSingleAmmunition();
+	void UpdateCarriedAmmunition();
+	void SetHUDCarriedAmmunition();
+	
+	UFUNCTION(BlueprintCallable)
+	void ThrowEnd();
 
 protected:
 	virtual void BeginPlay() override;
@@ -63,6 +75,14 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void ServerSetAiming(bool bIsAiming);
+
+	/*
+	 * Throwing
+	 */
+	void Throw();
+
+	UFUNCTION(Server, Reliable)
+	void ServerThrow();
 
 private:
 	TObjectPtr<APlayerCharacter> PlayerCharacter;

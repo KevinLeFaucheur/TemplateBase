@@ -4,6 +4,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
+#include "Equipment/EquipmentComponent.h"
 #include "Equipment/Weapon/Casing.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -151,6 +152,12 @@ void ATool::SpendAmmunition()
 
 void ATool::OnRep_Ammunition()
 {
+	// TODO: Maybe some interface call instead
+	OwnerCharacter = OwnerCharacter == nullptr ? OwnerCharacter = Cast<APlayerCharacter>(GetOwner()) : OwnerCharacter;
+	if(OwnerCharacter && OwnerCharacter->EquipmentComponent && IsFull())
+	{
+		OwnerCharacter->EquipmentComponent->JumpToReloadEnd();
+	}
 	SetHUDAmmunition();
 }
 
@@ -259,9 +266,4 @@ void ATool::OnRep_ToolState()
 		break;
 	default: ;
 	}
-}
-
-bool ATool::IsEmpty()
-{
-	return Ammunition <= 0;
 }
