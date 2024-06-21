@@ -15,10 +15,11 @@ class TEMPLATEBASE_API AHitScanWeapon : public AWeapon
 	GENERATED_BODY()
 
 public:
-	void ApplyDamage(AController* InstigatorController, const FHitResult& FireHit);
-	void PlayHitEffects(const UWorld* World, const FHitResult& FireHit) const;
-	void ShowTracer(const FTransform& SocketTransform, UWorld* World, const FVector& BeamEnd) const;
 	virtual void Activate(const FVector& HitTarget) override;
+	void WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit) const;
+	void ApplyDamage(AController* InstigatorController, const FHitResult& FireHit);
+	void PlayHitEffects(const FHitResult& FireHit, bool bOverrideMultipliers = false) const;
+	void ShowTracer(const FVector& AtLocation, const UWorld* World, const FVector& BeamEnd) const;
 
 private:
 	UPROPERTY(EditAnywhere, Category="Equipment|HitScan")

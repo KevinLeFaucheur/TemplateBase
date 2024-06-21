@@ -207,6 +207,10 @@ void APlayerCharacterController::ClientShowDamageNumber_Implementation(float Dam
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		const FVector DamageTextLocation = DamageText->GetComponentLocation();
+		const float RandY = DamageTextLocation.Y + FMath::FRandRange(- 50.f, 50.f); 
+		const float RandZ = DamageTextLocation.Z + FMath::FRandRange(- 50.f, 50.f); 
+		DamageText->SetWorldLocation(FVector(DamageTextLocation.X, RandY, RandZ));
 		DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
 	}
 }

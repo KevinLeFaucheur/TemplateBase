@@ -22,19 +22,25 @@ void AHitScanWeapon::Activate(const FVector& HitTarget)
 		const FVector Start = SocketTransform.GetLocation();
 		const FVector End = Start + (HitTarget - Start) * 1.25;
 
-		if(UWorld* World = GetWorld())
+		FHitResult FireHit;
+		WeaponTraceHit(Start, HitTarget, FireHit);
+		ApplyDamage(InstigatorController, FireHit);
+		PlayHitEffects(FireHit);
+	}
+}
+
+void AHitScanWeapon::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit) const
+{
+	if(const UWorld* World = GetWorld())
+	{
+		const FVector End = bUseScatter ? TraceEndWithScatter(TraceStart, HitTarget) :  TraceStart + (HitTarget - TraceStart) * 1.25;
+		World->LineTraceSingleByChannel(OutHit, TraceStart, End, ECC_Visibility);
+		FVector BeamEnd = End;
+		if(OutHit.bBlockingHit)
 		{
-			FHitResult FireHit;
-			World->LineTraceSingleByChannel(FireHit, Start, End, ECC_Visibility);
-			FVector BeamEnd = End;
-			if(FireHit.bBlockingHit)
-			{
-				BeamEnd = FireHit.ImpactPoint;
-				ApplyDamage(InstigatorController, FireHit);
-				PlayHitEffects(World, FireHit);
-			}
-			ShowTracer(SocketTransform, World, BeamEnd);
+			BeamEnd = OutHit.ImpactPoint;
 		}
+		ShowTracer(TraceStart, World, BeamEnd);
 	}
 }
 
@@ -48,23 +54,27 @@ void AHitScanWeapon::ApplyDamage(AController* InstigatorController, const FHitRe
 	}
 }
 
-void AHitScanWeapon::PlayHitEffects(const UWorld* World, const FHitResult& FireHit) const
+void AHitScanWeapon::PlayHitEffects(const FHitResult& FireHit, bool bOverrideMultipliers) const
 {
-	if(ImpactParticles)
+	if(const UWorld* World = GetWorld())
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(World, ImpactParticles, FireHit.ImpactPoint, FireHit.ImpactNormal.Rotation());
-	}
-	if(ImpactSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(World, ImpactSound, FireHit.ImpactPoint);
+		if(ImpactParticles)
+		{
+			UGameplayStatics::SpawnEmitterAtLocation(World, ImpactParticles, FireHit.ImpactPoint, FireHit.ImpactNormal.Rotation());
+		}
+		if(ImpactSound)
+		{
+			if(bOverrideMultipliers) UGameplayStatics::PlaySoundAtLocation(World, ImpactSound, FireHit.ImpactPoint, .5f, FMath::FRandRange(-.5f, .5f));
+			else UGameplayStatics::PlaySoundAtLocation(World, ImpactSound, FireHit.ImpactPoint);
+		}
 	}
 }
 
-void AHitScanWeapon::ShowTracer(const FTransform& SocketTransform, UWorld* World, const FVector& BeamEnd) const
+void AHitScanWeapon::ShowTracer(const FVector& AtLocation, const UWorld* World, const FVector& BeamEnd) const
 {
 	if(BeamParticles)
 	{
-		if(UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(World, BeamParticles, SocketTransform))
+		if(UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(World, BeamParticles, AtLocation, FRotator::ZeroRotator, true))
 		{
 			Beam->SetVectorParameter(FName("Target"), BeamEnd);
 		}

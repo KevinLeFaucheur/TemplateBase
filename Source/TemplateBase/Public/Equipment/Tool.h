@@ -3,10 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
+#include "ScalableFloat.h"
+#include "AbilitySystem/AbilityTypes.h"
 #include "Data/WeapenData.h"
 #include "GameFramework/Actor.h"
 #include "Tool.generated.h"
 
+class UGameplayEffect;
 enum class EToolType : uint8;
 class APlayerCharacterController;
 class APlayerCharacter;
@@ -33,6 +37,8 @@ class TEMPLATEBASE_API ATool : public AActor
 public:	
 	ATool();
 	virtual void Tick(float DeltaTime) override;
+	void PlayFireAnimation();
+	void EjectCasing();
 	void ShowPickupWidget(bool bShowWidget);
 	virtual void Activate(const FVector& HitTarget);
 	virtual void Drop();
@@ -96,7 +102,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	FVector TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget);
+	FVector TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget) const;
 
 	UFUNCTION()
 	void OnSphereBeginOverlap(
@@ -122,6 +128,33 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category="Equipment")
 	TObjectPtr<UWidgetComponent> PickupWidget;
+
+	/*
+	 * Scatter
+	*/
+	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	bool bUseScatter = false;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	bool bDebugScatter = false;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	float DistanceToSphere = 1000.f;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	float SphereRadius = 75.f;
+
+	/*
+	 * Damage
+	*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment|Damage")
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment|Damage")
+	FGameplayTag DamageType;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Damage")
+	FDamageRange DamageRange;
 
 private:
 	UPROPERTY()
@@ -152,21 +185,6 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	bool bUsePhysicsAsset = false;
-
-	/*
-	 * Scatter
-	*/
-	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
-	bool bUseScatter = false;
-	
-	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
-	bool bDebugScatter = false;
-	
-	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
-	float DistanceToSphere = 1000.f;
-	
-	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
-	float SphereRadius = 75.f;
 
 public:	
 	void SetToolState(const EToolState NewState);

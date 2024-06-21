@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 
+#define TRACE_LENGTH 80000.f
+
 UENUM(BlueprintType)
 enum class EToolType : uint8
 {
