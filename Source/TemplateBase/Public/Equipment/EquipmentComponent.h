@@ -8,6 +8,7 @@
 #include "UI/PlayerHUD.h"
 #include "EquipmentComponent.generated.h"
 
+class AProjectile;
 enum class EToolType : uint8;
 class APlayerHUD;
 class APlayerCharacterController;
@@ -42,6 +43,14 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void ThrowEnd();
+
+	UFUNCTION(BlueprintCallable)
+	void Throwing();
+
+	UFUNCTION(Server, Reliable)
+	void ServerThrowing(const FVector_NetQuantize& Target);
+
+	void PickupAmmunition(EToolType ToolType, int32 AmmunitionAmount);
 
 protected:
 	virtual void BeginPlay() override;
@@ -83,6 +92,8 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void ServerThrow();
+	
+	void ToggleAttachedThrowable(bool bShow);
 
 private:
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
@@ -115,6 +126,23 @@ private:
 	float TraceStartAdjustment = 85.f;
 	
 	FVector HitTarget;
+
+	/*
+	 * Throw
+	 */
+	UPROPERTY(EditAnywhere, Category="Equipment|Throw")
+	TSubclassOf<AProjectile> ThrowableClass;
+
+	UPROPERTY(ReplicatedUsing=OnRep_ThrowableCount)
+	int32 ThrowableCount = 4;
+
+	UFUNCTION()
+	void OnRep_ThrowableCount();
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Throw")
+	int32 MaxThrowableCount = 4;
+
+	void UpdateHUDThrowableCount();
 	
 	/*
 	 * Crosshairs
@@ -159,6 +187,9 @@ private:
 
 	UFUNCTION()
 	void OnRep_CarriedAmmunition();
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Ammunition")
+	int32 MaxCarriedAmmunition = 100;
 
 	UPROPERTY(EditDefaultsOnly, Category="Equipment|Ammunition")
 	int32 StartingHandgunAmmunition = 12;

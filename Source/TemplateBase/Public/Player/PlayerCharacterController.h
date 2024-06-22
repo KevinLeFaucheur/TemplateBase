@@ -64,10 +64,10 @@ public:
 	
 	void SetHUDAmmunition(int32 Ammo) const;
 	void SetHUDCarriedAmmunition(int32 Ammo) const;
-	void SetHUDGrenadeCount(int32 GrenadeCount) const;
+	void SetHUDThrowableCount(int32 GrenadeCount) const;
 	FOnAmmunitionChangedSignature AmmunitionChanged;
 	FOnAmmunitionChangedSignature CarriedAmmunitionChanged;
-	FOnAmmunitionChangedSignature GrenadeCountChanged;
+	FOnAmmunitionChangedSignature ThrowableCountChanged;
 
 	UFUNCTION(BlueprintCallable)
 	void ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial = nullptr);

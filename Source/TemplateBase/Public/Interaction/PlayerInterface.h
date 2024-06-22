@@ -58,4 +58,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial = nullptr);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void PickupAmmunition(EToolType ToolType, int32 AmmunitionAmount);
 };

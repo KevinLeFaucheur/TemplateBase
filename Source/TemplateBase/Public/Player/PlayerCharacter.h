@@ -74,6 +74,7 @@ public:
 	virtual void AddToSpellPoints_Implementation(int32 InSpellPoints) override;
 	virtual void LevelUp_Implementation() override;
 	virtual void ToggleMagicCircle_Implementation(bool bShow, UMaterialInterface* DecalMaterial) override;
+	virtual void PickupAmmunition_Implementation(EToolType ToolType, int32 AmmunitionAmount) override;
 	//~ Player Interface
 
 	UFUNCTION(NetMulticast, Unreliable)
@@ -95,6 +96,7 @@ public:
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 
 protected:
+	virtual void BeginPlay() override;
 	void AimOffset(float DeltaTime);
 	void SimProxiesTurn();
 
@@ -135,6 +137,12 @@ private:
 	float ProxyYaw;
 	float TimeSinceLastMovementReplication;
 
+	/*
+	 *
+	 */
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStaticMeshComponent> AttachedThrowable;
+
 	/* Camera */
 	void HideCharacterIfCameraClose();
 
@@ -156,5 +164,5 @@ public:
 	FORCEINLINE bool ShouldRotateRootBone() const { return bRotateRootBone; }
 	ECombatState GetCombatState() const;
 	void SetCombatState(const ECombatState NewState);
-	
+	FORCEINLINE UStaticMeshComponent* GetAttachedThrowable() const { return AttachedThrowable; }
 };

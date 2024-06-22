@@ -51,6 +51,10 @@ APlayerCharacter::APlayerCharacter()
 	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagaraComponent");
 	LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
 	LevelUpNiagaraComponent->bAutoActivate = false;
+
+	AttachedThrowable = CreateDefaultSubobject<UStaticMeshComponent>("AttachedThrowable");
+	AttachedThrowable->SetupAttachment(GetMesh(), FName("ThrowableSocket"));
+	AttachedThrowable->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -76,6 +80,12 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	// Init Actor Info - Server
 	InitAbilityActorInfo();
 	AddCharacterAbilities();
+}
+
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	if(AttachedThrowable) AttachedThrowable->SetVisibility(false);
 }
 
 void APlayerCharacter::OnRep_PlayerState()
@@ -497,6 +507,11 @@ void APlayerCharacter::ToggleMagicCircle_Implementation(bool bShow, UMaterialInt
 		PlayerCharacterController->ToggleMagicCircle(bShow, DecalMaterial);
 		// PlayerCharacterController->bShowMouseCursor = !bShow;
 	}
+}
+
+void APlayerCharacter::PickupAmmunition_Implementation(EToolType ToolType, int32 AmmunitionAmount)
+{
+	EquipmentComponent->PickupAmmunition(ToolType, AmmunitionAmount);
 }
 
 /*

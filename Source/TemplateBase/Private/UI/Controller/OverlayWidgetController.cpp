@@ -90,7 +90,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		{
 			OnCarriedAmmunitionChanged.Broadcast(NewCount);
 		});
-		CharacterPlayerController->GrenadeCountChanged.AddLambda([this](int32 NewCount)
+		CharacterPlayerController->ThrowableCountChanged.AddLambda([this](int32 NewCount)
 		{
 			OnGrenadeCountChanged.Broadcast(NewCount);
 		});

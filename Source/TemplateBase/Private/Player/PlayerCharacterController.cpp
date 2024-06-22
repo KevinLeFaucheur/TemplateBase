@@ -229,9 +229,9 @@ void APlayerCharacterController::SetHUDCarriedAmmunition(int32 Ammo) const
 	CarriedAmmunitionChanged.Broadcast(Ammo);
 }
 
-void APlayerCharacterController::SetHUDGrenadeCount(int32 GrenadeCount) const
+void APlayerCharacterController::SetHUDThrowableCount(int32 GrenadeCount) const
 {
-	GrenadeCountChanged.Broadcast(GrenadeCount);
+	ThrowableCountChanged.Broadcast(GrenadeCount);
 }
 
 void APlayerCharacterController::ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial)

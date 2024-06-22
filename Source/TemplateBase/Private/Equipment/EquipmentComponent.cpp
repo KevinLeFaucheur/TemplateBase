@@ -7,6 +7,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Equipment/Tool.h"
 #include "Equipment/Data/WeapenData.h"
+#include "Equipment/Weapon/Projectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -27,6 +28,7 @@ void UEquipmentComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(UEquipmentComponent, EquippedTool);
 	DOREPLIFETIME(UEquipmentComponent, bAiming);
 	DOREPLIFETIME(UEquipmentComponent, CombatState);
+	DOREPLIFETIME(UEquipmentComponent, ThrowableCount);
 	DOREPLIFETIME_CONDITION(UEquipmentComponent, CarriedAmmunition, COND_OwnerOnly);
 }
 
@@ -46,6 +48,7 @@ void UEquipmentComponent::BeginPlay()
 	{
 		InitializeCarriedAmmunition();
 	}
+	UpdateHUDThrowableCount();
 }
 
 void UEquipmentComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -192,7 +195,7 @@ void UEquipmentComponent::FireIntervalEnd()
 */
 void UEquipmentComponent::Reload()
 {
-	if(CarriedAmmunition > 0 && CombatState == ECombatState::ECS_Unoccupied)
+	if(CarriedAmmunition > 0 && CombatState == ECombatState::ECS_Unoccupied && EquippedTool && !EquippedTool->IsFull())
 	{
 		ServerReload();
 	}
@@ -291,7 +294,8 @@ void UEquipmentComponent::OnRep_CombatState()
 		if(PlayerCharacter && !PlayerCharacter->IsLocallyControlled())
 		{
 			PlayerCharacter->PlayThrowMontage();
-			AttachToolToSocket(EquippedTool, EquippedTool->GetOffhandSocket());
+			if(EquippedTool) AttachToolToSocket(EquippedTool, EquippedTool->GetOffhandSocket());
+			ToggleAttachedThrowable(true);
 		}
 		break;
 	default: ;
@@ -342,6 +346,15 @@ void UEquipmentComponent::OnRep_CarriedAmmunition()
 		CarriedAmmunition == 0;
 	
 	if(bJumpToReloadEnd) JumpToReloadEnd();
+}
+
+void UEquipmentComponent::PickupAmmunition(EToolType ToolType, int32 AmmunitionAmount)
+{
+	if(CarriedAmmunitionMap.Contains(ToolType))
+	{
+		CarriedAmmunitionMap[ToolType] = FMath::Clamp(CarriedAmmunitionMap[ToolType] + AmmunitionAmount, 0, MaxCarriedAmmunition);
+		UpdateCarriedAmmunition();
+	}
 }
 
 /*
@@ -497,28 +510,81 @@ void UEquipmentComponent::ServerSetAiming_Implementation(bool bIsAiming)
  */
 void UEquipmentComponent::Throw()
 {
+	if(ThrowableCount == 0) return;
+	if(EquippedTool == nullptr) return; // TODO: Only temporary solution, should be able to throw anyway
 	if(CombatState != ECombatState::ECS_Unoccupied) return;
 	CombatState = ECombatState::ECS_Throwing;
 	if(PlayerCharacter)
 	{
 		PlayerCharacter->PlayThrowMontage();
-		AttachToolToSocket(EquippedTool, EquippedTool->GetOffhandSocket());
+		if(EquippedTool) AttachToolToSocket(EquippedTool, EquippedTool->GetOffhandSocket());
+		ToggleAttachedThrowable(true);
 	}
 	if(PlayerCharacter && !PlayerCharacter->HasAuthority()) ServerThrow();
+	if(PlayerCharacter && PlayerCharacter->HasAuthority())
+	{
+		ThrowableCount = FMath::Clamp(ThrowableCount - 1, 0 , MaxThrowableCount);
+		UpdateHUDThrowableCount();
+	}
 }
 
 void UEquipmentComponent::ServerThrow_Implementation()
 {
+	if(ThrowableCount == 0) return;
 	CombatState = ECombatState::ECS_Throwing;
 	if(PlayerCharacter)
 	{
 		PlayerCharacter->PlayThrowMontage();
-		AttachToolToSocket(EquippedTool, EquippedTool->GetOffhandSocket());
+		if(EquippedTool) AttachToolToSocket(EquippedTool, EquippedTool->GetOffhandSocket());
+		ToggleAttachedThrowable(true);
 	}
+	ThrowableCount = FMath::Clamp(ThrowableCount - 1, 0 , MaxThrowableCount);
+	UpdateHUDThrowableCount();
 }
 
 void UEquipmentComponent::ThrowEnd()
 {
 	CombatState = ECombatState::ECS_Unoccupied;
 	AttachToolToSocket(EquippedTool, FName("RightHandSocket"));
+}
+
+void UEquipmentComponent::Throwing()
+{
+	ToggleAttachedThrowable(false);
+	if(PlayerCharacter && PlayerCharacter->IsLocallyControlled()) ServerThrowing(HitTarget);
+}
+
+void UEquipmentComponent::ServerThrowing_Implementation(const FVector_NetQuantize& Target)
+{
+	if(PlayerCharacter && PlayerCharacter->GetAttachedThrowable() && ThrowableClass)
+	{
+		const FVector StartingLocation = PlayerCharacter->GetAttachedThrowable()->GetComponentLocation();
+		const FVector ToTarget = Target - StartingLocation;
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = PlayerCharacter;
+		SpawnParams.Instigator = PlayerCharacter;
+		if (UWorld* World = GetWorld())
+		{
+			World->SpawnActor<AProjectile>(ThrowableClass, StartingLocation, ToTarget.Rotation(), SpawnParams);
+		}
+	}
+}
+
+void UEquipmentComponent::ToggleAttachedThrowable(bool bShow)
+{
+	if(PlayerCharacter->GetAttachedThrowable()) PlayerCharacter->GetAttachedThrowable()->SetVisibility(bShow);
+}
+
+void UEquipmentComponent::OnRep_ThrowableCount()
+{
+	UpdateHUDThrowableCount();
+}
+
+void UEquipmentComponent::UpdateHUDThrowableCount()
+{
+	PlayerCharacterController = PlayerCharacterController == nullptr ? Cast<APlayerCharacterController>(PlayerCharacter->GetController()) : PlayerCharacterController;
+	if(PlayerCharacterController)
+	{
+		PlayerCharacterController->SetHUDThrowableCount(ThrowableCount);	
+	}
 }
