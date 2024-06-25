@@ -13,7 +13,7 @@
 
 ASpellProjectile::ASpellProjectile()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
@@ -45,6 +45,19 @@ void ASpellProjectile::BeginPlay()
 	}
 }
 
+void ASpellProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if(!IsValidOverlap(OtherActor)) return;
+	if(!bHit) OnHit();
+	
+	if(HasAuthority())
+	{
+		ApplyDamageEffects(OtherActor);
+		Destroy();
+	}
+	else bHit = true;
+}
+
 void ASpellProjectile::OnHit()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
@@ -62,36 +75,28 @@ bool ASpellProjectile::IsValidOverlap(AActor* OtherActor)
 	return true;
 }
 
-void ASpellProjectile::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if(!IsValidOverlap(OtherActor)) return;
-	if(!bHit) OnHit();
-	
-	if(HasAuthority())
-	{
-		if(UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-		{
-			DamageEffectParams.DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
-			
-			const bool bAirborne = FMath::RandRange(1, 100) < DamageEffectParams.AirborneChance;
-			if(bAirborne)
-			{
-				FRotator Rotation = GetActorRotation();
-				Rotation.Pitch = 45.f;
-				const FVector AirborneDirection = Rotation.Vector();
-				DamageEffectParams.AirborneForce = AirborneDirection * DamageEffectParams.AirborneForceMagnitude;
-			}
-			
-			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
-			UBaseAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
-		}
-		Destroy();
-	}
-	else bHit = true;
-}
-
 void ASpellProjectile::Destroyed()
 {
 	if(!bHit && !HasAuthority()) OnHit();
 	Super::Destroyed();
+}
+
+void ASpellProjectile::ApplyDamageEffects(AActor* OtherActor)
+{
+	if(UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+	{
+		DamageEffectParams.DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
+			
+		const bool bAirborne = FMath::RandRange(1, 100) < DamageEffectParams.AirborneChance;
+		if(bAirborne)
+		{
+			FRotator Rotation = GetActorRotation();
+			Rotation.Pitch = 45.f;
+			const FVector AirborneDirection = Rotation.Vector();
+			DamageEffectParams.AirborneForce = AirborneDirection * DamageEffectParams.AirborneForceMagnitude;
+		}
+			
+		DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+		UBaseAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
+	}
 }

@@ -34,9 +34,8 @@ void UProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation, 
 	Projectile->FinishSpawning(SpawnTransform);
 }
 
-void UProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-                                       const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
-                                       const FGameplayEventData* TriggerEventData)
+void UProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,  const FGameplayAbilityActorInfo* ActorInfo,
+	const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }

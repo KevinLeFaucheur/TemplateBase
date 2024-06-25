@@ -146,39 +146,39 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 		DamageTypeValue *= ( 100.f - Resistance ) / 100.f;
 
-		// if (UBaseAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
-		// {
-		// 	DamageTypeValue = UBaseAbilitySystemLibrary::GetRadialDamageWithFalloff(
-		// 	   TargetAvatar,
-		// 	   DamageTypeValue,
-		// 	   0.f,
-		// 	   UBaseAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
-		// 	   UBaseAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
-		// 	   UBaseAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
-		// 	   1.f);
-		// }
-		
-		if(UBaseAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		if (UBaseAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
 		{
-			if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
-			{
-				CombatInterface->GetOnTakeDamage().AddLambda([&] (float DamageAmount)
-				{
-					DamageTypeValue = DamageAmount;
-				});
-			}
-			UGameplayStatics::ApplyRadialDamageWithFalloff(
-				TargetAvatar,
-				DamageTypeValue,
-				0.f,
-				UBaseAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
-				UBaseAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
-				UBaseAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
-				1.f,
-				UDamageType::StaticClass(),
-				TArray<AActor*>(),
-				SourceAvatar, nullptr);
+			DamageTypeValue = UBaseAbilitySystemLibrary::GetRadialDamageWithFalloff(
+			   TargetAvatar,
+			   DamageTypeValue,
+			   0.f,
+			   UBaseAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+			   UBaseAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+			   UBaseAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+			   1.f);
 		}
+		
+		// if(UBaseAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		// {
+		// 	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
+		// 	{
+		// 		CombatInterface->GetOnTakeDamage().AddLambda([&] (float DamageAmount)
+		// 		{
+		// 			DamageTypeValue = DamageAmount;
+		// 		});
+		// 	}
+		// 	UGameplayStatics::ApplyRadialDamageWithFalloff(
+		// 		TargetAvatar,
+		// 		DamageTypeValue,
+		// 		0.f,
+		// 		UBaseAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+		// 		UBaseAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+		// 		UBaseAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+		// 		1.f,
+		// 		UDamageType::StaticClass(),
+		// 		TArray<AActor*>(),
+		// 		SourceAvatar, nullptr);
+		// }
 		
 		Damage += DamageTypeValue;
 	}

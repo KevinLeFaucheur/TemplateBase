@@ -47,9 +47,9 @@ public:
 	virtual 	int32 GetMinionCount_Implementation() override;
 	virtual void IncrementMinionCount_Implementation(int32 Amount) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
-	virtual FOnTakeDamage& GetOnTakeDamage() override { return OnTakeDamage; }
-	virtual FOnASCRegistered& GetOnASCRegistered() override { return OnASCRegistered; } 
-	virtual FOnDeath& GetOnDeathDelegate() override { return OnDeath; }
+	virtual FOnTakeDamage& GetOnTakeDamage() override;
+	virtual FOnASCRegistered& GetOnASCRegistered() override;
+	virtual FOnDeath& GetOnDeathDelegate() override;
 	virtual bool IsElectrocuted_Implementation() const override;
 	virtual void SetIsElectrocuted_Implementation(bool bInIsElectrocuted) override;
 	//~ Combat Interface

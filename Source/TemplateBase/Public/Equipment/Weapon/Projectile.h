@@ -21,17 +21,16 @@ public:
 	AProjectile();
 	virtual void Tick(float DeltaTime) override;
 	virtual void Destroyed() override;
+	
+	FGameplayEffectSpecHandle DamageEffectSpecHandle;
+	FDamageEffectParams DamageEffectParams;
 
 protected:
 	virtual void BeginPlay() override;
-	
 	void DestroyTimerStart();
 	void DestroyTimerEnd();
 	bool IsValidOverlap(AActor* OtherActor);
-	void PlayImpactEffects();
-	void SpawnTrailSystem();
-	void ApplyRadialDamage();
-	
+
 	UFUNCTION()
 	virtual void OnHit(
 		UPrimitiveComponent* HitComponent,
@@ -46,14 +45,30 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category="Weapon|Projectile")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 	
-	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn))
-	FDamageEffectParams DamageEffectParams;
-	
 	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")
 	TObjectPtr<UBoxComponent> HitCollision;
 	
 	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")
 	float InitialSpeed = 15000.f;
+
+	/*
+	 * Applying Damage
+	 */
+	void ApplyDamageEffects(AActor* OtherActor);
+	void ApplyRadialDamage();
+
+	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")
+	float RadialDamageInnerRadius = 10.f;
+	
+	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")
+	float RadialDamageOuterRadius = 500.f;
+	
+	/*
+	 * Visual and Sound Effects
+	*/
+	void HitReact(AActor* OtherActor);
+	void PlayImpactEffects();
+	void SpawnTrailSystem();
 	
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UNiagaraSystem> TrailSystem;
@@ -61,19 +76,12 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UNiagaraComponent> TrailComponent;
 
-	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")
-	float RadialDamageInnerRadius = 200.f;
-	
-	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")
-	float RadialDamageOuterRadius = 500.f;
-
 	FTimerHandle DestroyTimer;
 
 	UPROPERTY(EditAnywhere)
 	float DestroyTime = 3.f;
 
 private:
-
 	UPROPERTY(EditAnywhere, Category="Weapon|Projectile|Effects")
 	TObjectPtr<UParticleSystem> Tracer;
 	

@@ -17,7 +17,7 @@ class TEMPLATEBASE_API AHitScanWeapon : public AWeapon
 public:
 	virtual void Activate(const FVector& HitTarget) override;
 	void WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit) const;
-	void ApplyDamage(AController* InstigatorController, const FHitResult& FireHit);
+	void ApplyDamage(const FHitResult& FireHit);
 	void PlayHitEffects(const FHitResult& FireHit, bool bOverrideMultipliers = false) const;
 	void ShowTracer(const FVector& AtLocation, const UWorld* World, const FVector& BeamEnd) const;
 

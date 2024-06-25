@@ -165,7 +165,10 @@ public:
 
 	/*
 	 * Damage Effect Params
-	 */
+	*/
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary")
+	static float GetRadialDamageWithFalloff(const AActor* TargetActor, float BaseDamage, float MinimumDamage, const FVector& Origin, float DamageInnerRadius, float DamageOuterRadius, float DamageFalloff);
+	
 	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary")
 	static void SetIsRadialDamageEffectParam(UPARAM(ref) FDamageEffectParams& DamageEffectParams, bool IsRadialDamage, float InnerRadius, float OuterRadius, FVector Origin);
 	
@@ -176,7 +179,7 @@ public:
 	static void SetDeathImpulseDirection(UPARAM(ref) FDamageEffectParams& DamageEffectParams, FVector DeathImpulseDirection, float Magnitude = 0.f);
 
 	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary")
-	static void SetTargetAbilitysystemComponent(UPARAM(ref) FDamageEffectParams& DamageEffectParams, UAbilitySystemComponent* InTargetASC);
+	static void SetTargetAbilitySystemComponent(UPARAM(ref) FDamageEffectParams& DamageEffectParams, UAbilitySystemComponent* InTargetASC);
 };
 
 

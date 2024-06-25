@@ -82,6 +82,7 @@ FDamageEffectParams UDamageGameplayAbility::MakeDamageEffectParamsFromClassDefau
 	if(bIsRadialDamage)
 	{
 		Params.bIsRadialDamage = bIsRadialDamage;
+		Params.RadialDamageOrigin = InRadialDamageOrigin;
 		Params.RadialDamageInnerRadius = RadialDamageInnerRadius;
 		Params.RadialDamageOuterRadius = RadialDamageOuterRadius;
 	}

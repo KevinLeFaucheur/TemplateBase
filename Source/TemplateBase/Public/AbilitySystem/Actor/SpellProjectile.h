@@ -36,7 +36,8 @@ protected:
 	virtual void OnHit();
 
 	bool IsValidOverlap(AActor* OtherActor);
-	
+	void ApplyDamageEffects(AActor* OtherActor);
+
 	UFUNCTION()
 	virtual void OnSphereBeginOverlap(
 		UPrimitiveComponent* OverlappedComponent,

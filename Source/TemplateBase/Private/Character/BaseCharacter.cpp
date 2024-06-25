@@ -234,6 +234,21 @@ ECharacterClass ABaseCharacter::GetCharacterClass_Implementation()
 	return CharacterClass;
 }
 
+FOnTakeDamage& ABaseCharacter::GetOnTakeDamage()
+{
+	return OnTakeDamage;
+}
+
+FOnASCRegistered& ABaseCharacter::GetOnASCRegistered()
+{
+	return OnASCRegistered;
+}
+
+FOnDeath& ABaseCharacter::GetOnDeathDelegate()
+{
+	return OnDeath;
+}
+
 bool ABaseCharacter::IsElectrocuted_Implementation() const
 {
 	return bIsElectrocuted;

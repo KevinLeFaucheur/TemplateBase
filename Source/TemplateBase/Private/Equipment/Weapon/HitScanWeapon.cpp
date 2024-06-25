@@ -1,6 +1,9 @@
 // Retropsis @ 2024
 
 #include "Equipment/Weapon/HitScanWeapon.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+#include "BaseGameplayTags.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -24,7 +27,7 @@ void AHitScanWeapon::Activate(const FVector& HitTarget)
 
 		FHitResult FireHit;
 		WeaponTraceHit(Start, HitTarget, FireHit);
-		ApplyDamage(InstigatorController, FireHit);
+		ApplyDamage(FireHit);
 		PlayHitEffects(FireHit);
 	}
 }
@@ -44,13 +47,12 @@ void AHitScanWeapon::WeaponTraceHit(const FVector& TraceStart, const FVector& Hi
 	}
 }
 
-// TODO: Change this to GAS
-void AHitScanWeapon::ApplyDamage(AController* InstigatorController, const FHitResult& FireHit)
+// TODO: Investigate for refactor
+void AHitScanWeapon::ApplyDamage(const FHitResult& FireHit)
 {
-	APlayerCharacter* PlayerCharacter = Cast<APlayerCharacter>(FireHit.GetActor());
-	if(HasAuthority() && PlayerCharacter && InstigatorController)
+	if(HasAuthority() && FireHit.GetActor())
 	{
-		UGameplayStatics::ApplyDamage(PlayerCharacter, Damage, InstigatorController, this, UDamageType::StaticClass());
+		ApplyHitScanDamage(FireHit.GetActor());
 	}
 }
 

@@ -1,11 +1,11 @@
 // Retropsis @ 2024
 
 #include "AbilitySystem/BaseAbilitySystemLibrary.h"
-
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "AbilitySystem/AbilityTypes.h"
+#include "Engine/DamageEvents.h"
 #include "Engine/OverlapResult.h"
 #include "Game/OverworldGameMode.h"
 #include "Interaction/CombatInterface.h"
@@ -269,10 +269,7 @@ FVector UBaseAbilitySystemLibrary::GetRadialDamageOrigin(const FGameplayEffectCo
 {
 	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
-		if(BaseEffectContext->GetDamageType().IsValid())
-		{
-			return BaseEffectContext->GetRadialDamageOrigin();
-		}
+		return BaseEffectContext->GetRadialDamageOrigin();
 	}
 	return FVector::ZeroVector;
 }
@@ -546,23 +543,24 @@ void UBaseAbilitySystemLibrary::SetDeathImpulseDirection(FDamageEffectParams& Da
 	else DamageEffectParams.DeathImpulse = DeathImpulseDirection * Magnitude;
 }
 
-void UBaseAbilitySystemLibrary::SetTargetAbilitysystemComponent(FDamageEffectParams& DamageEffectParams,
+void UBaseAbilitySystemLibrary::SetTargetAbilitySystemComponent(FDamageEffectParams& DamageEffectParams,
 	UAbilitySystemComponent* InTargetASC)
 {
 	DamageEffectParams.TargetAbilitySystemComponent = InTargetASC;
 }
 
-// float UBaseAbilitySystemLibrary::GetRadialDamageWithFalloff(const AActor* TargetActor, float BaseDamage,
-// 	float MinimumDamage, const FVector& Origin, float DamageInnerRadius, float DamageOuterRadius, float DamageFalloff)
-// {
-// 	if (!TargetActor) return 0.f;
-//  
-// 	FRadialDamageParams RadialDamageParams;
-// 	RadialDamageParams.BaseDamage = BaseDamage;
-// 	RadialDamageParams.DamageFalloff = DamageFalloff;
-// 	RadialDamageParams.InnerRadius = DamageInnerRadius;
-// 	RadialDamageParams.OuterRadius = DamageOuterRadius;
-// 	RadialDamageParams.MinimumDamage = MinimumDamage;
-// 	float DamageScale = RadialDamageParams.GetDamageScale((Origin - TargetActor->GetActorLocation()).Length());
-// 	return BaseDamage * DamageScale;
-// }
+float UBaseAbilitySystemLibrary::GetRadialDamageWithFalloff(const AActor* TargetActor, float BaseDamage,
+	float MinimumDamage, const FVector& Origin, float DamageInnerRadius, float DamageOuterRadius, float DamageFalloff)
+{
+	if (!TargetActor) return 0.f;
+ 
+	FRadialDamageParams RadialDamageParams;
+	RadialDamageParams.BaseDamage = BaseDamage;
+	RadialDamageParams.DamageFalloff = DamageFalloff;
+	RadialDamageParams.InnerRadius = DamageInnerRadius;
+	RadialDamageParams.OuterRadius = DamageOuterRadius;
+	RadialDamageParams.MinimumDamage = MinimumDamage;
+	const float DamageScale = RadialDamageParams.GetDamageScale((Origin - TargetActor->GetActorLocation()).Length());
+	
+	return BaseDamage * DamageScale;
+}
