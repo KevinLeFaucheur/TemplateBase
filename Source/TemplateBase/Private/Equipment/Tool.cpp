@@ -37,6 +37,11 @@ ATool::ATool()
 	PickupWidget->SetDrawAtDesiredSize(true);
 }
 
+void ATool::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+}
+
 void ATool::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

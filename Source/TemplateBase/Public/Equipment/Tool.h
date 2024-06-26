@@ -36,6 +36,7 @@ class TEMPLATEBASE_API ATool : public AActor
 	
 public:	
 	ATool();
+	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void Tick(float DeltaTime) override;
 	void PlayFireAnimation();
 	void EjectCasing();
