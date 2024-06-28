@@ -6,7 +6,7 @@
 #include "Camera/CameraComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Equipment/Tool.h"
-#include "Equipment/Data/WeapenData.h"
+#include "Data/WeapenData.h"
 #include "Equipment/Weapon/Projectile.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"

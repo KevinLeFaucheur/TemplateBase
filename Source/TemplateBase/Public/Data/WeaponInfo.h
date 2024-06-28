@@ -6,6 +6,8 @@
 #include "GameplayTagContainer.h"
 #include "WeapenData.h"
 #include "AbilitySystem/AbilityTypes.h"
+#include "Data/ItemInfo.h"
+#include "Data/ToolInfo.h"
 #include "Engine/DataAsset.h"
 #include "WeaponInfo.generated.h"
 
@@ -128,13 +130,13 @@ public:
  * 
  */
 UCLASS()
-class TEMPLATEBASE_API UWeaponInfo : public UDataAsset
+class TEMPLATEBASE_API UWeaponInfo : public UToolInfo
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon")
-	TArray<FWeaponData> AbilityInformation;
+	FWeaponData WeaponData;
 
 	// FWeaponInfo FindWeaponInfoForTag(const FGameplayTag& AbilityTag, bool bLogNotFound = false) const;
 	
