@@ -8,6 +8,7 @@
 #include "Equipment/Tool.h"
 #include "PlayerCharacter.generated.h"
 
+class UPlayerInventoryComponent;
 class UNiagaraComponent;
 class UEquipmentComponent;
 class ATool;
@@ -75,6 +76,7 @@ public:
 	virtual void LevelUp_Implementation() override;
 	virtual void ToggleMagicCircle_Implementation(bool bShow, UMaterialInterface* DecalMaterial) override;
 	virtual void PickupAmmunition_Implementation(EToolType ToolType, int32 AmmunitionAmount) override;
+	virtual void UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData) override;
 	//~ Player Interface
 
 	UFUNCTION(NetMulticast, Unreliable)
@@ -94,6 +96,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Effects")
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Inventory")
+	TObjectPtr<UPlayerInventoryComponent> PlayerInventory;
 
 protected:
 	virtual void BeginPlay() override;

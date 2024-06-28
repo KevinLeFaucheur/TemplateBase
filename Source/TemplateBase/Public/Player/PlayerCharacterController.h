@@ -6,6 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
+#include "Interaction/ControllerInterface.h"
 #include "PlayerCharacterController.generated.h"
 
 class AMagicCircle;
@@ -22,7 +23,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnAmmunitionChangedSignature, int32 /* NewC
  * 
  */
 UCLASS()
-class TEMPLATEBASE_API APlayerCharacterController : public APlayerController
+class TEMPLATEBASE_API APlayerCharacterController : public APlayerController, public IControllerInterface
 {
 	GENERATED_BODY()
 
@@ -59,6 +60,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputAction> AimAction;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> InventoryAction;
+	
 	UFUNCTION(Client, Reliable)
 	void ClientShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
 	
@@ -71,6 +75,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial = nullptr);
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsInventoryOpen = false;
+	
+	virtual void UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData) override;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -88,6 +97,12 @@ protected:
 	void AimButtonReleased();
 	void ReloadButtonPressed();
 	void ThrowButtonPressed();
+
+	UFUNCTION(Client, Reliable)
+	void InventoryButtonPressed();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ToggleInventory();
 
 private:
 	UPROPERTY()

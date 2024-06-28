@@ -18,6 +18,7 @@
 #include "Player/PlayerCharacterState.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/StatusEffect/StatusEffectNiagaraComponent.h"
+#include "Inventory/PlayerInventoryComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -55,6 +56,9 @@ APlayerCharacter::APlayerCharacter()
 	AttachedThrowable = CreateDefaultSubobject<UStaticMeshComponent>("AttachedThrowable");
 	AttachedThrowable->SetupAttachment(GetMesh(), FName("ThrowableSocket"));
 	AttachedThrowable->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	PlayerInventory = CreateDefaultSubobject<UPlayerInventoryComponent>("PlayerInventory");
+	// PlayerInventory->SetInventorySize(30);
 }
 
 void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -512,6 +516,12 @@ void APlayerCharacter::ToggleMagicCircle_Implementation(bool bShow, UMaterialInt
 void APlayerCharacter::PickupAmmunition_Implementation(EToolType ToolType, int32 AmmunitionAmount)
 {
 	EquipmentComponent->PickupAmmunition(ToolType, AmmunitionAmount);
+}
+
+void APlayerCharacter::UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex,
+	FInventoryItemData ItemData)
+{
+	IControllerInterface::Execute_UpdateInventorySlot(Controller, ContainerType, SlotIndex, ItemData);
 }
 
 /*

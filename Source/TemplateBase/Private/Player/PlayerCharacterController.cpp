@@ -13,7 +13,6 @@
 #include "TemplateBase/TemplateBase.h"
 #include "UI/DamageTextComponent.h"
 
-
 void APlayerCharacterController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -43,6 +42,7 @@ void APlayerCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &APlayerCharacterController::AimButtonReleased);
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &APlayerCharacterController::ReloadButtonPressed);
 		EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Started, this, &APlayerCharacterController::ThrowButtonPressed);
+		EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Started, this, &APlayerCharacterController::InventoryButtonPressed);
 
 		EnhancedInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 	}
@@ -168,6 +168,11 @@ void APlayerCharacterController::ThrowButtonPressed()
 	if (PlayerCharacter) PlayerCharacter->ThrowButtonPressed();
 }
 
+void APlayerCharacterController::InventoryButtonPressed_Implementation()
+{
+	ToggleInventory();
+}
+
 void APlayerCharacterController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	if(GetASC() && GetASC()->HasMatchingGameplayTag(FBaseGameplayTags::Get().Player_Block_InputPressed)) return;
@@ -245,4 +250,9 @@ void APlayerCharacterController::ToggleMagicCircle(bool bShow, UMaterialInterfac
 		}
 	}
 	else if(IsValid(MagicCircle)) MagicCircle->Destroy();
+}
+
+void APlayerCharacterController::UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex,
+	FInventoryItemData ItemData)
+{
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Inventory/InventoryComponent.h"
 #include "UObject/Interface.h"
 #include "PlayerInterface.generated.h"
 
@@ -61,4 +62,7 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void PickupAmmunition(EToolType ToolType, int32 AmmunitionAmount);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void UpdateInventorySlot(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData);
 };
