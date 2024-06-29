@@ -8,6 +8,7 @@
 #include "Equipment/Tool.h"
 #include "PlayerCharacter.generated.h"
 
+class UHotbarComponent;
 class UPlayerInventoryComponent;
 class UNiagaraComponent;
 class UEquipmentComponent;
@@ -77,6 +78,8 @@ public:
 	virtual void ToggleMagicCircle_Implementation(bool bShow, UMaterialInterface* DecalMaterial) override;
 	virtual void PickupAmmunition_Implementation(EToolType ToolType, int32 AmmunitionAmount) override;
 	virtual void UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData) override;
+	virtual void OnSlotDrop_Implementation(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType) override;
+	virtual void ResetInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex) override;
 	//~ Player Interface
 
 	UFUNCTION(NetMulticast, Unreliable)
@@ -97,9 +100,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Effects")
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 
+	/*
+	 * Inventory
+	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Inventory")
 	TObjectPtr<UPlayerInventoryComponent> PlayerInventory;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Hotbar")
+	TObjectPtr<UHotbarComponent> HotbarComponent;
 
+	UFUNCTION(Server, Reliable)
+	void ServerOnSlotDrop(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType);
+
+	void OnSlotDrop(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType) const;
+	
 protected:
 	virtual void BeginPlay() override;
 	void AimOffset(float DeltaTime);

@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
+enum class EArmorType : uint8;
 class UItemInfo;
 
 USTRUCT(BlueprintType)
@@ -60,6 +61,18 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerAddItem(FInventoryItemData ItemToAdd);
 
+	virtual bool AddItemToIndex(FInventoryItemData InventoryItemData, int32 SourceSlotIndex, int32 TargetSlotIndex);
+	virtual bool RemoveItemAtIndex(int32 SlotIndex);
+	
+	UFUNCTION(Server, Reliable)
+	void OnSlotDrop(UInventoryComponent* SourceInventory, int32 SourceSlotIndex, int32 TargetSlotIndex);
+
+	virtual void HandleOnSlotDrop(UInventoryComponent* SourceInventory, int32 SourceSlotIndex, int32 TargetSlotIndex);
+	virtual void TransferItem(UInventoryComponent* TargetInventory, int32 SourceSlotIndex, int32 TargetSlotIndex);
+	bool IsSlotEmpty(int32 SlotIndex);
+
+	FInventoryItemData GetItemAtIndex(int32 SlotIndex);
+	
 	void UpdateInventorySlotUI(int32 SlotIndex, const FInventoryItemData& ItemData);
 
 	void SetInventorySize(int32 Size);
@@ -75,7 +88,7 @@ protected:
 
 private:
 	bool FindEmptySlot(int32& EmptySlotIndex);
-	void AddItem(FInventoryItemData ItemToAdd);
+	void AddItem(const FInventoryItemData& ItemToAdd);
 
 public:
 };

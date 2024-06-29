@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "ScalableFloat.h"
 #include "AbilitySystem/AbilityTypes.h"
 #include "Data/WeapenData.h"
 #include "GameFramework/Actor.h"

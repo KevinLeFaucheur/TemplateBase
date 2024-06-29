@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/ArmorInfo.h"
 #include "Inventory/InventoryComponent.h"
 #include "UObject/Interface.h"
 #include "PlayerInterface.generated.h"
@@ -65,4 +66,10 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void UpdateInventorySlot(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData);
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnSlotDrop(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ResetInventorySlot(EContainerType ContainerType, int32 SlotIndex);
 };

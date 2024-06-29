@@ -18,6 +18,7 @@
 #include "Player/PlayerCharacterState.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/StatusEffect/StatusEffectNiagaraComponent.h"
+#include "Inventory/HotbarComponent.h"
 #include "Inventory/PlayerInventoryComponent.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -58,6 +59,7 @@ APlayerCharacter::APlayerCharacter()
 	AttachedThrowable->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	PlayerInventory = CreateDefaultSubobject<UPlayerInventoryComponent>("PlayerInventory");
+	HotbarComponent = CreateDefaultSubobject<UHotbarComponent>("Hotbar");
 	// PlayerInventory->SetInventorySize(30);
 }
 
@@ -518,10 +520,19 @@ void APlayerCharacter::PickupAmmunition_Implementation(EToolType ToolType, int32
 	EquipmentComponent->PickupAmmunition(ToolType, AmmunitionAmount);
 }
 
-void APlayerCharacter::UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex,
-	FInventoryItemData ItemData)
+void APlayerCharacter::UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData)
 {
 	IControllerInterface::Execute_UpdateInventorySlot(Controller, ContainerType, SlotIndex, ItemData);
+}
+
+void APlayerCharacter::OnSlotDrop_Implementation(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType)
+{
+	ServerOnSlotDrop(TargetContainer, SourceContainer, SourceSlotIndex, TargetSlotIndex, ArmorType);
+}
+
+void APlayerCharacter::ResetInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex)
+{
+	IControllerInterface::Execute_ResetInventorySlot(Controller, ContainerType, SlotIndex);
 }
 
 /*
@@ -554,6 +565,49 @@ void APlayerCharacter::OnRep_IsBurning()
 {
 	if(bIsBurning) BurnStatusEffectComponent->Activate();
 	else BurnStatusEffectComponent->Deactivate();
+}
+
+/*
+ * Inventory
+ */
+void APlayerCharacter::ServerOnSlotDrop_Implementation(const EContainerType TargetContainer, const EContainerType SourceContainer, const int32 SourceSlotIndex, const int32 TargetSlotIndex, const EArmorType ArmorType)
+{
+	OnSlotDrop(TargetContainer, SourceContainer, SourceSlotIndex, TargetSlotIndex, ArmorType);
+}
+
+void APlayerCharacter::OnSlotDrop(const EContainerType TargetContainer, const EContainerType SourceContainer, const int32 SourceSlotIndex, const int32 TargetSlotIndex, EArmorType ArmorType) const
+{
+	UInventoryComponent* TargetInventory = nullptr;
+	UInventoryComponent* SourceInventory = nullptr;
+	
+	switch (TargetContainer)
+	{
+	case EContainerType::Inventory:
+		TargetInventory = PlayerInventory;
+		break;
+	case EContainerType::Hotbar:
+		break;
+	case EContainerType::Storage:
+		break;
+	case EContainerType::Armor:
+		break;
+	default: ;
+	}
+	
+	switch (SourceContainer)
+	{
+	case EContainerType::Inventory:
+		SourceInventory = PlayerInventory;
+		break;
+	case EContainerType::Hotbar:
+		break;
+	case EContainerType::Storage:
+		break;
+	case EContainerType::Armor:
+		break;
+	default: ;
+	}
+	if(TargetInventory && SourceInventory) TargetInventory->OnSlotDrop(SourceInventory, SourceSlotIndex, TargetSlotIndex);
 }
 
 /*

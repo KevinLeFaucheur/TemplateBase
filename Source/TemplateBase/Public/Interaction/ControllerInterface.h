@@ -7,6 +7,8 @@
 #include "UObject/Interface.h"
 #include "ControllerInterface.generated.h"
 
+enum class EArmorType : uint8;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UControllerInterface : public UInterface
@@ -27,4 +29,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void UpdateInventorySlot(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void ResetInventorySlot(EContainerType ContainerType, int32 SlotIndex);
 };
