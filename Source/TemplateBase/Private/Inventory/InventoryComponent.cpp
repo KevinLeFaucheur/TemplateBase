@@ -100,12 +100,12 @@ FInventoryItemData UInventoryComponent::GetItemAtIndex(int32 SlotIndex)
 
 void UInventoryComponent::UpdateInventorySlotUI(int32 SlotIndex, const FInventoryItemData& ItemData)
 {
+	// TODO: Remainder if custom behaviour is needed, don't forget to break
 	switch (ContainerType)
 	{
 	case EContainerType::Inventory:
-		IPlayerInterface::Execute_UpdateInventorySlot(GetOwner(), ContainerType, SlotIndex, ItemData);
-		break;
 	case EContainerType::Hotbar:
+		IPlayerInterface::Execute_UpdateInventorySlot(GetOwner(), ContainerType, SlotIndex, ItemData);
 		break;
 	case EContainerType::Storage:
 		break;

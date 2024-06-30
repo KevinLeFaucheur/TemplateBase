@@ -94,6 +94,7 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bUseFABRIK = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
 	bUseAimOffset = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
 	bTransformRightHand = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
+	// AnimationState = EquippedTool ? EquippedTool->GetAnimationState() : EAnimationState::Default;
 }
 
 /*

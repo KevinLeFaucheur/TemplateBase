@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Equipment/EquipmentData.h"
 #include "Character/CharacterData.h"
 #include "CharacterAnimInstance.generated.h"
 
@@ -25,6 +26,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<APlayerCharacter> PlayerCharacter;
 
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<ATool> EquippedTool;
 
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
@@ -65,6 +67,9 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	ECombatState CombatState = ECombatState::ECS_Unoccupied;
+	
+	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
+	EAnimationState AnimationState = EAnimationState::Default;
 	
 	UPROPERTY(BlueprintReadOnly, Category="PlayerCharacter")
 	FRotator RightHandRotation;

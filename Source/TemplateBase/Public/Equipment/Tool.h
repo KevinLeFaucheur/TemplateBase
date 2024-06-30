@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EquipmentData.h"
 #include "GameplayTagContainer.h"
 #include "AbilitySystem/AbilityTypes.h"
 #include "Data/WeapenData.h"
 #include "GameFramework/Actor.h"
+#include "Interaction/EquipmentInterface.h"
+#include "World/ItemBase.h"
 #include "Tool.generated.h"
 
 class UGameplayEffect;
@@ -16,20 +19,10 @@ class APlayerCharacter;
 class ACasing;
 class UWidgetComponent;
 
-UENUM(BlueprintType)
-enum class EToolState : uint8
-{
-	ETS_Initial UMETA(DisplayName="Initial"),
-	ETS_Equipped UMETA(DisplayName="Equipped"),	
-	ETS_Dropped UMETA(DisplayName="Dropped"),
-	
-	ETS_MAX UMETA(DisplayName="DefaultMAX")
-};
-
 class USphereComponent;
 
 UCLASS()
-class TEMPLATEBASE_API ATool : public AActor
+class TEMPLATEBASE_API ATool : public AItemBase, public IEquipmentInterface
 {
 	GENERATED_BODY()
 	
@@ -45,6 +38,12 @@ public:
 	virtual void OnRep_Owner() override;
 	void AddAmmunition(int32 AmountToAdd);
 	void SetHUDAmmunition();
+
+	//~ Equipment Interface
+	virtual FEquipmentInfo GetEquipmentInfo_Implementation() override;
+	virtual void UseItem_Implementation(AActor* PlayerCharacter) override;
+	void MontageEnd_Implementation() override;
+	//~ Equipment Interface
 
 	// TODO: Should be DataAsset/Table
 	/*
@@ -198,8 +197,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Equipment|Reload")
 	bool bCanInterruptReload = false;
 	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	FName MainHandSocket = FName("MainHandSocket");
+	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment|Reload")
 	FName OffhandSocket = FName("OffhandSocket");
+
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	EAnimationState AnimationState = EAnimationState::Default;
 	
 public:	
 	void SetToolState(const EToolState NewState);
@@ -208,12 +213,14 @@ public:
 	FORCEINLINE float GetMarksmanFOV() const { return MarksmanFOV; }
 	FORCEINLINE float GetMarksmanInterpSpeed() const { return MarksmanInterpSpeed; }
 	FORCEINLINE EToolType GetToolType() const { return ToolType; }
+	FORCEINLINE EAnimationState GetAnimationState() const { return AnimationState; }
 	FORCEINLINE bool IsEmpty() const { return Ammunition <= 0; };
 	FORCEINLINE bool IsFull() const { return Ammunition == AmmunitionCapacity; };
 	FORCEINLINE int32 GetAmmunition() const { return Ammunition; }
 	FORCEINLINE int32 GetAmmunitionCapacity() const { return AmmunitionCapacity; }
 	FORCEINLINE bool HasScope() const { return bHasScope; }
 	FORCEINLINE FName GetReloadEndSection() const { return ReloadEndSection; }
+	FORCEINLINE FName GetMainHandSocket() const { return MainHandSocket; }
 	FORCEINLINE FName GetOffhandSocket() const { return OffhandSocket; }
 	FORCEINLINE bool CanInterruptReload() const { return bCanInterruptReload; }
 };

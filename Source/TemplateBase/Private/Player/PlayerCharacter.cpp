@@ -18,6 +18,7 @@
 #include "Player/PlayerCharacterState.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/StatusEffect/StatusEffectNiagaraComponent.h"
+#include "Data/ToolInfo.h"
 #include "Inventory/HotbarComponent.h"
 #include "Inventory/PlayerInventoryComponent.h"
 
@@ -282,6 +283,11 @@ void APlayerCharacter::ServerEquipButtonPressed_Implementation()
 	}
 }
 
+void APlayerCharacter::ServerLeftMouseButtonPressed_Implementation()
+{
+	if(EquippedTool) IEquipmentInterface::Execute_UseItem(EquippedTool, this);
+}
+
 void APlayerCharacter::SetOverlappingTool(ATool* Tool)
 {
 	if(IsLocallyControlled()) if(OverlappingTool) OverlappingTool->ShowPickupWidget(false);
@@ -300,6 +306,8 @@ void APlayerCharacter::OnRep_OverlappingTool(ATool* LastTool)
  */
 void APlayerCharacter::FireButtonPressed()
 {
+	// TODO: Need to streamline some other way
+	ServerLeftMouseButtonPressed();
 	if(EquipmentComponent) EquipmentComponent->FireButtonPressed(true);
 }
 
@@ -403,6 +411,7 @@ void APlayerCharacter::HideCharacterIfCameraClose()
 		EquipmentComponent->EquippedTool->GetMesh()->bOwnerNoSee = bCameraTooClose;
 	}
 }
+
 /*
  * Combat Interface
  */
@@ -535,6 +544,27 @@ void APlayerCharacter::ResetInventorySlot_Implementation(EContainerType Containe
 	IControllerInterface::Execute_ResetInventorySlot(Controller, ContainerType, SlotIndex);
 }
 
+void APlayerCharacter::PlayMontage_Implementation(UAnimMontage* Montage)
+{
+	MulticastPlayMontage(Montage);
+}
+
+void APlayerCharacter::MulticastPlayMontage_Implementation(UAnimMontage* Montage)
+{
+	bIsUsingItem = true;
+	GetMesh()->GetAnimInstance()->Montage_Play(Montage);
+	FOnMontageEnded MontageCompleted;
+	MontageCompleted.BindWeakLambda(this, [this](UAnimMontage* AnimMontage, bool bInterrupted)
+	{
+		if(EquippedTool)
+		{
+			IEquipmentInterface::Execute_MontageEnd(EquippedTool);
+		}
+		bIsUsingItem = false;
+	});
+	GetMesh()->GetAnimInstance()->Montage_SetEndDelegate(MontageCompleted, Montage);
+}
+
 /*
  * Status Effects
  */
@@ -608,6 +638,73 @@ void APlayerCharacter::OnSlotDrop(const EContainerType TargetContainer, const EC
 	default: ;
 	}
 	if(TargetInventory && SourceInventory) TargetInventory->OnSlotDrop(SourceInventory, SourceSlotIndex, TargetSlotIndex);
+}
+
+void APlayerCharacter::ServerUseHotbarSlot_Implementation(int32 Index)
+{
+	if(!bIsUsingItem)
+	{
+		CurrentHotbarIndex = Index;
+		EItemType ItemType;
+		if(HotbarComponent->CheckHotbarAtIndex(Index, ItemType))
+		{
+			switch (ItemType) {
+			case EItemType::Misc:
+				break;
+			case EItemType::Resource:
+				break;
+			case EItemType::Equipment:
+				if(IsValid(EquippedTool))
+				{
+					EquippedTool->Destroy();
+					MulticastUnequipItem();
+				}
+				else
+				{
+					const FInventoryItemData ItemData =  HotbarComponent->GetItemAtIndex(CurrentHotbarIndex);
+					const UToolInfo* ToolInfo = Cast<UToolInfo>(ItemData.Asset.LoadSynchronous());
+					UClass* Class = ToolInfo->ToolData.ToolClass.LoadSynchronous();
+					ServerSpawnEquipment(Class, CurrentHotbarIndex);
+				}
+				break;
+			case EItemType::Armor:
+				break;
+			case EItemType::Consumable:
+				break;
+			case EItemType::Buildable:
+				break;
+			default: ;
+			}
+		}
+	}
+}
+
+void APlayerCharacter::ServerSpawnEquipment_Implementation(TSubclassOf<AActor> Class, int32 Index)
+{
+	EquippedTool = GetWorld()->SpawnActor<AActor>(Class);
+	if(EquippedTool)
+	{
+		EquippedTool->SetOwner(this);
+		const FEquipmentInfo EquipmentInfo = IEquipmentInterface::Execute_GetEquipmentInfo(EquippedTool);
+		MulticastAttachActorToMainHand(EquippedTool, EquipmentInfo.MainHandSocket, EquipmentInfo.AnimationState);
+	}
+}
+
+void APlayerCharacter::MulticastAttachActorToMainHand_Implementation(AActor* TargetActor, FName MainHandSocket, EAnimationState AnimationState)
+{
+	if(UCharacterAnimInstance* CharacterAnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		CharacterAnimInstance->AnimationState = AnimationState;
+	}
+	if(EquippedTool) EquippedTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, MainHandSocket);
+}
+
+void APlayerCharacter::MulticastUnequipItem_Implementation()
+{
+	if(UCharacterAnimInstance* CharacterAnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		CharacterAnimInstance->AnimationState =EAnimationState::Default;
+	}
 }
 
 /*

@@ -180,6 +180,21 @@ void ATool::SetHUDAmmunition()
 }
 
 /*
+ * Equipment Interface
+ */
+FEquipmentInfo ATool::GetEquipmentInfo_Implementation()
+{
+	return FEquipmentInfo{ MainHandSocket, AnimationState };
+}
+
+void ATool::UseItem_Implementation(AActor* PlayerCharacter)
+{
+	
+}
+
+void ATool::MontageEnd_Implementation() {}	
+
+/*
  * Interaction
  */
 void ATool::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

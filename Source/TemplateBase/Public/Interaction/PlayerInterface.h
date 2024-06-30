@@ -72,4 +72,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void ResetInventorySlot(EContainerType ContainerType, int32 SlotIndex);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void PlayMontage(UAnimMontage* Montage);
 };

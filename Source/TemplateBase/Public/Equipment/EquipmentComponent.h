@@ -69,6 +69,8 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastActivate(const FVector_NetQuantize& TraceHitTarget);
 
+	
+
 	// Reloading
 	UFUNCTION(Server, Reliable)
 	void ServerReload();

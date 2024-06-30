@@ -63,6 +63,36 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputAction> InventoryAction;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> HotbarAction_0;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> HotbarAction_1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> HotbarAction_2;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> HotbarAction_3;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> HotbarAction_4;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> HotbarAction_5;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> HotbarAction_6;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> HotbarAction_7;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> HotbarAction_8;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> HotbarAction_9;
+	
 	UFUNCTION(Client, Reliable)
 	void ClientShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
 	
@@ -100,6 +130,11 @@ protected:
 
 	UFUNCTION(Client, Reliable)
 	void InventoryButtonPressed();
+
+	/*
+	 * Hotbar
+	 */
+	void HotbarButtonPressed(int32 Index);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void ToggleInventory();

@@ -6,6 +6,8 @@
 #include "Data/ItemInfo.h"
 #include "ToolInfo.generated.h"
 
+class AItemBase;
+
 USTRUCT(Blueprintable, BlueprintType)
 struct FToolData
 {
@@ -13,13 +15,13 @@ struct FToolData
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Tool")
-	TSoftClassPtr<ATool> ToolClass;
+	TSoftClassPtr<AItemBase> ToolClass;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Tool")
 	float BaseDamage = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Tool")
-	bool bUseAmmunition = true;
+	bool bUseAmmunition = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Tool")
 	int32 Ammunition = 0;

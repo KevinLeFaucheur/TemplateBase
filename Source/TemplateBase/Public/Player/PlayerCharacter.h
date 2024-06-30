@@ -50,6 +50,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
 	
+	UFUNCTION(Server, Reliable)
+	void ServerLeftMouseButtonPressed();
+	
 	//~ Combat Interface
 	virtual int32 GetCharacterLevel_Implementation() override;
 	//~ Combat Interface
@@ -80,10 +83,14 @@ public:
 	virtual void UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData) override;
 	virtual void OnSlotDrop_Implementation(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType) override;
 	virtual void ResetInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex) override;
+	void PlayMontage_Implementation(UAnimMontage* Montage) override;
 	//~ Player Interface
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastHitReact();
+	
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastPlayMontage(UAnimMontage* Montage);
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<USpringArmComponent> SpringArm;
@@ -113,6 +120,24 @@ public:
 	void ServerOnSlotDrop(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType);
 
 	void OnSlotDrop(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType) const;
+
+	UFUNCTION(Server, Reliable)
+	void ServerUseHotbarSlot(int32 Index);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSpawnEquipment(TSubclassOf<AActor> Class, int32 Index);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastAttachActorToMainHand(AActor* TargetActor, FName MainHandSocket, EAnimationState AnimationState);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastUnequipItem();
+
+	UPROPERTY()
+	TObjectPtr<AActor> EquippedTool;
+	
+	int32 CurrentHotbarIndex = -1;
+	bool bIsUsingItem = false;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -155,6 +180,7 @@ private:
 	FRotator ProxyRotation;
 	float ProxyYaw;
 	float TimeSinceLastMovementReplication;
+
 
 	/*
 	 *
