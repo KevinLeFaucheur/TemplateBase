@@ -12,13 +12,12 @@
 #include "World/ItemBase.h"
 #include "Tool.generated.h"
 
-class UGameplayEffect;
 enum class EToolType : uint8;
+class UGameplayEffect;
 class APlayerCharacterController;
 class APlayerCharacter;
 class ACasing;
 class UWidgetComponent;
-
 class USphereComponent;
 
 UCLASS()
@@ -45,56 +44,59 @@ public:
 	void MontageEnd_Implementation() override;
 	//~ Equipment Interface
 
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	bool bUseAimOffsets = false;
+
 	// TODO: Should be DataAsset/Table
 	/*
 	 * Crosshairs
 	 */
-	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsCenter;
 	
-	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsLeft;
 	
-	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsRight;
 	
-	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsTop;
 	
-	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsBottom;
 
 	/*
 	 * Zoomed FoV while Aiming
 	 */
-	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Properties")
 	float MarksmanFOV = 30.f;
 	
-	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Properties")
 	float MarksmanInterpSpeed = 20.f;
 
 	/*
 	 * Automatic
 	 */
-	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Properties")
 	float FireInterval = .35f;
 
-	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Properties")
 	bool bAutomatic = false;
 	
 	/*
 	 * Cosmetics
 	 */
-	UPROPERTY(EditAnywhere, Category="Equipment|Animation")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Animation")
 	TObjectPtr<UAnimationAsset> ActiveAnimation;
 
-	UPROPERTY(EditAnywhere, Category="Equipment")
+	UPROPERTY(EditAnywhere, Category="01-Equipment")
 	TSubclassOf<ACasing> CasingClass;
 
-	UPROPERTY(EditAnywhere, Category="Equipment|SFX")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|SFX")
 	TObjectPtr<USoundBase> EquipSound;
 
-	UPROPERTY(EditAnywhere, Category="Equipment|SFX")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|SFX")
 	TObjectPtr<USoundBase> DropSound;
 
 protected:
@@ -119,46 +121,46 @@ protected:
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
 
-	UPROPERTY(VisibleAnywhere, Category="Equipment")
+	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
 	TObjectPtr<USkeletalMeshComponent> Mesh;
 
-	UPROPERTY(VisibleAnywhere, Category="Equipment")
+	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
 	TObjectPtr<USphereComponent> AreaSphere;
 
-	UPROPERTY(VisibleAnywhere, Category="Equipment")
+	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
 	TObjectPtr<UWidgetComponent> PickupWidget;
 
 	/*
 	 * Scatter
 	*/
-	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Scatter")
 	bool bUseScatter = false;
 	
-	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Scatter")
 	bool bDebugScatter = false;
 	
-	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Scatter")
 	float DistanceToSphere = 1000.f;
 	
-	UPROPERTY(EditAnywhere, Category="Equipment|Scatter")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Scatter")
 	float SphereRadius = 75.f;
 
 	/*
 	 * Scope
 	 */
-	UPROPERTY(EditAnywhere, Category="Equipment|Mods")
+	UPROPERTY(EditAnywhere, Category="01-Equipment|Mods")
 	bool bHasScope = false;
 
 	/*
 	 * Damage
 	*/
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment|Damage")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="01-Equipment|Damage")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Equipment|Damage", meta=(Categories="Damage"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="01-Equipment|Damage", meta=(Categories="Damage"))
 	FGameplayTag DamageType;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Equipment|Damage")
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment|Damage")
 	FDamageRange DamageRange;
 
 private:
@@ -168,16 +170,16 @@ private:
 	UPROPERTY()
 	APlayerCharacter* OwnerCharacter;
 
-	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
 	EToolType ToolType = EToolType::ETT_Handgun;
 	
-	UPROPERTY(ReplicatedUsing=OnRep_ToolState, VisibleAnywhere, Category="Equipment")
+	UPROPERTY(ReplicatedUsing=OnRep_ToolState, VisibleAnywhere, Category="01-Equipment")
 	EToolState ToolState = EToolState::ETS_Initial;
 
 	UFUNCTION()
 	void OnRep_ToolState();
 
-	UPROPERTY(ReplicatedUsing=OnRep_Ammunition, EditDefaultsOnly, Category="Equipment")
+	UPROPERTY(ReplicatedUsing=OnRep_Ammunition, EditDefaultsOnly, Category="01-Equipment")
 	int32 Ammunition;
 
 	UFUNCTION()
@@ -185,25 +187,25 @@ private:
 
 	void SpendAmmunition();
 
-	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
 	int32 AmmunitionCapacity;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
 	bool bUsePhysicsAsset = false;
 
-	UPROPERTY(EditDefaultsOnly, Category="Equipment|Reload")
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment|Reload")
 	FName ReloadEndSection = FName("ReloadEnd");
 
-	UPROPERTY(EditDefaultsOnly, Category="Equipment|Reload")
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment|Reload")
 	bool bCanInterruptReload = false;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Equipment")
-	FName MainHandSocket = FName("MainHandSocket");
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	FName MainHandSocket = FName("RightHandSocket");
 	
-	UPROPERTY(EditDefaultsOnly, Category="Equipment|Reload")
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment|Reload")
 	FName OffhandSocket = FName("OffhandSocket");
 
-	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
 	EAnimationState AnimationState = EAnimationState::Default;
 	
 public:	

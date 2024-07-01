@@ -168,6 +168,7 @@ float APlayerCharacter::CalculateSpeed()
 void APlayerCharacter::AimOffset(float DeltaTime)
 {
 	if(EquipmentComponent && EquipmentComponent->EquippedTool == nullptr) return;
+	if(!EquipmentComponent->EquippedTool->bUseAimOffsets) return;
 	const float Speed= CalculateSpeed();
 	const bool bAirborne = GetCharacterMovement()->IsFalling();
 	
@@ -746,6 +747,14 @@ void APlayerCharacter::SetCombatState(const ECombatState NewState)
 {
 	if(EquipmentComponent == nullptr) return;
 	EquipmentComponent->CombatState = NewState;
+}
+
+void APlayerCharacter::SetAnimationState(const EAnimationState NewState)
+{
+	if(UCharacterAnimInstance* CharacterAnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		CharacterAnimInstance->AnimationState = NewState;
+	}
 }
 
 FVector APlayerCharacter::GetHitTarget() const

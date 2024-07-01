@@ -209,5 +209,6 @@ public:
 	FORCEINLINE bool ShouldRotateRootBone() const { return bRotateRootBone; }
 	ECombatState GetCombatState() const;
 	void SetCombatState(const ECombatState NewState);
+	void SetAnimationState(const EAnimationState NewState);
 	FORCEINLINE UStaticMeshComponent* GetAttachedThrowable() const { return AttachedThrowable; }
 };

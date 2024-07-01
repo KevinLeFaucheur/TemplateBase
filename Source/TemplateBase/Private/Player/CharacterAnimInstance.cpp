@@ -91,6 +91,7 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 		/* */
 	}
+	// const bool bHasAOEquipment = EquippedTool ? EquippedTool->bUseAimOffsets : false;
 	bUseFABRIK = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
 	bUseAimOffset = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
 	bTransformRightHand = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;

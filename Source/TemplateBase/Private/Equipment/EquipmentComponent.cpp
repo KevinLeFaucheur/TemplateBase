@@ -18,8 +18,8 @@
 UEquipmentComponent::UEquipmentComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	BaseWalkSpeed = 600.f;;
-	AimWalkSpeed = 400.f;;
+	BaseWalkSpeed = 600.f;
+	AimWalkSpeed = 400.f;
 }
 
 void UEquipmentComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -76,24 +76,49 @@ void UEquipmentComponent::EquipTool(ATool* ToolToEquip)
 	if(CombatState != ECombatState::ECS_Unoccupied) return;
 	
 	DropEquippedTool();
+	
 	EquippedTool = ToolToEquip;
 	EquippedTool->SetToolState(EToolState::ETS_Equipped);
 	EquippedTool->SetOwner(PlayerCharacter);
 	EquippedTool->SetHUDAmmunition();
-	AttachToolToSocket(EquippedTool, FName("RightHandSocket"));
+	AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
+	PlayerCharacter->SetAnimationState(EquippedTool->GetAnimationState());
+
+	// TODO: Does this EquippedTool orient character to Movement or ControllerOrientation
+	if(EquippedTool->bUseAimOffsets)
+	{
+		PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
+		PlayerCharacter->bUseControllerRotationYaw = true;
+	}
+	else
+	{
+		PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
+		PlayerCharacter->bUseControllerRotationYaw = false;
+	}
+
+	// TODO: Is it a FireWeapon? Add or Update Ammunition HUD
 	UpdateCarriedAmmunition();
-	PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
-	PlayerCharacter->bUseControllerRotationYaw = true;
 }
 
 void UEquipmentComponent::OnRep_EquippedTool()
 {
 	if(EquippedTool && PlayerCharacter)
 	{
-		AttachToolToSocket(EquippedTool, FName("RightHandSocket"));
+		AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
 		EquippedTool->SetToolState(EToolState::ETS_Equipped);
-		PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
-		PlayerCharacter->bUseControllerRotationYaw = true;
+		PlayerCharacter->SetAnimationState(EquippedTool->GetAnimationState());
+		
+		// TODO: Does this EquippedTool orient character to Movement or ControllerOrientation
+		if(EquippedTool->bUseAimOffsets)
+		{
+			PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
+			PlayerCharacter->bUseControllerRotationYaw = true;
+		}
+		else
+		{
+			PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
+			PlayerCharacter->bUseControllerRotationYaw = false;
+		}
 	}	
 }
 
@@ -545,7 +570,7 @@ void UEquipmentComponent::ServerThrow_Implementation()
 void UEquipmentComponent::ThrowEnd()
 {
 	CombatState = ECombatState::ECS_Unoccupied;
-	AttachToolToSocket(EquippedTool, FName("RightHandSocket"));
+	AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
 }
 
 void UEquipmentComponent::Throwing()
@@ -565,7 +590,12 @@ void UEquipmentComponent::ServerThrowing_Implementation(const FVector_NetQuantiz
 		SpawnParams.Instigator = PlayerCharacter;
 		if (UWorld* World = GetWorld())
 		{
-			World->SpawnActor<AProjectile>(ThrowableClass, StartingLocation, ToTarget.Rotation(), SpawnParams);
+			// AProjectile* Projectile = World->SpawnActor<AProjectile>(ThrowableClass, StartingLocation, ToTarget.Rotation(), SpawnParams);
+			// World->SpawnActor<AProjectile>(ThrowableClass, StartingLocation, ToTarget.Rotation(), SpawnParams);
+			// AProjectile* Projectile = World->SpawnActorDeferred<AProjectile>(ThrowableClass, SocketTransform, GetOwner(), InstigatorPawn, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+			// Projectile->DamageEffectSpecHandle = MakeDamageEffectSpec();
+			// Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+			// Projectile->FinishSpawning(SpawnTransform);
 		}
 	}
 }

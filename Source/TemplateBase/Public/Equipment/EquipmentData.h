@@ -7,12 +7,16 @@ UENUM(BlueprintType)
 enum class EAnimationState : uint8
 {
 	Default UMETA(DisplayName="Default"),
+	Unequipped UMETA(DisplayName="Unequipped"),
 	Hatchet UMETA(DisplayName="Hatchet"),
 	Bow UMETA(DisplayName="Bow"),
 	Rock UMETA(DisplayName="Rock"),
+	OneHandedMeleeWeapon UMETA(DisplayName="OneHandedMeleeWeapon"),
+	TwoHandedMeleeWeapon UMETA(DisplayName="TwoHandedMeleeWeapon"),
+	OneHandedFireWeapon UMETA(DisplayName="OneHandedFireWeapon"),
 	TwoHandedFireWeapon UMETA(DisplayName="TwoHandedFireWeapon"),
 	HeavyWeapon UMETA(DisplayName="HeavyWeapon"),
-	TwoHandedMeleeWeapon UMETA(DisplayName="TwoHandedMeleeWeapon"),
+	ShoulderWeapon UMETA(DisplayName="ShoulderWeapon"),
 	Swimming UMETA(DisplayName="Swimming"),
 };
 
