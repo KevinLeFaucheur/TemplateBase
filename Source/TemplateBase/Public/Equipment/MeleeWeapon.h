@@ -13,5 +13,7 @@ UCLASS()
 class TEMPLATEBASE_API AMeleeWeapon : public AWeapon
 {
 	GENERATED_BODY()
-	
+
+public:
+	AMeleeWeapon();
 };

@@ -12,6 +12,7 @@
 
 ARangeWeapon::ARangeWeapon()
 {
+	ToolClass = EToolClass::RangeWeapon;
 }
 
 void ARangeWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

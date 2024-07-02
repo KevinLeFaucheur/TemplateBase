@@ -71,6 +71,7 @@ void ATool::Activate(const FVector& HitTarget)
 void ATool::PlayFireAnimation()
 {
 	// TODO: Is Overriden in Weapon
+	PlayActiveAnimation();
 }
 
 void ATool::Drop()

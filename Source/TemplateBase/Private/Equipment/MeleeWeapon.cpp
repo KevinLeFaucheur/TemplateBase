@@ -3,3 +3,7 @@
 
 #include "Equipment/MeleeWeapon.h"
 
+AMeleeWeapon::AMeleeWeapon()
+{
+	ToolClass = EToolClass::MeleeWeapon;
+}

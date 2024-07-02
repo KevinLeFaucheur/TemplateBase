@@ -113,6 +113,9 @@ protected:
 	
 	UPROPERTY()
 	APlayerCharacter* OwnerCharacter;
+	
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	EToolClass ToolClass = EToolClass::Tool;
 
 	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
 	TObjectPtr<USphereComponent> AreaSphere;
@@ -123,9 +126,6 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
 	EToolType ToolType = EToolType::ETT_Handgun;
-	
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
-	EToolClass ToolClass = EToolClass::Tool;
 	
 	UPROPERTY(ReplicatedUsing=OnRep_ToolState, VisibleAnywhere, Category="01-Equipment")
 	EToolState ToolState = EToolState::ETS_Initial;

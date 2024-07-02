@@ -155,7 +155,20 @@ void UEquipmentComponent::FireButtonPressed(bool bPressed)
 	bFireButtonPressed = bPressed;
 	if(bFireButtonPressed)
 	{
-		ActivateTool();
+		switch (EquippedTool->GetToolClass())
+		{
+		case EToolClass::Tool:
+			break;
+		case EToolClass::HarvestingTool:
+			ServerActivateTool();
+			break;
+		case EToolClass::MeleeWeapon:
+			break;
+		case EToolClass::RangeWeapon:
+			ActivateTool();
+			break;
+		default: ;
+		}
 	}
 }
 
@@ -172,6 +185,15 @@ void UEquipmentComponent::ActivateTool()
 		}
 		FireIntervalStart();
 	}
+}
+
+void UEquipmentComponent::ServerActivateTool_Implementation()
+{
+	MulticastActivateTool();
+}
+
+void UEquipmentComponent::MulticastActivateTool_Implementation()
+{
 }
 
 void UEquipmentComponent::ServerActivate_Implementation(const FVector_NetQuantize& TraceHitTarget)
