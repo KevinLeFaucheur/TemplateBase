@@ -7,6 +7,13 @@
 
 AWeapon::AWeapon()
 {
+	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	Mesh->SetupAttachment(RootComponent);
+	Mesh->SetCollisionResponseToAllChannels(ECR_Block);
+	Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetRootComponent(Mesh);
 }
 
 void AWeapon::ApplyHitScanDamage(AActor* TargetActor) const
@@ -104,4 +111,40 @@ FDamageEffectParams AWeapon::MakeDamageEffectParamsFromClassDefaults(AActor* Tar
 	}
 
 	return Params;
+}
+
+void AWeapon::PlayActiveAnimation()
+{
+	if(ActiveAnimation) Mesh->PlayAnimation(ActiveAnimation, false);
+}
+
+void AWeapon::DetachToolFromComponent()
+{
+	const FDetachmentTransformRules DetachRules(EDetachmentRule::KeepWorld, true);
+	Mesh->DetachFromComponent(DetachRules);
+}
+
+void AWeapon::OnEquipped()
+{
+	Super::OnEquipped();
+	Mesh->SetSimulatePhysics(false);
+	Mesh->SetEnableGravity(false);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	if(bUsePhysicsAsset)
+	{
+		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Mesh->SetEnableGravity(true);
+		Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	}
+}
+
+void AWeapon::OnDropped()
+{
+	Super::OnDropped();
+	Mesh->SetSimulatePhysics(true);
+	Mesh->SetEnableGravity(true);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	Mesh->SetCollisionResponseToAllChannels(ECR_Block);
+	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 }

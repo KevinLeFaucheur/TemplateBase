@@ -13,5 +13,14 @@ UCLASS()
 class TEMPLATEBASE_API AHarvestingTool : public ATool
 {
 	GENERATED_BODY()
-	
+
+public:
+	AHarvestingTool();
+
+	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
+	TObjectPtr<UStaticMeshComponent> Mesh;
+
+	virtual void DetachToolFromComponent() override;
+	virtual void OnEquipped() override;
+	virtual void OnDropped() override;
 };

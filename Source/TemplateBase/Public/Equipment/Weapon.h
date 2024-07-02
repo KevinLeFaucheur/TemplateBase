@@ -33,7 +33,16 @@ public:
 		bool bOverridePitch = false,
 		float PitchOverride = 0.f) const;
 
+	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
+	TObjectPtr<USkeletalMeshComponent> Mesh;
+
 protected:	
+	virtual USkeletalMeshComponent* GetMesh() const override { return Mesh; }
+	virtual void PlayActiveAnimation() override;
+	virtual void DetachToolFromComponent() override;
+	virtual void OnEquipped() override;
+	virtual void OnDropped() override;
+	
 	/*
 	 * Damage
 	*/

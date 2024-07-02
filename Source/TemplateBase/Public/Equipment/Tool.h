@@ -84,6 +84,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="01-Equipment|SFX")
 	TObjectPtr<USoundBase> DropSound;
+	
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment|Physics")
+	bool bUsePhysicsAsset = false;
 
 protected:
 	virtual void BeginPlay() override;
@@ -112,9 +115,6 @@ protected:
 	APlayerCharacter* OwnerCharacter;
 
 	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
-	TObjectPtr<USkeletalMeshComponent> Mesh;
-
-	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
 	TObjectPtr<USphereComponent> AreaSphere;
 
 	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
@@ -134,9 +134,6 @@ private:
 	void OnRep_ToolState();
 	
 	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
-	bool bUsePhysicsAsset = false;
-	
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
 	FName MainHandSocket = FName("RightHandSocket");
 	
 	UPROPERTY(EditDefaultsOnly, Category="01-Equipment|Reload")
@@ -148,7 +145,6 @@ private:
 public:	
 	void SetToolState(const EToolState NewState);
 	FORCEINLINE USphereComponent* GetAreaSphere() { return AreaSphere; }
-	FORCEINLINE USkeletalMeshComponent* GetMesh() const { return Mesh; }
 	FORCEINLINE float GetMarksmanFOV() const { return MarksmanFOV; }
 	FORCEINLINE float GetMarksmanInterpSpeed() const { return MarksmanInterpSpeed; }
 	FORCEINLINE EToolType GetToolType() const { return ToolType; }
@@ -158,7 +154,7 @@ public:
 	FORCEINLINE FName GetOffhandSocket() const { return OffhandSocket; }
 
 	/*
-	 * Meant to be overriden
+	 * Overriden in RangeWeapon
 	*/
 	virtual void AddAmmunition(int32 AmountToAdd) {}
 	virtual void SetHUDAmmunition() {}
@@ -171,4 +167,13 @@ public:
 	virtual bool CanInterruptReload() const { return false; }
 	virtual bool HasScope() const { return false; }
 	virtual float GetFireInterval() const { return 0.f; }
+
+	/*
+	 * Overriden in Weapon and HarvestingTool
+	 */
+	virtual USkeletalMeshComponent* GetMesh() const { return nullptr; }
+	virtual void PlayActiveAnimation() {}
+	virtual void DetachToolFromComponent() {}
+	virtual void OnEquipped();
+	virtual void OnDropped();
 };

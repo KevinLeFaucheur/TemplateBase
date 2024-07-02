@@ -3,7 +3,6 @@
 #include "Equipment/Tool.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
-#include "Equipment/EquipmentComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/PlayerCharacter.h"
@@ -13,14 +12,6 @@ ATool::ATool()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
-
-	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
-	Mesh->SetupAttachment(RootComponent);
-	Mesh->SetCollisionResponseToAllChannels(ECR_Block);
-	Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
-	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SetRootComponent(Mesh);
 
 	AreaSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AreaSphere"));
 	AreaSphere->SetupAttachment(RootComponent);
@@ -79,14 +70,13 @@ void ATool::Activate(const FVector& HitTarget)
 
 void ATool::PlayFireAnimation()
 {
-	if(ActiveAnimation) Mesh->PlayAnimation(ActiveAnimation, false);
+	// TODO: Is Overriden in Weapon
 }
 
 void ATool::Drop()
 {
 	SetToolState(EToolState::ETS_Dropped);
-	const FDetachmentTransformRules DetachRules(EDetachmentRule::KeepWorld, true);
-	Mesh->DetachFromComponent(DetachRules);
+	DetachToolFromComponent(); // TODO: Is Overriden in Weapon
 	SetOwner(nullptr); 
 	OwnerCharacter = nullptr;
 	OwnerController = nullptr;
@@ -156,29 +146,13 @@ void ATool::SetToolState(const EToolState NewState)
 	case EToolState::ETS_Initial:
 		break;
 	case EToolState::ETS_Equipped:
-		ShowPickupWidget(false);
 		AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		Mesh->SetSimulatePhysics(false);
-		Mesh->SetEnableGravity(false);
-		Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		if(EquipSound) UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
-		if(bUsePhysicsAsset)
-		{
-			Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			Mesh->SetEnableGravity(true);
-			Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
-		}
+		OnEquipped();
 		break;
 	case EToolState::ETS_Dropped:
 		AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		AreaSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-		Mesh->SetSimulatePhysics(true);
-		Mesh->SetEnableGravity(true);
-		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		Mesh->SetCollisionResponseToAllChannels(ECR_Block);
-		Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-		Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
-		if(DropSound) UGameplayStatics::PlaySoundAtLocation(this, DropSound, GetActorLocation());
+		OnDropped();
 		break;
 	default: ;
 	}
@@ -190,27 +164,22 @@ void ATool::OnRep_ToolState()
 	case EToolState::ETS_Initial:
 		break;
 	case EToolState::ETS_Equipped:
-		ShowPickupWidget(false);
-		Mesh->SetSimulatePhysics(false);
-		Mesh->SetEnableGravity(false);
-		Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		if(EquipSound) UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
-		if(bUsePhysicsAsset)
-		{
-			Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			Mesh->SetEnableGravity(true);
-			Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
-		}
+		OnEquipped();
 		break;
 	case EToolState::ETS_Dropped:
-		Mesh->SetSimulatePhysics(true);
-		Mesh->SetEnableGravity(true);
-		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		Mesh->SetCollisionResponseToAllChannels(ECR_Block);
-		Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-		Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
-		if(DropSound) UGameplayStatics::PlaySoundAtLocation(this, DropSound, GetActorLocation());
+		OnDropped();
 		break;
 	default: ;
 	}
+}
+
+void ATool::OnEquipped()
+{
+	ShowPickupWidget(false);
+	if(EquipSound) UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
+}
+
+void ATool::OnDropped()
+{
+	if(DropSound) UGameplayStatics::PlaySoundAtLocation(this, DropSound, GetActorLocation());
 }
