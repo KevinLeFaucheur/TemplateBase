@@ -284,11 +284,6 @@ void APlayerCharacter::ServerEquipButtonPressed_Implementation()
 	}
 }
 
-void APlayerCharacter::ServerLeftMouseButtonPressed_Implementation()
-{
-	if(EquippedTool) IEquipmentInterface::Execute_UseItem(EquippedTool, this);
-}
-
 void APlayerCharacter::SetOverlappingTool(ATool* Tool)
 {
 	if(IsLocallyControlled()) if(OverlappingTool) OverlappingTool->ShowPickupWidget(false);
@@ -304,7 +299,12 @@ void APlayerCharacter::OnRep_OverlappingTool(ATool* LastTool)
 
 /*
  * Firing
- */
+*/
+void APlayerCharacter::ServerLeftMouseButtonPressed_Implementation()
+{
+	if(EquippedTool) IEquipmentInterface::Execute_UseItem(EquippedTool, this);
+}
+
 void APlayerCharacter::FireButtonPressed()
 {
 	// TODO: Need to streamline some other way
