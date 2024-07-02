@@ -5,6 +5,10 @@
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 
+AWeapon::AWeapon()
+{
+}
+
 void AWeapon::ApplyHitScanDamage(AActor* TargetActor) const
 {
 	const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());

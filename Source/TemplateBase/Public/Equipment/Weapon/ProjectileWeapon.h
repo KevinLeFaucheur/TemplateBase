@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Equipment/Weapon.h"
+#include "Equipment/RangeWeapon.h"
 #include "ProjectileWeapon.generated.h"
 
 class AProjectile;
@@ -11,7 +11,7 @@ class AProjectile;
  * 
  */
 UCLASS()
-class TEMPLATEBASE_API AProjectileWeapon : public AWeapon
+class TEMPLATEBASE_API AProjectileWeapon : public ARangeWeapon
 {
 	GENERATED_BODY()
 

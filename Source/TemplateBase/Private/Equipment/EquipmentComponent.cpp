@@ -80,7 +80,7 @@ void UEquipmentComponent::EquipTool(ATool* ToolToEquip)
 	EquippedTool = ToolToEquip;
 	EquippedTool->SetToolState(EToolState::ETS_Equipped);
 	EquippedTool->SetOwner(PlayerCharacter);
-	EquippedTool->SetHUDAmmunition();
+	EquippedTool->SetHUDAmmunition(); // TODO: Do nothing if not Range
 	AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
 	PlayerCharacter->SetAnimationState(EquippedTool->GetAnimationState());
 
@@ -144,7 +144,7 @@ bool UEquipmentComponent::CanActivate()
 	if(!EquippedTool) return false;
 	if(EquippedTool->IsEmpty()) return false;
 	if(!bCanActivate) return false;
-	if(CombatState == ECombatState::ECS_Reloading && EquippedTool->CanInterruptReload()) return true;
+	if(CombatState == ECombatState::ECS_Reloading && EquippedTool->CanInterruptReload()) return true; // TODO: CanInterruptReload return false if NOT Ranged
 	if(CombatState != ECombatState::ECS_Unoccupied) return false;
 
 	return true;
@@ -202,14 +202,14 @@ void UEquipmentComponent::MulticastActivate_Implementation(const FVector_NetQuan
 void UEquipmentComponent::FireIntervalStart()
 {
 	if(EquippedTool == nullptr || PlayerCharacter == nullptr) return;
-	PlayerCharacter->GetWorldTimerManager().SetTimer(FireIntervalTimer, this, &UEquipmentComponent::FireIntervalEnd, EquippedTool->FireInterval);
+	PlayerCharacter->GetWorldTimerManager().SetTimer(FireIntervalTimer, this, &UEquipmentComponent::FireIntervalEnd, EquippedTool->GetFireInterval()); // TODO: return 0.f if not Range
 }
 
 void UEquipmentComponent::FireIntervalEnd()
 {
 	if(EquippedTool == nullptr) return;
 	bCanActivate = true;
-	if(bFireButtonPressed && EquippedTool->bAutomatic)
+	if(bFireButtonPressed && EquippedTool->IsAutomatic()) // TODO: return false if not Range
 	{
 		ActivateTool();
 	}
@@ -220,7 +220,7 @@ void UEquipmentComponent::FireIntervalEnd()
 */
 void UEquipmentComponent::Reload()
 {
-	if(CarriedAmmunition > 0 && CombatState == ECombatState::ECS_Unoccupied && EquippedTool && !EquippedTool->IsFull())
+	if(CarriedAmmunition > 0 && CombatState == ECombatState::ECS_Unoccupied && EquippedTool && !EquippedTool->IsFull()) // TODO: IsFull return false if NOT Ranged
 	{
 		ServerReload();
 	}

@@ -8,6 +8,15 @@
 
 class AItemBase;
 
+UENUM()
+enum class EToolClass : uint8
+{
+	Tool UMETA(DisplayName="Default Tool"),
+	HarvestingTool UMETA(DisplayName="Harvesting Tool"),
+	MeleeWeapon UMETA(DisplayName="MeleeWeapon"),
+	RangeWeapon UMETA(DisplayName="RangeWeapon")
+};
+
 USTRUCT(Blueprintable, BlueprintType)
 struct FToolData
 {

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/AbilityTypes.h"
 #include "Equipment/Tool.h"
 #include "Weapon.generated.h"
 
@@ -15,6 +16,8 @@ class TEMPLATEBASE_API AWeapon : public ATool
 	GENERATED_BODY()
 
 public:
+	AWeapon();
+	
 	UFUNCTION(BlueprintCallable)
 	void ApplyHitScanDamage(AActor* TargetActor) const;
 	FGameplayEffectSpecHandle MakeDamageEffectSpec() const;
@@ -30,7 +33,22 @@ public:
 		bool bOverridePitch = false,
 		float PitchOverride = 0.f) const;
 
-protected:
+protected:	
+	/*
+	 * Damage
+	*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon|Damage")
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon|Damage", meta=(Categories="Damage"))
+	FGameplayTag DamageType;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Weapon|Damage")
+	FDamageRange DamageRange;
+
+	/*
+	 * Radial Damage
+	 */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon|Damage")
 	bool bIsRadialDamage = false;
 	
