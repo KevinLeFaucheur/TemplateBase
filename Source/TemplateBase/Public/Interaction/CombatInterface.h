@@ -102,6 +102,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SetIsElectrocuted(bool bInIsElectrocuted);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	int32 GetThrowableCount();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SpendAvailableThrowable();
+
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 };

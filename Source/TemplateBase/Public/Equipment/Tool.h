@@ -11,6 +11,7 @@
 #include "World/ItemBase.h"
 #include "Tool.generated.h"
 
+class UBoxComponent;
 enum class EToolClass : uint8;
 enum class EToolType : uint8;
 class UGameplayEffect;
@@ -107,6 +108,8 @@ protected:
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
+
+	virtual void OnToolStateSet();
 	
 	UPROPERTY()
 	APlayerCharacterController* OwnerController;
@@ -132,15 +135,24 @@ private:
 
 	UFUNCTION()
 	void OnRep_ToolState();
-	
+
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	EAnimationState AnimationState = EAnimationState::Default;
+
+	/*
+	 * Sockets
+	 */
 	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
 	FName MainHandSocket = FName("RightHandSocket");
 	
 	UPROPERTY(EditDefaultsOnly, Category="01-Equipment|Reload")
 	FName OffhandSocket = FName("OffhandSocket");
-
+	
 	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
-	EAnimationState AnimationState = EAnimationState::Default;
+	FName BackSocket = FName("BackSocket_01");
+	
+	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	FName BeltSocket = FName("BeltSocket_01");
 	
 public:	
 	void SetToolState(const EToolState NewState);
@@ -152,6 +164,8 @@ public:
 	FORCEINLINE EAnimationState GetAnimationState() const { return AnimationState; }
 	FORCEINLINE FName GetMainHandSocket() const { return MainHandSocket; }
 	FORCEINLINE FName GetOffhandSocket() const { return OffhandSocket; }
+	FORCEINLINE FName GetBackSocket() const { return BackSocket; }
+	FORCEINLINE FName GetBeltSocket() const { return BeltSocket; }
 
 	/*
 	 * Overriden in RangeWeapon
@@ -169,6 +183,12 @@ public:
 	virtual float GetFireInterval() const { return 0.f; }
 
 	/*
+	 * Overriden in MeleeWeapon
+	 */
+	virtual UBoxComponent* GetCollisionBox() { return nullptr; }
+	virtual void EmptyIgnoreActors() {};
+	
+	/*
 	 * Overriden in Weapon and HarvestingTool
 	 */
 	virtual USkeletalMeshComponent* GetMesh() const { return nullptr; }
@@ -176,4 +196,5 @@ public:
 	virtual void DetachToolFromComponent() {}
 	virtual void OnEquipped();
 	virtual void OnDropped();
+	virtual void OnSecondary();
 };

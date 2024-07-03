@@ -55,10 +55,13 @@ public:
 	
 	//~ Combat Interface
 	virtual int32 GetCharacterLevel_Implementation() override;
+	virtual int32 GetThrowableCount_Implementation() override;
+	virtual void SpendAvailableThrowable_Implementation() override;
 	//~ Combat Interface
 
 	void PlayFireMontage(bool bAiming);
 	void PlayThrowMontage();
+	void PlaySwapToolMontage();
 	void PlayReloadMontage(const EToolType ToolType);
 	void ReloadEnd();
 	
@@ -138,6 +141,8 @@ public:
 	
 	int32 CurrentHotbarIndex = -1;
 	bool bIsUsingItem = false;
+
+	bool bFinishedSwapping = false;
 	
 protected:
 	virtual void BeginPlay() override;

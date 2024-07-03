@@ -2,6 +2,7 @@
 
 #include "Player/CharacterAnimInstance.h"
 
+#include "Equipment/EquipmentComponent.h"
 #include "Equipment/Tool.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -93,6 +94,10 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	}
 	// const bool bHasAOEquipment = EquippedTool ? EquippedTool->bUseAimOffsets : false;
 	bUseFABRIK = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
+	if(PlayerCharacter->IsLocallyControlled() && PlayerCharacter->GetCombatState() != ECombatState::ECS_Throwing && PlayerCharacter->bFinishedSwapping)
+	{
+		// bUseFABRIK = !PlayerCharacter->IsLocallyReloading();
+	}
 	bUseAimOffset = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
 	bTransformRightHand = PlayerCharacter->GetCombatState() == ECombatState::ECS_Unoccupied;
 	// AnimationState = EquippedTool ? EquippedTool->GetAnimationState() : EAnimationState::Default;
@@ -198,9 +203,9 @@ void UCharacterAnimInstance::PlayThrowMontage()
 	{
 		Montage_Play(ThrowMontage);
 		
-		// FOnMontageEnded MontageCompleted;
-		// MontageCompleted.BindWeakLambda(this, [this](UAnimMontage* AnimMontage, bool bInterrupted)
-		// {
+		FOnMontageEnded MontageCompleted;
+		MontageCompleted.BindWeakLambda(this, [this](UAnimMontage* AnimMontage, bool bInterrupted)
+		{
 		// 	if (bInterrupted)
 		// 	{
 		// 		UE_LOG(LogTemp, Warning, TEXT("We were interrupted"));
@@ -210,7 +215,30 @@ void UCharacterAnimInstance::PlayThrowMontage()
 		// 	{
 		// 		// UE_LOG(LogTemp, Warning, TEXT("We completed"));
 		// 	}
-		// });
-		// Montage_SetEndDelegate(MontageCompleted, HitReactMontage);
+			if (PlayerCharacter->HasAuthority()) PlayerCharacter->SetCombatState(ECombatState::ECS_Unoccupied);
+		});
+		Montage_SetEndDelegate(MontageCompleted, HitReactMontage);
+	}
+}
+
+void UCharacterAnimInstance::PlaySwapToolMontage()
+{
+	if(SwapToolMontage)
+	{
+		Montage_Play(SwapToolMontage);
+		
+		FOnMontageEnded MontageCompleted;
+		MontageCompleted.BindWeakLambda(this, [this](UAnimMontage* AnimMontage, bool bInterrupted)
+		{
+			if (bInterrupted)
+			{
+			}
+			else
+			{
+			}
+			if (PlayerCharacter->HasAuthority()) PlayerCharacter->SetCombatState(ECombatState::ECS_Unoccupied);
+			if (PlayerCharacter) PlayerCharacter->bFinishedSwapping = true;
+		});
+		Montage_SetEndDelegate(MontageCompleted, SwapToolMontage);
 	}
 }

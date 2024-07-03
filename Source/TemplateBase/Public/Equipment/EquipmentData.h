@@ -38,6 +38,7 @@ enum class EToolState : uint8
 {
 	ETS_Initial UMETA(DisplayName="Initial"),
 	ETS_Equipped UMETA(DisplayName="Equipped"),	
+	ETS_Secondary UMETA(DisplayName="Secondary"),	
 	ETS_Dropped UMETA(DisplayName="Dropped"),
 	
 	ETS_MAX UMETA(DisplayName="DefaultMAX")

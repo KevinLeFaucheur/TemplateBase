@@ -23,4 +23,5 @@ public:
 	virtual void DetachToolFromComponent() override;
 	virtual void OnEquipped() override;
 	virtual void OnDropped() override;
+	virtual void OnSecondary() override;
 };

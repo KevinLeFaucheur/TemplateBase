@@ -44,3 +44,17 @@ void AHarvestingTool::OnDropped()
 	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 }
+
+void AHarvestingTool::OnSecondary()
+{
+	Super::OnSecondary();
+	Mesh->SetSimulatePhysics(false);
+	Mesh->SetEnableGravity(false);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	if(bUsePhysicsAsset)
+	{
+		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Mesh->SetEnableGravity(true);
+		Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	}
+}

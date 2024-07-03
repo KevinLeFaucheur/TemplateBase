@@ -6,7 +6,6 @@
 #include "GameplayTagContainer.h"
 #include "WeapenData.h"
 #include "AbilitySystem/AbilityTypes.h"
-#include "Data/ItemInfo.h"
 #include "Data/ToolInfo.h"
 #include "Engine/DataAsset.h"
 #include "WeaponInfo.generated.h"

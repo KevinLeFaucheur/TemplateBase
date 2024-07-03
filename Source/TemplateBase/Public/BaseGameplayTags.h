@@ -166,6 +166,9 @@ FGameplayTag InputTag_Passive_3;
 FGameplayTag InputTag_Passive_4;
 FGameplayTag InputTag_Passive_5;
  
+FGameplayTag InputTag_Throw_1;
+FGameplayTag InputTag_Throw_2;
+ 
  /*
  * Player Tags
  */

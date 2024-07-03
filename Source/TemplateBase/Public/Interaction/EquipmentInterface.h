@@ -31,4 +31,6 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void MontageEnd();
+
+	
 };

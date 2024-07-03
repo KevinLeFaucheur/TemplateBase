@@ -20,6 +20,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void ApplyHitScanDamage(AActor* TargetActor) const;
+	void CauseDamage(const FHitResult& Hit) const;
 	FGameplayEffectSpecHandle MakeDamageEffectSpec() const;
 
 	UFUNCTION(BlueprintPure)
@@ -42,6 +43,7 @@ protected:
 	virtual void DetachToolFromComponent() override;
 	virtual void OnEquipped() override;
 	virtual void OnDropped() override;
+	virtual void OnSecondary() override;
 	
 	/*
 	 * Damage

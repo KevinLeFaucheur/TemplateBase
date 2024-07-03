@@ -2,11 +2,8 @@
 
 #include "Equipment/Weapon/ProjectileWeapon.h"
 #include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
-#include "BaseGameplayTags.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Equipment/Weapon/Projectile.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 void AProjectileWeapon::Activate(const FVector& HitTarget)
 {

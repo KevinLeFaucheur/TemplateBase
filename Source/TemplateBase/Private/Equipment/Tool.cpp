@@ -14,10 +14,10 @@ ATool::ATool()
 	bReplicates = true;
 
 	AreaSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AreaSphere"));
-	AreaSphere->SetupAttachment(RootComponent);
 	AreaSphere->SetSphereRadius(150.f);
 	AreaSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SetRootComponent(AreaSphere);
 
 	PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
 	PickupWidget->SetupAttachment(RootComponent);
@@ -93,7 +93,12 @@ void ATool::OnRep_Owner()
 	}
 	else
 	{
-		SetHUDAmmunition();
+		OwnerCharacter = OwnerCharacter == nullptr ? Cast<APlayerCharacter>(Owner) : OwnerCharacter;
+		if(OwnerCharacter && OwnerCharacter->GetEquippedTool() == this)
+		{
+			SetHUDAmmunition();
+		}
+		// TODO: Could add ammo HUD for Secondary if needed
 	}
 }
 
@@ -138,30 +143,22 @@ void ATool::ShowPickupWidget(bool bShowWidget)
 
 /*
  * State
- */
+*/
 void ATool::SetToolState(const EToolState NewState)
 {
 	ToolState = NewState;
-	
-	switch (ToolState) {
-	case EToolState::ETS_Initial:
-		break;
-	case EToolState::ETS_Equipped:
-		AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		OnEquipped();
-		break;
-	case EToolState::ETS_Dropped:
-		AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		AreaSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-		OnDropped();
-		break;
-	default: ;
-	}
+	OnToolStateSet();
 }
 
 void ATool::OnRep_ToolState()
 {
-	switch (ToolState) {
+	OnToolStateSet();
+}
+
+void ATool::OnToolStateSet()
+{
+	switch (ToolState)
+	{
 	case EToolState::ETS_Initial:
 		break;
 	case EToolState::ETS_Equipped:
@@ -169,6 +166,9 @@ void ATool::OnRep_ToolState()
 		break;
 	case EToolState::ETS_Dropped:
 		OnDropped();
+		break;
+	case EToolState::ETS_Secondary:
+		OnSecondary();
 		break;
 	default: ;
 	}
@@ -177,10 +177,23 @@ void ATool::OnRep_ToolState()
 void ATool::OnEquipped()
 {
 	ShowPickupWidget(false);
+	AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	if(EquipSound) UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
 }
 
 void ATool::OnDropped()
 {
+	if(HasAuthority())
+	{
+		AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		AreaSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	}
 	if(DropSound) UGameplayStatics::PlaySoundAtLocation(this, DropSound, GetActorLocation());
+}
+
+void ATool::OnSecondary()
+{
+	ShowPickupWidget(false);
+	AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	if(EquipSound) UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
 }

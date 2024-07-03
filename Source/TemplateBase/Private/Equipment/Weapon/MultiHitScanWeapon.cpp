@@ -9,7 +9,7 @@
 
 void AMultiHitScanWeapon::Activate(const FVector& HitTarget)
 {
-	ATool::Activate(HitTarget);
+	ARangeWeapon::Activate(HitTarget);
 	
 	APawn* OwnerPawn = Cast<APawn>(GetOwner());
 	if(OwnerPawn == nullptr) return;
@@ -27,7 +27,6 @@ void AMultiHitScanWeapon::Activate(const FVector& HitTarget)
 			FHitResult FireHit;
 			WeaponTraceHit(Start, HitTarget, FireHit);
 			UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(FireHit.GetActor());
-			if(FireHit.GetActor()) GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Green, FString::Printf(TEXT("Hit: %s"), *FireHit.GetActor()->GetName()));
 			if (HasAuthority() && TargetASC && UBaseAbilitySystemLibrary::IsHostile(OwnerPawn, FireHit.GetActor()))
 			{
 				if(HitMap.Contains(TargetASC))

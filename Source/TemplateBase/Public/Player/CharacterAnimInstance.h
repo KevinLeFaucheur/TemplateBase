@@ -101,6 +101,7 @@ public:
 	void PlayFireMontage(bool bIsAiming);
 	void PlayHitReactMontage();
 	void PlayThrowMontage();
+	void PlaySwapToolMontage();
 	void PlayReloadMontage(const EToolType ToolType);
 	void JumpToReloadEnd(const FName& SectionName);
 	
@@ -115,6 +116,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
 	TObjectPtr<UAnimMontage> ThrowMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
+	TObjectPtr<UAnimMontage> SwapToolMontage;
 	
 private:
 	FRotator CharacterRotationLastFrame;

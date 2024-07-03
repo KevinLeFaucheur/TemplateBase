@@ -1,13 +1,9 @@
 // Retropsis @ 2024
 
 #include "Equipment/Weapon/HitScanWeapon.h"
-#include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
-#include "BaseGameplayTags.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
-#include "Player/PlayerCharacter.h"
 
 
 void AHitScanWeapon::Activate(const FVector& HitTarget)

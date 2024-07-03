@@ -4,6 +4,7 @@
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Equipment/Tool.h"
 #include "Data/WeapenData.h"
@@ -26,6 +27,7 @@ void UEquipmentComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UEquipmentComponent, EquippedTool);
+	DOREPLIFETIME(UEquipmentComponent, SecondaryTool);
 	DOREPLIFETIME(UEquipmentComponent, bAiming);
 	DOREPLIFETIME(UEquipmentComponent, CombatState);
 	DOREPLIFETIME(UEquipmentComponent, ThrowableCount);
@@ -74,16 +76,16 @@ void UEquipmentComponent::EquipTool(ATool* ToolToEquip)
 {
 	if(PlayerCharacter == nullptr || ToolToEquip == nullptr) return;
 	if(CombatState != ECombatState::ECS_Unoccupied) return;
-	
-	DropEquippedTool();
-	
-	EquippedTool = ToolToEquip;
-	EquippedTool->SetToolState(EToolState::ETS_Equipped);
-	EquippedTool->SetOwner(PlayerCharacter);
-	EquippedTool->SetHUDAmmunition(); // TODO: Do nothing if not Range
-	AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
-	PlayerCharacter->SetAnimationState(EquippedTool->GetAnimationState());
 
+	if(EquippedTool != nullptr && SecondaryTool == nullptr)
+	{
+		EquipSecondaryTool(ToolToEquip);
+	}
+	else
+	{
+		EquipPrimaryTool(ToolToEquip);		
+	}
+	
 	// TODO: Does this EquippedTool orient character to Movement or ControllerOrientation
 	if(EquippedTool->bUseAimOffsets)
 	{
@@ -95,9 +97,31 @@ void UEquipmentComponent::EquipTool(ATool* ToolToEquip)
 		PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
 		PlayerCharacter->bUseControllerRotationYaw = false;
 	}
+}
 
-	// TODO: Is it a FireWeapon? Add or Update Ammunition HUD
-	UpdateCarriedAmmunition();
+void UEquipmentComponent::EquipPrimaryTool(ATool* ToolToEquip)
+{
+	DropEquippedTool();
+	EquippedTool = ToolToEquip;
+	EquippedTool->SetToolState(EToolState::ETS_Equipped);
+	EquippedTool->SetOwner(PlayerCharacter);
+	AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
+	PlayerCharacter->SetAnimationState(EquippedTool->GetAnimationState());
+	
+	EquippedTool->SetHUDAmmunition(); // TODO: Do nothing if not Range
+	UpdateCarriedAmmunition(); // TODO: Is it a FireWeapon? Add or Update Ammunition HUD
+}
+
+void UEquipmentComponent::EquipSecondaryTool(ATool* ToolToEquip)
+{
+	SecondaryTool = ToolToEquip;
+	SecondaryTool->SetToolState(EToolState::ETS_Secondary);
+	SecondaryTool->SetOwner(PlayerCharacter);
+	AttachToolToSocket(SecondaryTool, SecondaryTool->GetBackSocket());
+
+	// TODO: Could still add ammo for secondary if there is 
+	// SecondaryTool->SetHUDAmmunition(); // TODO: Do nothing if not Range
+	// UpdateCarriedAmmunition(); // TODO: Is it a FireWeapon? Add or Update Ammunition HUD
 }
 
 void UEquipmentComponent::OnRep_EquippedTool()
@@ -106,6 +130,7 @@ void UEquipmentComponent::OnRep_EquippedTool()
 	{
 		AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
 		EquippedTool->SetToolState(EToolState::ETS_Equipped);
+		EquippedTool->SetHUDAmmunition(); // TODO: Do nothing if not Range
 		PlayerCharacter->SetAnimationState(EquippedTool->GetAnimationState());
 		
 		// TODO: Does this EquippedTool orient character to Movement or ControllerOrientation
@@ -120,6 +145,48 @@ void UEquipmentComponent::OnRep_EquippedTool()
 			PlayerCharacter->bUseControllerRotationYaw = false;
 		}
 	}	
+}
+
+void UEquipmentComponent::OnRep_SecondaryTool()
+{
+	if(SecondaryTool && PlayerCharacter)
+	{
+		AttachToolToSocket(SecondaryTool, SecondaryTool->GetBackSocket());
+		SecondaryTool->SetToolState(EToolState::ETS_Secondary);
+	}
+}
+
+/*
+ * Swapping
+ */
+void UEquipmentComponent::SwapTools()
+{
+	if(CombatState != ECombatState::ECS_Unoccupied || PlayerCharacter == nullptr || !PlayerCharacter->HasAuthority()) return;
+
+	PlayerCharacter->PlaySwapToolMontage();
+	PlayerCharacter->bFinishedSwapping = false;
+	CombatState = ECombatState::ECS_Swapping;
+	
+	ATool* TempTool = EquippedTool;
+	EquippedTool = SecondaryTool;
+	SecondaryTool = TempTool;
+}
+
+void UEquipmentComponent::SwappingTools()
+{
+	EquippedTool->SetToolState(EToolState::ETS_Equipped);
+	AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
+	PlayerCharacter->SetAnimationState(EquippedTool->GetAnimationState());
+	EquippedTool->SetHUDAmmunition(); // TODO: Do nothing if not Range
+	UpdateCarriedAmmunition(); // TODO: Is it a FireWeapon? Add or Update Ammunition HUD
+	
+	SecondaryTool->SetToolState(EToolState::ETS_Secondary);
+	AttachToolToSocket(SecondaryTool, SecondaryTool->GetBackSocket());
+}
+
+bool UEquipmentComponent::ShouldSwapTools()
+{
+	return EquippedTool != nullptr && SecondaryTool != nullptr;
 }
 
 void UEquipmentComponent::AttachToolToSocket(AActor* Tool, const FName& SocketName)
@@ -145,6 +212,9 @@ bool UEquipmentComponent::CanActivate()
 	if(EquippedTool->IsEmpty()) return false;
 	if(!bCanActivate) return false;
 	if(CombatState == ECombatState::ECS_Reloading && EquippedTool->CanInterruptReload()) return true; // TODO: CanInterruptReload return false if NOT Ranged
+
+	// if(bIsLocallyReloading) return false;
+	
 	if(CombatState != ECombatState::ECS_Unoccupied) return false;
 
 	return true;
@@ -155,6 +225,7 @@ void UEquipmentComponent::FireButtonPressed(bool bPressed)
 	bFireButtonPressed = bPressed;
 	if(bFireButtonPressed)
 	{
+		if(EquippedTool == nullptr) return; // TODO: Think of another place to check it
 		switch (EquippedTool->GetToolClass())
 		{
 		case EToolClass::Tool:
@@ -189,7 +260,10 @@ void UEquipmentComponent::ActivateTool()
 
 void UEquipmentComponent::ServerActivateTool_Implementation()
 {
-	MulticastActivateTool();
+	GEngine->AddOnScreenDebugMessage(159, 5.f, FColor::White, FString::Printf(TEXT("ServerActivateTool_Implementation")));
+	if(PlayerCharacter && EquippedTool) IEquipmentInterface::Execute_UseItem(EquippedTool, PlayerCharacter);
+	// if(PlayerCharacter && PlayerCharacter->EquippedTool) IEquipmentInterface::Execute_UseItem(PlayerCharacter->EquippedTool, PlayerCharacter);
+	// MulticastActivateTool();
 }
 
 void UEquipmentComponent::MulticastActivateTool_Implementation()
@@ -335,7 +409,7 @@ void UEquipmentComponent::OnRep_CombatState()
 		if(bFireButtonPressed) ActivateTool();
 		break;
 	case ECombatState::ECS_Reloading:
-		HandleReload();
+		if(PlayerCharacter && !PlayerCharacter->IsLocallyControlled()) HandleReload();
 		break;
 	case ECombatState::ECS_Throwing:
 		if(PlayerCharacter && !PlayerCharacter->IsLocallyControlled())
@@ -344,6 +418,9 @@ void UEquipmentComponent::OnRep_CombatState()
 			if(EquippedTool) AttachToolToSocket(EquippedTool, EquippedTool->GetOffhandSocket());
 			ToggleAttachedThrowable(true);
 		}
+		break;
+	case ECombatState::ECS_Swapping:
+		if(PlayerCharacter && !PlayerCharacter->IsLocallyControlled()) PlayerCharacter->PlaySwapToolMontage();
 		break;
 	default: ;
 	}
@@ -592,7 +669,7 @@ void UEquipmentComponent::ServerThrow_Implementation()
 void UEquipmentComponent::ThrowEnd()
 {
 	CombatState = ECombatState::ECS_Unoccupied;
-	AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
+	if(EquippedTool) AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
 }
 
 void UEquipmentComponent::Throwing()
@@ -638,5 +715,14 @@ void UEquipmentComponent::UpdateHUDThrowableCount()
 	if(PlayerCharacterController)
 	{
 		PlayerCharacterController->SetHUDThrowableCount(ThrowableCount);	
+	}
+}
+
+void UEquipmentComponent::SetMeleeWeaponCollisionEnabled(const ECollisionEnabled::Type CollisionEnabled)
+{
+	if(PlayerCharacter->HasAuthority() && EquippedTool && EquippedTool->GetCollisionBox() && EquippedTool->GetToolClass() == EToolClass::MeleeWeapon)
+	{
+		EquippedTool->GetCollisionBox()->SetCollisionEnabled(CollisionEnabled);
+		EquippedTool->EmptyIgnoreActors();
 	}
 }

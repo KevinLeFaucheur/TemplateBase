@@ -24,8 +24,14 @@ public:
 	friend class APlayerCharacter;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	void DropEquippedTool();
+	
 	void EquipTool(ATool* ToolToEquip);
+	void DropEquippedTool();
+	void SwapTools();
+	
+	UFUNCTION(BlueprintCallable)
+	void SwappingTools();
+	
 	void Reload();
 
 	UFUNCTION(BlueprintCallable)
@@ -52,12 +58,26 @@ public:
 
 	void PickupAmmunition(EToolType ToolType, int32 AmmunitionAmount);
 
+	UFUNCTION(BlueprintCallable)
+	void SetMeleeWeaponCollisionEnabled(const ECollisionEnabled::Type CollisionEnabled);
+
 protected:
 	virtual void BeginPlay() override;
 
-	// Activating
+	/*
+	 * Equipping
+	 */
+	void EquipPrimaryTool(ATool* ToolToEquip);
+	void EquipSecondaryTool(ATool* ToolToEquip);
+
+	/*
+	 * Activating
+	 */
 	UFUNCTION()
 	void OnRep_EquippedTool();
+	
+	UFUNCTION()
+	void OnRep_SecondaryTool();
 	
 	void AttachToolToSocket(AActor* Tool, const FName& SocketName);
 	
@@ -75,8 +95,9 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastActivateTool();
 	
-
-	// Reloading
+	/*
+	 * Reloading
+	 */
 	UFUNCTION(Server, Reliable)
 	void ServerReload();
 
@@ -84,7 +105,9 @@ protected:
 
 	int32 AmountToReload();
 	
-	// Aiming
+	/*
+	 * Aiming
+	 */
 	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
 	void SetHUDCrosshairs(float DeltaTime);
 	void SetAiming(bool bIsAiming);
@@ -115,6 +138,9 @@ private:
 
 	UPROPERTY(ReplicatedUsing=OnRep_EquippedTool)
 	TObjectPtr<ATool> EquippedTool;
+	
+	UPROPERTY(ReplicatedUsing=OnRep_SecondaryTool)
+	TObjectPtr<ATool> SecondaryTool;
 
 	void FireButtonPressed(bool bPressed);
 
@@ -139,15 +165,15 @@ private:
 	 */
 	UPROPERTY(EditAnywhere, Category="Equipment|Throw")
 	TSubclassOf<AProjectile> ThrowableClass;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Throw")
+	int32 MaxThrowableCount = 4;
 
 	UPROPERTY(ReplicatedUsing=OnRep_ThrowableCount)
 	int32 ThrowableCount = 4;
 
 	UFUNCTION()
 	void OnRep_ThrowableCount();
-	
-	UPROPERTY(EditAnywhere, Category="Equipment|Throw")
-	int32 MaxThrowableCount = 4;
 
 	void UpdateHUDThrowableCount();
 	
@@ -225,4 +251,5 @@ private:
 	void InitializeCarriedAmmunition();
 	
 public:
+	bool ShouldSwapTools();
 };

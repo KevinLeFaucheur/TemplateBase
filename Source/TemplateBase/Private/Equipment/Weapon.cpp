@@ -13,7 +13,6 @@ AWeapon::AWeapon()
 	Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SetRootComponent(Mesh);
 }
 
 void AWeapon::ApplyHitScanDamage(AActor* TargetActor) const
@@ -29,6 +28,27 @@ void AWeapon::ApplyHitScanDamage(AActor* TargetActor) const
 	if(UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor))
 	{
 		TargetASC->ApplyGameplayEffectSpecToTarget( *DamageSpecHandle.Data.Get(),UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+	}
+}
+
+void AWeapon::CauseDamage(const FHitResult& Hit) const
+{
+	if (HasAuthority() && Hit.bBlockingHit)
+	{
+		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
+		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, 1.0f, SourceASC->MakeEffectContext());
+    
+		const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+		
+		const float ScaledMagnitudeMin = DamageRange.DamageMin.GetValueAtLevel(1.f);
+		const float ScaledMagnitudeMax = DamageRange.DamageMax.GetValueAtLevel(1.f);
+		const float Magnitude = FMath::FRandRange(ScaledMagnitudeMin, ScaledMagnitudeMax);
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageType, Magnitude);
+		
+		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Hit.GetActor()))
+		{
+			TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+		}
 	}
 }
 
@@ -147,4 +167,18 @@ void AWeapon::OnDropped()
 	Mesh->SetCollisionResponseToAllChannels(ECR_Block);
 	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+}
+
+void AWeapon::OnSecondary()
+{
+	Super::OnSecondary();
+	Mesh->SetSimulatePhysics(false);
+	Mesh->SetEnableGravity(false);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	if(bUsePhysicsAsset)
+	{
+		Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		Mesh->SetEnableGravity(true);
+		Mesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	}
 }

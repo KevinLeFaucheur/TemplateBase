@@ -265,22 +265,25 @@ void APlayerCharacter::EquipButtonPressed()
 {
 	if(EquipmentComponent)
 	{
-		if(HasAuthority())
+		if(EquipmentComponent->CombatState == ECombatState::ECS_Unoccupied) ServerEquipButtonPressed();
+		if (!HasAuthority() && EquipmentComponent->ShouldSwapTools() && EquipmentComponent->CombatState == ECombatState::ECS_Unoccupied && OverlappingTool == nullptr)
 		{
-			EquipmentComponent->EquipTool(OverlappingTool);
-		}
-		else
-		{
-			ServerEquipButtonPressed();
+			PlaySwapToolMontage();
+			SetCombatState(ECombatState::ECS_Swapping);
+			bFinishedSwapping = false;
 		}
 	}
 }
 
 void APlayerCharacter::ServerEquipButtonPressed_Implementation()
 {
-	if(EquipmentComponent)
+	if(OverlappingTool)
 	{
 		EquipmentComponent->EquipTool(OverlappingTool);
+	}
+	else if (EquipmentComponent->ShouldSwapTools())
+	{
+		EquipmentComponent->SwapTools();
 	}
 }
 
@@ -308,7 +311,7 @@ void APlayerCharacter::ServerLeftMouseButtonPressed_Implementation()
 void APlayerCharacter::FireButtonPressed()
 {
 	// TODO: Need to streamline some other way
-	ServerLeftMouseButtonPressed();
+	// ServerLeftMouseButtonPressed();
 	if(EquipmentComponent) EquipmentComponent->FireButtonPressed(true);
 }
 
@@ -345,6 +348,14 @@ void APlayerCharacter::MulticastHitReact_Implementation()
 	if(UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->PlayHitReactMontage();
+	}
+}
+
+void APlayerCharacter::PlaySwapToolMontage()
+{
+	if(UCharacterAnimInstance* AnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->PlaySwapToolMontage();
 	}
 }
 
@@ -530,6 +541,16 @@ void APlayerCharacter::PickupAmmunition_Implementation(EToolType ToolType, int32
 	EquipmentComponent->PickupAmmunition(ToolType, AmmunitionAmount);
 }
 
+int32 APlayerCharacter::GetThrowableCount_Implementation()
+{
+	return EquipmentComponent->ThrowableCount;
+}
+
+void APlayerCharacter::SpendAvailableThrowable_Implementation()
+{
+	EquipmentComponent->ThrowableCount = FMath::Clamp(EquipmentComponent->ThrowableCount - 1, 0 , EquipmentComponent->MaxThrowableCount);
+}
+
 void APlayerCharacter::UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData)
 {
 	IControllerInterface::Execute_UpdateInventorySlot(Controller, ContainerType, SlotIndex, ItemData);
@@ -557,9 +578,9 @@ void APlayerCharacter::MulticastPlayMontage_Implementation(UAnimMontage* Montage
 	FOnMontageEnded MontageCompleted;
 	MontageCompleted.BindWeakLambda(this, [this](UAnimMontage* AnimMontage, bool bInterrupted)
 	{
-		if(EquippedTool)
+		if(EquipmentComponent->EquippedTool)
 		{
-			IEquipmentInterface::Execute_MontageEnd(EquippedTool);
+			IEquipmentInterface::Execute_MontageEnd(EquipmentComponent->EquippedTool);
 		}
 		bIsUsingItem = false;
 	});
@@ -655,10 +676,24 @@ void APlayerCharacter::ServerUseHotbarSlot_Implementation(int32 Index)
 			case EItemType::Resource:
 				break;
 			case EItemType::Equipment:
-				if(IsValid(EquippedTool))
+				if(IsValid(EquipmentComponent->EquippedTool))
 				{
-					EquippedTool->Destroy();
-					MulticastUnequipItem();
+					switch (EquipmentComponent->EquippedTool->GetToolClass())
+					{
+					case EToolClass::HarvestingTool:
+						EquipmentComponent->EquippedTool->Destroy();
+						MulticastUnequipItem();
+						break;
+					case EToolClass::MeleeWeapon:
+					case EToolClass::RangeWeapon:
+					default:
+						EquipmentComponent->DropEquippedTool();
+						const FInventoryItemData ItemData =  HotbarComponent->GetItemAtIndex(CurrentHotbarIndex);
+						const UToolInfo* ToolInfo = Cast<UToolInfo>(ItemData.Asset.LoadSynchronous());
+						UClass* Class = ToolInfo->ToolData.ToolClass.LoadSynchronous();
+						ServerSpawnEquipment(Class, CurrentHotbarIndex);
+						break;
+					}
 				}
 				else
 				{
@@ -668,6 +703,7 @@ void APlayerCharacter::ServerUseHotbarSlot_Implementation(int32 Index)
 					ServerSpawnEquipment(Class, CurrentHotbarIndex);
 				}
 				break;
+				
 			case EItemType::Armor:
 				break;
 			case EItemType::Consumable:
@@ -682,12 +718,12 @@ void APlayerCharacter::ServerUseHotbarSlot_Implementation(int32 Index)
 
 void APlayerCharacter::ServerSpawnEquipment_Implementation(TSubclassOf<AActor> Class, int32 Index)
 {
-	EquippedTool = GetWorld()->SpawnActor<AActor>(Class);
-	if(EquippedTool)
+	EquipmentComponent->EquippedTool = GetWorld()->SpawnActor<ATool>(Class);
+	if(EquipmentComponent->EquippedTool)
 	{
-		EquippedTool->SetOwner(this);
-		const FEquipmentInfo EquipmentInfo = IEquipmentInterface::Execute_GetEquipmentInfo(EquippedTool);
-		MulticastAttachActorToMainHand(EquippedTool, EquipmentInfo.MainHandSocket, EquipmentInfo.AnimationState);
+		EquipmentComponent->EquippedTool->SetOwner(this);
+		const FEquipmentInfo EquipmentInfo = IEquipmentInterface::Execute_GetEquipmentInfo(EquipmentComponent->EquippedTool);
+		MulticastAttachActorToMainHand(EquipmentComponent->EquippedTool, EquipmentInfo.MainHandSocket, EquipmentInfo.AnimationState);
 	}
 }
 
@@ -697,7 +733,7 @@ void APlayerCharacter::MulticastAttachActorToMainHand_Implementation(AActor* Tar
 	{
 		CharacterAnimInstance->AnimationState = AnimationState;
 	}
-	if(EquippedTool) EquippedTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, MainHandSocket);
+	if(EquipmentComponent->EquippedTool) EquipmentComponent->EquippedTool->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, MainHandSocket);
 }
 
 void APlayerCharacter::MulticastUnequipItem_Implementation()
