@@ -119,6 +119,9 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Type_None = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Type.None"), FString("Abilities Type None"));
 	GameplayTags.Abilities_Type_Offensive = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Type.Offensive"), FString("Abilities Type Offensive"));
 	GameplayTags.Abilities_Type_Passive = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Type.Passive"), FString("Abilities Type Passive"));
+	
+	GameplayTags.Abilities_Weapon_Sword_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Sword.1"), FString("Abilities Weapon Sword 1"));
+	GameplayTags.Abilities_Weapon_Sword_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Sword.2"), FString("Abilities Weapon Sword 2"));
 
 	/*
 	 * Gameplay Cues

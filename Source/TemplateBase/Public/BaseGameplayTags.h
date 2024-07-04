@@ -112,6 +112,9 @@ FGameplayTag Abilities_Status_Equipped;
 FGameplayTag Abilities_Type_Offensive;
 FGameplayTag Abilities_Type_Passive;
 FGameplayTag Abilities_Type_None;
+ 
+FGameplayTag Abilities_Weapon_Sword_1;
+FGameplayTag Abilities_Weapon_Sword_2;
 
  /*
   * Gameplay Cues

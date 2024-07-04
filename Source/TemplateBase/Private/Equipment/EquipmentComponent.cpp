@@ -3,6 +3,7 @@
 #include "Equipment/EquipmentComponent.h"
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
+#include "AbilitySystem/BaseAbilitySystemLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -107,6 +108,12 @@ void UEquipmentComponent::EquipPrimaryTool(ATool* ToolToEquip)
 	EquippedTool->SetOwner(PlayerCharacter);
 	AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
 	PlayerCharacter->SetAnimationState(EquippedTool->GetAnimationState());
+
+	if(EquippedTool->HasAbilities())
+	{
+		// Give them
+		UBaseAbilitySystemLibrary::GiveToolAbilities(PlayerCharacter, PlayerCharacter->GetAbilitySystemComponent(), EquippedTool);
+	}
 	
 	EquippedTool->SetHUDAmmunition(); // TODO: Do nothing if not Range
 	UpdateCarriedAmmunition(); // TODO: Is it a FireWeapon? Add or Update Ammunition HUD
@@ -170,6 +177,15 @@ void UEquipmentComponent::SwapTools()
 	ATool* TempTool = EquippedTool;
 	EquippedTool = SecondaryTool;
 	SecondaryTool = TempTool;
+	
+	if(EquippedTool->HasAbilities())
+	{
+		UBaseAbilitySystemLibrary::GiveToolAbilities(PlayerCharacter, PlayerCharacter->GetAbilitySystemComponent(), EquippedTool);
+	}
+	if(SecondaryTool->HasAbilities())
+	{
+		UBaseAbilitySystemLibrary::RemoveToolAbilities(PlayerCharacter, PlayerCharacter->GetAbilitySystemComponent(), SecondaryTool);
+	}
 }
 
 void UEquipmentComponent::SwappingTools()
@@ -583,7 +599,7 @@ void UEquipmentComponent::SetHUDCrosshairs(float DeltaTime)
 			CrosshairPerShotFactor = FMath::FInterpTo(CrosshairPerShotFactor, 0.f, DeltaTime, 4.f);
 			
 			HUDPackage.CrosshairSpread =
-				0.5f +																		// Base line for crosshairs wont overlap each other
+				0.5f +																		// Baseline for cross-hairs won't overlap each other
 				CrosshairVelocityFactor +
 				CrosshairAirborneFactor -
 				CrosshairMarksmanFactor +

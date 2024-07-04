@@ -197,3 +197,13 @@ void ATool::OnSecondary()
 	AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	if(EquipSound) UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
 }
+
+TArray<FGameplayTag> ATool::GetToolAbilityTags() const
+{
+	TArray<FGameplayTag> AbilityTags;
+	for (TTuple<FGameplayTag, FGameplayTag> Ability : ToolAbilities)
+	{
+		AbilityTags.Add(Ability.Key);
+	}
+	return AbilityTags;
+}

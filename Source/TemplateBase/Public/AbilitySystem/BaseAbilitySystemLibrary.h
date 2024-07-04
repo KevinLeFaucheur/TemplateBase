@@ -8,6 +8,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "BaseAbilitySystemLibrary.generated.h"
 
+class ATool;
 class UCharacterClassInfo;
 class UAbilityInfo;
 struct FWidgetControllerParams;
@@ -49,12 +50,21 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
 	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
+
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	static void GiveToolAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ATool* Tool);
+	
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	static void RemoveToolAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ATool* Tool);
 	
 	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
 	
 	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
 	static UAbilityInfo* GetAbilityInfo(const UObject* WorldContextObject);
+	
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	static UAbilityInfo* GetToolAbilityInfo(const UObject* WorldContextObject);
 	
 	/*
 	 * Effect Context Getters  

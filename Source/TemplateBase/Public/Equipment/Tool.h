@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EquipmentData.h"
+#include "GameplayTagContainer.h"
 #include "Data/ToolInfo.h"
 #include "Data/WeapenData.h"
 #include "GameFramework/Actor.h"
@@ -11,6 +12,7 @@
 #include "World/ItemBase.h"
 #include "Tool.generated.h"
 
+class UGameplayAbility;
 class UBoxComponent;
 enum class EToolClass : uint8;
 enum class EToolType : uint8;
@@ -43,50 +45,56 @@ public:
 	void MontageEnd_Implementation() override;
 	//~ Equipment Interface
 
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	bool bUseAimOffsets = false;
 
 	// TODO: Should be DataAsset/Table
 	/*
 	 * Crosshairs
 	 */
-	UPROPERTY(EditAnywhere, Category="01-Equipment|Crosshairs")
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsCenter;
 	
-	UPROPERTY(EditAnywhere, Category="01-Equipment|Crosshairs")
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsLeft;
 	
-	UPROPERTY(EditAnywhere, Category="01-Equipment|Crosshairs")
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsRight;
 	
-	UPROPERTY(EditAnywhere, Category="01-Equipment|Crosshairs")
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsTop;
 	
-	UPROPERTY(EditAnywhere, Category="01-Equipment|Crosshairs")
+	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
 	TObjectPtr<UTexture2D> CrosshairsBottom;
 
 	/*
 	 * Zoomed FoV while Aiming
 	 */
-	UPROPERTY(EditAnywhere, Category="01-Equipment|Properties")
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
 	float MarksmanFOV = 30.f;
 	
-	UPROPERTY(EditAnywhere, Category="01-Equipment|Properties")
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
 	float MarksmanInterpSpeed = 20.f;
+	
+	/*
+	 * Abilities
+	 */
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Abilities")
+	TMap<FGameplayTag, FGameplayTag> ToolAbilities;
 	
 	/*
 	 * Cosmetics
 	 */
-	UPROPERTY(EditAnywhere, Category="01-Equipment|Animation")
+	UPROPERTY(EditAnywhere, Category="Equipment|Animation")
 	TObjectPtr<UAnimationAsset> ActiveAnimation;
 
-	UPROPERTY(EditAnywhere, Category="01-Equipment|SFX")
+	UPROPERTY(EditAnywhere, Category="Equipment|SFX")
 	TObjectPtr<USoundBase> EquipSound;
 
-	UPROPERTY(EditAnywhere, Category="01-Equipment|SFX")
+	UPROPERTY(EditAnywhere, Category="Equipment|SFX")
 	TObjectPtr<USoundBase> DropSound;
 	
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment|Physics")
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Physics")
 	bool bUsePhysicsAsset = false;
 
 protected:
@@ -117,41 +125,41 @@ protected:
 	UPROPERTY()
 	APlayerCharacter* OwnerCharacter;
 	
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	EToolClass ToolClass = EToolClass::Tool;
 
-	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
+	UPROPERTY(VisibleAnywhere, Category="Equipment")
 	TObjectPtr<USphereComponent> AreaSphere;
 
-	UPROPERTY(VisibleAnywhere, Category="01-Equipment")
+	UPROPERTY(VisibleAnywhere, Category="Equipment")
 	TObjectPtr<UWidgetComponent> PickupWidget;
 
 private:
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
-	EToolType ToolType = EToolType::ETT_Handgun;
-	
-	UPROPERTY(ReplicatedUsing=OnRep_ToolState, VisibleAnywhere, Category="01-Equipment")
-	EToolState ToolState = EToolState::ETS_Initial;
-
 	UFUNCTION()
 	void OnRep_ToolState();
-
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	EAnimationState AnimationState = EAnimationState::Default;
-
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	EToolType ToolType = EToolType::ETT_Handgun;
+	
+	UPROPERTY(ReplicatedUsing=OnRep_ToolState, VisibleAnywhere, Category="Equipment")
+	EToolState ToolState = EToolState::ETS_Initial;
+	
 	/*
 	 * Sockets
 	 */
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	FName MainHandSocket = FName("RightHandSocket");
 	
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment|Reload")
+	UPROPERTY(EditDefaultsOnly, Category="Equipment|Reload")
 	FName OffhandSocket = FName("OffhandSocket");
 	
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	FName BackSocket = FName("BackSocket_01");
 	
-	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	FName BeltSocket = FName("BeltSocket_01");
 	
 public:	
@@ -166,6 +174,8 @@ public:
 	FORCEINLINE FName GetOffhandSocket() const { return OffhandSocket; }
 	FORCEINLINE FName GetBackSocket() const { return BackSocket; }
 	FORCEINLINE FName GetBeltSocket() const { return BeltSocket; }
+	FORCEINLINE bool HasAbilities() const { return ToolAbilities.Num() > 0; }
+	TArray<FGameplayTag> GetToolAbilityTags() const;
 
 	/*
 	 * Overriden in RangeWeapon

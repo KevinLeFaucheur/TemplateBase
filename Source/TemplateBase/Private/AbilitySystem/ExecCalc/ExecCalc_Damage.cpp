@@ -8,7 +8,6 @@
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Interaction/CombatInterface.h"
-#include "Kismet/GameplayStatics.h"
 
 struct BaseDamageStatics
 {

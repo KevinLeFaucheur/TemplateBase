@@ -5,8 +5,11 @@
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "AbilitySystem/AbilityTypes.h"
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "Engine/DamageEvents.h"
 #include "Engine/OverlapResult.h"
+#include "Equipment/Tool.h"
 #include "Game/OverworldGameMode.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -118,6 +121,53 @@ void UBaseAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 	}
 }
 
+void UBaseAbilitySystemLibrary::GiveToolAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ATool* Tool)
+{
+	UAbilityInfo* ToolAbilityInfo = GetToolAbilityInfo(WorldContextObject);
+	if(ToolAbilityInfo == nullptr || Tool == nullptr) return;
+	
+	for (TTuple<FGameplayTag, FGameplayTag> Ability : Tool->ToolAbilities)
+	{
+		const FBaseAbilityInfo AbilityInfo = ToolAbilityInfo->FindAbilityInfoForTag(Ability.Key);
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityInfo.Ability, 1);
+		AbilitySpec.DynamicAbilityTags.AddTag(Ability.Value);
+		ASC->GiveAbility(AbilitySpec);
+		ASC->MarkAbilitySpecDirty(AbilitySpec);
+	}
+
+	// TODO: Could give extra skills if character has a specific class or weapon mastery skill 
+	// const FCharacterClassDefaultInfo DefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	// for (TSubclassOf<UGameplayAbility> AbilityClass : DefaultInfo.StartupAbilities)
+	// {
+	// 	if(ASC->GetAvatarActor()->Implements<UCombatInterface>())
+	// 	{
+	// 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, ICombatInterface::Execute_GetCharacterLevel(ASC->GetAvatarActor()));
+	// 		ASC->GiveAbility(AbilitySpec);
+	// 	}
+	// }
+}
+
+void UBaseAbilitySystemLibrary::RemoveToolAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ATool* Tool)
+{
+	
+	UAbilityInfo* ToolAbilityInfo = GetToolAbilityInfo(WorldContextObject);
+	if(ToolAbilityInfo == nullptr || Tool == nullptr) return;
+	
+	for (TTuple<FGameplayTag, FGameplayTag> Ability : Tool->ToolAbilities)
+	{
+		if(UBaseAbilitySystemComponent* BaseASC = Cast<UBaseAbilitySystemComponent>(ASC))
+		{
+			FGameplayAbilitySpec* AbilitySpec = BaseASC->GetSpecFromAbilityTag(Ability.Key);
+			if(AbilitySpec)
+			{
+				AbilitySpec->DynamicAbilityTags.RemoveTag(Ability.Value);
+				ASC->ClearAbility(AbilitySpec->Handle);
+				ASC->MarkAbilitySpecDirty(*AbilitySpec);
+			}
+		}
+	}
+}
+
 UCharacterClassInfo* UBaseAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
 {
 	const AOverworldGameMode* OverworldGameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
@@ -130,6 +180,13 @@ UAbilityInfo* UBaseAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldCont
 	const AOverworldGameMode* OverworldGameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
 	if(OverworldGameMode == nullptr) return nullptr;
 	return  OverworldGameMode->AbilityInfo;
+}
+
+UAbilityInfo* UBaseAbilitySystemLibrary::GetToolAbilityInfo(const UObject* WorldContextObject)
+{
+	const AOverworldGameMode* OverworldGameMode = Cast<AOverworldGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if(OverworldGameMode == nullptr) return nullptr;
+	return  OverworldGameMode->ToolAbilityInfo;
 }
 
 int32 UBaseAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* WorldContextObject,

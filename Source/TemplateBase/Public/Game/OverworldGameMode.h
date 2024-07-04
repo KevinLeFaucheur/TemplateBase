@@ -22,4 +22,7 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Character")
 	TObjectPtr<UAbilityInfo> AbilityInfo;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Character")
+	TObjectPtr<UAbilityInfo> ToolAbilityInfo;
 };
