@@ -69,6 +69,7 @@ protected:
 	 */
 	void EquipPrimaryTool(ATool* ToolToEquip);
 	void EquipSecondaryTool(ATool* ToolToEquip);
+	void HandleUseAimOffsets();
 
 	/*
 	 * Activating

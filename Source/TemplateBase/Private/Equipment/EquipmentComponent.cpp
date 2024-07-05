@@ -86,18 +86,7 @@ void UEquipmentComponent::EquipTool(ATool* ToolToEquip)
 	{
 		EquipPrimaryTool(ToolToEquip);		
 	}
-	
-	// TODO: Does this EquippedTool orient character to Movement or ControllerOrientation
-	if(EquippedTool->bUseAimOffsets)
-	{
-		PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
-		PlayerCharacter->bUseControllerRotationYaw = true;
-	}
-	else
-	{
-		PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
-		PlayerCharacter->bUseControllerRotationYaw = false;
-	}
+	HandleUseAimOffsets();
 }
 
 void UEquipmentComponent::EquipPrimaryTool(ATool* ToolToEquip)
@@ -140,17 +129,7 @@ void UEquipmentComponent::OnRep_EquippedTool()
 		EquippedTool->SetHUDAmmunition(); // TODO: Do nothing if not Range
 		PlayerCharacter->SetAnimationState(EquippedTool->GetAnimationState());
 		
-		// TODO: Does this EquippedTool orient character to Movement or ControllerOrientation
-		if(EquippedTool->bUseAimOffsets)
-		{
-			PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
-			PlayerCharacter->bUseControllerRotationYaw = true;
-		}
-		else
-		{
-			PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
-			PlayerCharacter->bUseControllerRotationYaw = false;
-		}
+		HandleUseAimOffsets();
 	}	
 }
 
@@ -198,6 +177,8 @@ void UEquipmentComponent::SwappingTools()
 	
 	SecondaryTool->SetToolState(EToolState::ETS_Secondary);
 	AttachToolToSocket(SecondaryTool, SecondaryTool->GetBackSocket());
+	
+	HandleUseAimOffsets();
 }
 
 bool UEquipmentComponent::ShouldSwapTools()
@@ -217,6 +198,21 @@ void UEquipmentComponent::AttachToolToSocket(AActor* Tool, const FName& SocketNa
 void UEquipmentComponent::DropEquippedTool()
 {
 	if(EquippedTool) EquippedTool->Drop();
+}
+
+void UEquipmentComponent::HandleUseAimOffsets()
+{
+	// TODO: Does this EquippedTool orient character to Movement or ControllerOrientation
+	if(EquippedTool->bUseAimOffsets)
+	{
+		PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
+		PlayerCharacter->bUseControllerRotationYaw = true;
+	}
+	else
+	{
+		PlayerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
+		PlayerCharacter->bUseControllerRotationYaw = false;
+	}
 }
 
 /*
