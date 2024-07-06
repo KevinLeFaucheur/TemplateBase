@@ -36,5 +36,12 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category="GAS|Abilities")
 	void UseAvailableThrowable() const;
+
+	FVector GetSpawnLocation() const;
+	FRotator GetSpawnRotation() const;
+	FVector SpawnLocation;
+	FRotator SpawnDirection;
+	float StartTraceOffset = 480.f;
+	float DefaultTargetingRange = 3150.f;
 	
 };

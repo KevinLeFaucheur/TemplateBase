@@ -3,6 +3,7 @@
 #include "Equipment/EquipmentComponent.h"
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
+#include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAbilitySystemLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/BoxComponent.h"

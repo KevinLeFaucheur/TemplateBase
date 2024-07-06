@@ -39,13 +39,13 @@ protected:
 		FVector NormalImpulse,
 		const FHitResult& Hit );
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UStaticMeshComponent> ProjectileMesh;
 	
 	UPROPERTY(VisibleAnywhere, Category="Weapon|Projectile")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 	
-	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Weapon|Projectile")
 	TObjectPtr<UBoxComponent> HitCollision;
 	
 	UPROPERTY(EditAnywhere, Category="Weapon|Projectile")

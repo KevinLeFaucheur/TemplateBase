@@ -133,6 +133,12 @@ void UBaseAbilitySystemLibrary::GiveToolAbilities(const UObject* WorldContextObj
 		AbilitySpec.DynamicAbilityTags.AddTag(Ability.Value);
 		ASC->GiveAbility(AbilitySpec);
 		ASC->MarkAbilitySpecDirty(AbilitySpec);
+
+
+		if(UBaseAbilitySystemComponent* BaseASC = Cast<UBaseAbilitySystemComponent>(ASC))
+		{
+			BaseASC->ClientEquipToolAbility(Ability.Key, FBaseGameplayTags::Get().Abilities_Status_Equipped, Ability.Value, FGameplayTag());
+		}
 	}
 
 	// TODO: Could give extra skills if character has a specific class or weapon mastery skill 
@@ -163,6 +169,8 @@ void UBaseAbilitySystemLibrary::RemoveToolAbilities(const UObject* WorldContextO
 				AbilitySpec->DynamicAbilityTags.RemoveTag(Ability.Value);
 				ASC->ClearAbility(AbilitySpec->Handle);
 				ASC->MarkAbilitySpecDirty(*AbilitySpec);
+				
+				BaseASC->ClientEquipToolAbility(FBaseGameplayTags::Get().Abilities_None, FBaseGameplayTags::Get().Abilities_Status_Unlocked, Ability.Value, FGameplayTag());
 			}
 		}
 	}

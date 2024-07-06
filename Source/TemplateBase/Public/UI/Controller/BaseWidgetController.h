@@ -86,6 +86,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|WidgetData")
 	TObjectPtr<UAbilityInfo> AbilityInfo;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|WidgetData")
+	TObjectPtr<UAbilityInfo> ToolAbilityInfo;
 
 	APlayerCharacterController* GetPlayerCharacterController();
 	APlayerCharacterState* GetPlayerCharacterState();

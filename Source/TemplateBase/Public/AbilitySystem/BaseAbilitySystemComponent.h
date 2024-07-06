@@ -63,6 +63,9 @@ public:
 
 	UFUNCTION(Client, Reliable)
 	void ClientEquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot);
+	
+	UFUNCTION(Client, Reliable)
+	void ClientEquipToolAbility(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot);
 
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastActivatePassiveAbility(const FGameplayTag& AbilityTag, bool bActivate);
@@ -73,6 +76,7 @@ public:
 	FAbilitiesGiven AbilitiesGiven;
 	FAbilityStatusChanged AbilityStatusChanged;
 	FAbilityEquipped AbilityEquipped;
+	FAbilityEquipped ToolAbilityEquipped;
 	FDeactivatePassiveAbility DeactivatePassiveAbility;
 	FActivatePassiveAbility ActivatePassiveAbility;
 	bool bStartupAbilitiesGiven = false;

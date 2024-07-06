@@ -352,6 +352,12 @@ void UBaseAbilitySystemComponent::MulticastActivatePassiveAbility_Implementation
 	ActivatePassiveAbility.Broadcast(AbilityTag, bActivate);
 }
 
+void UBaseAbilitySystemComponent::ClientEquipToolAbility_Implementation(const FGameplayTag& AbilityTag,
+	const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot)
+{
+	ToolAbilityEquipped.Broadcast(AbilityTag, Status, Slot, PreviousSlot);
+}
+
 bool UBaseAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
                                                               FString& OutNextLevelDescription)
 {

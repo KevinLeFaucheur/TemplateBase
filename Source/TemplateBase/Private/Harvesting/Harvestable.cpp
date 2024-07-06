@@ -1,16 +1,14 @@
 // Retropsis @ 2024
 
-#include "World/ItemBase.h"
+#include "Harvesting/Harvestable.h"
 
-AItemBase::AItemBase()
+AHarvestable::AHarvestable()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	// SetReplicates(true);
 	bReplicates = true;
 }
 
-void AItemBase::BeginPlay()
+void AHarvestable::BeginPlay()
 {
 	Super::BeginPlay();
 }
-

@@ -55,6 +55,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	if (GetBaseAbilitySystemComponent())
 	{
 		GetBaseAbilitySystemComponent()->AbilityEquipped.AddUObject(this, &UOverlayWidgetController::OnAbilityEquipped);
+		GetBaseAbilitySystemComponent()->ToolAbilityEquipped.AddUObject(this, &UOverlayWidgetController::OnToolAbilityEquipped);
 		if(GetBaseAbilitySystemComponent()->bStartupAbilitiesGiven)
 		{
 			BroadcastAbilityInfo();
@@ -134,5 +135,15 @@ void UOverlayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag,
 	FBaseAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
 	Info.StatusTag = Status;
 	Info.InputTag = Slot;
+	AbilityInfoDelegate.Broadcast(Info);
+}
+
+void UOverlayWidgetController::OnToolAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status,
+	const FGameplayTag& Slot, const FGameplayTag& PreviousSlot) const
+{
+	FBaseAbilityInfo Info = ToolAbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	Info.StatusTag = Status;
+	Info.InputTag = Slot;
+	Info.AbilityTag = AbilityTag;
 	AbilityInfoDelegate.Broadcast(Info);
 }
