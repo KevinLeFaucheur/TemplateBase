@@ -11,6 +11,8 @@ AHarvestingTool::AHarvestingTool()
 	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ToolClass = EToolClass::HarvestingTool;
+
+	InitializeTool();
 }
 
 void AHarvestingTool::DetachToolFromComponent()

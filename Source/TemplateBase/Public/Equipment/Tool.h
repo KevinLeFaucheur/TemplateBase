@@ -28,7 +28,8 @@ class TEMPLATEBASE_API ATool : public AItemBase, public IEquipmentInterface
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	void InitializeTool();
 	ATool();
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void Tick(float DeltaTime) override;
@@ -120,10 +121,10 @@ protected:
 	virtual void OnToolStateSet();
 	
 	UPROPERTY()
-	APlayerCharacterController* OwnerController;
+	APlayerCharacterController* OwnerController = nullptr;
 	
 	UPROPERTY()
-	APlayerCharacter* OwnerCharacter;
+	APlayerCharacter* OwnerCharacter = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	EToolClass ToolClass = EToolClass::Tool;

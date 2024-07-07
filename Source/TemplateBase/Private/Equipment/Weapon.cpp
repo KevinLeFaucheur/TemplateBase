@@ -13,6 +13,8 @@ AWeapon::AWeapon()
 	Mesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	Mesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	InitializeTool();
 }
 
 void AWeapon::ApplyHitScanDamage(AActor* TargetActor) const

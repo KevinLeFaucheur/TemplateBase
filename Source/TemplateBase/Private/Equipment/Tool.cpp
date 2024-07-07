@@ -12,7 +12,10 @@ ATool::ATool()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
+}
 
+void ATool::InitializeTool()
+{
 	AreaSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AreaSphere"));
 	AreaSphere->SetSphereRadius(150.f);
 	AreaSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
