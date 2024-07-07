@@ -17,4 +17,7 @@ class TEMPLATEBASE_API UDamageTextComponent : public UWidgetComponent
 public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetDamageText(float Damage, bool bBlockedHit, bool bCriticalHit);
+
+	UPROPERTY(BlueprintReadOnly)
+	float Delay = 0.f;
 };

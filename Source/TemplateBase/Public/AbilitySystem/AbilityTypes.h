@@ -48,6 +48,7 @@ struct FDamageEffectParams
 	UPROPERTY(BlueprintReadWrite) float RadialDamageInnerRadius = 0.f;
 	UPROPERTY(BlueprintReadWrite) float RadialDamageOuterRadius = 0.f;
 	UPROPERTY(BlueprintReadWrite) FVector RadialDamageOrigin = FVector::ZeroVector;
+	UPROPERTY(BlueprintReadWrite) float ShowDamageDelay = 0.f;
 	
 };
 
@@ -70,6 +71,7 @@ public:
 	float GetRadialDamageInnerRadius() const { return RadialDamageInnerRadius; }
 	float GetRadialDamageOuterRadius() const { return RadialDamageOuterRadius; }
 	FVector GetRadialDamageOrigin() const { return RadialDamageOrigin; }
+	float GetShowDamageDelay() const { return ShowDamageDelay; }
 
 	void SetIsBlockedHit(bool bInIsBlockedHit) { bIsBlockedHit = bInIsBlockedHit; }
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
@@ -84,6 +86,7 @@ public:
 	void SetRadialDamageInnerRadius(float InRadialInnerRadius)  { RadialDamageInnerRadius = InRadialInnerRadius; }
 	void SetRadialDamageOuterRadius(float InRadialOuterRadius)  { RadialDamageOuterRadius = InRadialOuterRadius; }
 	void SetRadialDamageOrigin(const FVector& InRadialOrigin)  { RadialDamageOrigin = InRadialOrigin; }
+	void SetShowDamageDelay(float InShowDamageDelay)  { ShowDamageDelay = InShowDamageDelay; }
 	
 	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const override
@@ -144,6 +147,9 @@ protected:
 	
 	UPROPERTY()
 	FVector RadialDamageOrigin = FVector::ZeroVector;
+	
+	UPROPERTY()
+	float ShowDamageDelay = 0.f;
 };
 
 template<>

@@ -94,7 +94,7 @@ public:
 	TObjectPtr<UInputAction> HotbarAction_9;
 	
 	UFUNCTION(Client, Reliable)
-	void ClientShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit);
+	void ClientShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit, float Delay = 0.f);
 	
 	void SetHUDAmmunition(int32 Ammo) const;
 	void SetHUDCarriedAmmunition(int32 Ammo) const;

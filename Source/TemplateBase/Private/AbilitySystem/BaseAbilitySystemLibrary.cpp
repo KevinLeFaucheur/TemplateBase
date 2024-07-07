@@ -338,7 +338,16 @@ FVector UBaseAbilitySystemLibrary::GetRadialDamageOrigin(const FGameplayEffectCo
 	}
 	return FVector::ZeroVector;
 }
-		
+
+float UBaseAbilitySystemLibrary::GetShowDamageDelay(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return BaseEffectContext->GetShowDamageDelay();
+	}
+	return 0.f;
+}
+
 /*
  * Effect Context Setters  
  */
@@ -425,8 +434,7 @@ void UBaseAbilitySystemLibrary::SetIsRadialDamage(FGameplayEffectContextHandle& 
 	}
 }
 
-void UBaseAbilitySystemLibrary::SetRadialDamageInnerRadius(FGameplayEffectContextHandle& EffectContextHandle,
-	float InInnerRadius)
+void UBaseAbilitySystemLibrary::SetRadialDamageInnerRadius(FGameplayEffectContextHandle& EffectContextHandle, float InInnerRadius)
 {
 	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
@@ -434,8 +442,7 @@ void UBaseAbilitySystemLibrary::SetRadialDamageInnerRadius(FGameplayEffectContex
 	}
 }
 
-void UBaseAbilitySystemLibrary::SetRadialDamageOuterRadius(FGameplayEffectContextHandle& EffectContextHandle,
-	float InOuterRadius)
+void UBaseAbilitySystemLibrary::SetRadialDamageOuterRadius(FGameplayEffectContextHandle& EffectContextHandle, float InOuterRadius)
 {
 	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
@@ -443,8 +450,7 @@ void UBaseAbilitySystemLibrary::SetRadialDamageOuterRadius(FGameplayEffectContex
 	}
 }
 
-void UBaseAbilitySystemLibrary::SetRadialDamageOrigin(FGameplayEffectContextHandle& EffectContextHandle,
-	const FVector& InRadialOrigin)
+void UBaseAbilitySystemLibrary::SetRadialDamageOrigin(FGameplayEffectContextHandle& EffectContextHandle, const FVector& InRadialOrigin)
 {
 	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
@@ -452,12 +458,19 @@ void UBaseAbilitySystemLibrary::SetRadialDamageOrigin(FGameplayEffectContextHand
 	}
 }
 
+void UBaseAbilitySystemLibrary::SetShowDamageDelay(FGameplayEffectContextHandle& EffectContextHandle, float InDelay)
+{
+	if (FBaseGameplayEffectContext* BaseEffectContext = static_cast<FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		BaseEffectContext->SetShowDamageDelay(InDelay);
+	}
+}
+
 /*
  * Gameplay Mechanics
  */
 void UBaseAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject,
-                                                           TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius,
-                                                           const FVector& SphereOrigin)
+                                                           TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin)
 {
 	FCollisionQueryParams SphereParams;
 	SphereParams.AddIgnoredActors(ActorsToIgnore);
@@ -530,6 +543,7 @@ FGameplayEffectContextHandle UBaseAbilitySystemLibrary::ApplyDamageEffect(const 
 	SetRadialDamageInnerRadius(EffectContextHandle, DamageEffectParams.RadialDamageInnerRadius);
 	SetRadialDamageOuterRadius(EffectContextHandle, DamageEffectParams.RadialDamageOuterRadius);
 	SetRadialDamageOrigin(EffectContextHandle, DamageEffectParams.RadialDamageOrigin);
+	SetShowDamageDelay(EffectContextHandle, DamageEffectParams.ShowDamageDelay);
 	
 	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
 	

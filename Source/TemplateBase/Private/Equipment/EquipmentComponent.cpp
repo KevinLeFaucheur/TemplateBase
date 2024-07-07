@@ -279,7 +279,6 @@ void UEquipmentComponent::ActivateTool()
 
 void UEquipmentComponent::ServerActivateTool_Implementation()
 {
-	GEngine->AddOnScreenDebugMessage(159, 5.f, FColor::White, FString::Printf(TEXT("ServerActivateTool_Implementation")));
 	if(PlayerCharacter && EquippedTool) IEquipmentInterface::Execute_UseItem(EquippedTool, PlayerCharacter);
 	// if(PlayerCharacter && PlayerCharacter->EquippedTool) IEquipmentInterface::Execute_UseItem(PlayerCharacter->EquippedTool, PlayerCharacter);
 	// MulticastActivateTool();
@@ -531,7 +530,10 @@ void UEquipmentComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult)
 		{
 			const float DistanceToCharacter = (PlayerCharacter->GetActorLocation() - Start).Size();
 			Start += CrosshairWorldDirection * (DistanceToCharacter + TraceStartAdjustment);
-			DrawDebugSphere(GetWorld(), Start, 16.f, 12, FColor::White, false);
+			if(bShowTraceAdjustment)
+			{
+				DrawDebugSphere(GetWorld(), Start, 8.f, 12, FColor::White, false);
+			}
 		}
 		const FVector End = Start + CrosshairWorldDirection * TRACE_LENGTH;
 		GetWorld()->LineTraceSingleByChannel(TraceHitResult, Start, End, ECC_Visibility);

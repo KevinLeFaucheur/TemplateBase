@@ -228,19 +228,26 @@ UBaseAbilitySystemComponent* APlayerCharacterController::GetASC()
 	return BaseAbilitySystemComponent;
 }
 
-void APlayerCharacterController::ClientShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit)
+void APlayerCharacterController::ClientShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit, float Delay)
 {
+	// TODO: Probably want some kind of option to disable delay
 	if(IsValid(TargetCharacter) && DamageTextComponentClass/*&& IsLocalController()*/)
 	{
-		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
-		DamageText->RegisterComponent();
-		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		const FVector DamageTextLocation = DamageText->GetComponentLocation();
-		const float RandY = DamageTextLocation.Y + FMath::FRandRange(- 50.f, 50.f); 
-		const float RandZ = DamageTextLocation.Z + FMath::FRandRange(- 50.f, 50.f); 
-		DamageText->SetWorldLocation(FVector(DamageTextLocation.X, RandY, RandZ));
-		DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
+		FTimerHandle DamageDelay;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([this, TargetCharacter, DamageAmount, bBlockedHit, bCriticalHit]()
+		{
+			UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+			DamageText->RegisterComponent();
+			DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+			DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+			const FVector DamageTextLocation = DamageText->GetComponentLocation();
+			const float RandY = DamageTextLocation.Y + FMath::FRandRange(- 50.f, 50.f); 
+			const float RandZ = DamageTextLocation.Z + FMath::FRandRange(0.f, 75.f);
+			DamageText->SetWorldLocation(FVector(DamageTextLocation.X, RandY, RandZ));
+			DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
+		});
+		GetWorldTimerManager().SetTimer(DamageDelay, TimerDelegate, Delay, false);
 	}
 }
 

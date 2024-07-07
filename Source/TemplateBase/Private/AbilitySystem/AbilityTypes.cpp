@@ -88,9 +88,13 @@ bool FBaseGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 				RepBits |= 1 << 19;
 			}
 		}
+		if(ShowDamageDelay > 0.f)
+		{
+			RepBits |= 1 << 20;
+		}
 	}
 
-	Ar.SerializeBits(&RepBits, 20);
+	Ar.SerializeBits(&RepBits, 21);
 
 	if (RepBits & (1 << 0))
 	{
@@ -191,6 +195,10 @@ bool FBaseGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 		{
 			RadialDamageOrigin.NetSerialize(Ar, Map ,bOutSuccess);
 		}
+	}
+	if (RepBits & (1 << 20))
+	{
+		Ar << ShowDamageDelay;
 	}
 
 	if (Ar.IsLoading())

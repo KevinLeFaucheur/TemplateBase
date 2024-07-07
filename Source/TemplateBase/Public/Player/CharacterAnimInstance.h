@@ -119,6 +119,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter|Montages")
 	TObjectPtr<UAnimMontage> SwapToolMontage;
+
+	UPROPERTY(EditAnywhere, Category="PlayerCharacter|IK")
+	bool bDebugLineTrace = false;
 	
 private:
 	FRotator CharacterRotationLastFrame;

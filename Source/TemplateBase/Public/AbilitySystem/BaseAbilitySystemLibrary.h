@@ -107,6 +107,9 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
 	static FVector GetRadialDamageOrigin(const FGameplayEffectContextHandle& EffectContextHandle);
+	
+	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	static float GetShowDamageDelay(const FGameplayEffectContextHandle& EffectContextHandle);
 		
 	/*
 	 * Effect Context Setters  
@@ -149,6 +152,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
 	static void SetRadialDamageOrigin(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FVector& InRadialOrigin);
+	
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	static void SetShowDamageDelay(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, float InDelay);
 
 	/*
 	 * Gameplay Mechanics

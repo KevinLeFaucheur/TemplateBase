@@ -256,12 +256,14 @@ void UBaseAttributeSet::ShowDamageText(const FEffectProperties& Props, const flo
 	{
 		if (APlayerCharacterController* PC = Cast<APlayerCharacterController>(Props.SourceCharacter->Controller))
 		{
-			PC->ClientShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
+			const float Delay = UBaseAbilitySystemLibrary::GetShowDamageDelay(Props.EffectContextHandle);
+			PC->ClientShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit, Delay);
 			return;
 		}
 		if (APlayerCharacterController* PC = Cast<APlayerCharacterController>(Props.TargetCharacter->Controller))
 		{
-			PC->ClientShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
+			const float Delay = UBaseAbilitySystemLibrary::GetShowDamageDelay(Props.EffectContextHandle);
+			PC->ClientShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit, Delay);
 		}
 	}
 }

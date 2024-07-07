@@ -87,8 +87,11 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
             const FTransform MuzzleTipTransform = EquippedTool->GetMesh()->GetSocketTransform("MuzzleFlash", RTS_World);
             const FVector MuzzleX(FRotationMatrix(MuzzleTipTransform.GetRotation().Rotator()).GetUnitAxis(EAxis::X));
-            DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(), MuzzleTipTransform.GetLocation() + MuzzleX * 1000.f, FColor::Red);
-            DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(), PlayerCharacter->GetHitTarget(), FColor::Green);
+			if(bDebugLineTrace)
+			{
+				DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(), MuzzleTipTransform.GetLocation() + MuzzleX * 1000.f, FColor::Red);
+				DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(), PlayerCharacter->GetHitTarget(), FColor::Green);
+			}
 		}
 		/* */
 	}

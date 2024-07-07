@@ -158,6 +158,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
 	float TraceStartAdjustment = 85.f;
+
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	bool bShowTraceAdjustment = false;
 	
 	FVector HitTarget;
 
