@@ -23,6 +23,8 @@ void APlayerCharacterState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 
 	DOREPLIFETIME(APlayerCharacterState, Level);
 	DOREPLIFETIME(APlayerCharacterState, XP);
+	DOREPLIFETIME(APlayerCharacterState, SpellPoints);
+	DOREPLIFETIME(APlayerCharacterState, AttributePoints);
 }
 
 void APlayerCharacterState::AddToLevel(int32 InLevel)
