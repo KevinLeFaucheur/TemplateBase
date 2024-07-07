@@ -46,11 +46,7 @@ void ARocket::BeginPlay()
 
 void ARocket::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if(OtherActor == GetOwner())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Hit Self"));
-		return;;
-	}
+	if(OtherActor == GetOwner()) return;
 	ApplyRadialDamage();
 	
 	// Super::OnHit(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
