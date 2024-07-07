@@ -17,7 +17,7 @@ ATool::ATool()
 	AreaSphere->SetSphereRadius(150.f);
 	AreaSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SetRootComponent(AreaSphere);
+	AreaSphere->SetupAttachment(RootComponent);
 
 	PickupWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("PickupWidget"));
 	PickupWidget->SetupAttachment(RootComponent);

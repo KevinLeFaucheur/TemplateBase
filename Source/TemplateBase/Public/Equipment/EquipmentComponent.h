@@ -127,9 +127,9 @@ protected:
 	void ToggleAttachedThrowable(bool bShow);
 
 private:
-	TObjectPtr<APlayerCharacter> PlayerCharacter;
-	UPROPERTY() APlayerCharacterController* PlayerCharacterController;
-	UPROPERTY() APlayerHUD* PlayerHUD;
+	TObjectPtr<APlayerCharacter> PlayerCharacter = nullptr;
+	UPROPERTY() APlayerCharacterController* PlayerCharacterController = nullptr;
+	UPROPERTY() APlayerHUD* PlayerHUD = nullptr;
 
 	UPROPERTY(ReplicatedUsing=OnRep_CombatState)
 	ECombatState CombatState = ECombatState::ECS_Unoccupied;
@@ -138,23 +138,23 @@ private:
 	void OnRep_CombatState();
 
 	UPROPERTY(ReplicatedUsing=OnRep_EquippedTool)
-	TObjectPtr<ATool> EquippedTool;
+	TObjectPtr<ATool> EquippedTool = nullptr;
 	
 	UPROPERTY(ReplicatedUsing=OnRep_SecondaryTool)
-	TObjectPtr<ATool> SecondaryTool;
+	TObjectPtr<ATool> SecondaryTool = nullptr;
 
 	void FireButtonPressed(bool bPressed);
 
-	bool bFireButtonPressed;
+	bool bFireButtonPressed = false;
 
 	UPROPERTY(Replicated)
-	bool bAiming;
+	bool bAiming = false;
 
 	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
-	float BaseWalkSpeed;
+	float BaseWalkSpeed = 0.f;
 	
 	UPROPERTY(EditAnywhere, Category="PlayerCharacter")
-	float AimWalkSpeed;
+	float AimWalkSpeed = 0.f;
 
 	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
 	float TraceStartAdjustment = 85.f;
@@ -182,20 +182,20 @@ private:
 	 * Crosshairs
 	 */
 	UPROPERTY(EditAnywhere, Category="Equipment|Crosshairs")
-	TObjectPtr<UTexture2D> CrosshairsCenter;
+	TObjectPtr<UTexture2D> CrosshairsCenter = nullptr;
 
-	FHUDPackage HUDPackage;
+	FHUDPackage HUDPackage = FHUDPackage();
 	
-	float CrosshairVelocityFactor;
-	float CrosshairAirborneFactor;
-	float CrosshairMarksmanFactor;
-	float CrosshairPerShotFactor;
+	float CrosshairVelocityFactor = 0.f;
+	float CrosshairAirborneFactor = 0.f;
+	float CrosshairMarksmanFactor = 0.f;
+	float CrosshairPerShotFactor = 0.f;
 
 	/*
 	 * Aiming and FoV
 	 */
-	float DefaultFOV;
-	float CurrentFOV;
+	float DefaultFOV = 0.f;
+	float CurrentFOV = 0.f;
 	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment|Properties")
 	float MarksmanFOV = 30.f;
@@ -217,7 +217,7 @@ private:
 	bool CanActivate();
 
 	UPROPERTY(ReplicatedUsing=OnRep_CarriedAmmunition)
-	int32 CarriedAmmunition;
+	int32 CarriedAmmunition = 0;
 
 	UFUNCTION()
 	void OnRep_CarriedAmmunition();

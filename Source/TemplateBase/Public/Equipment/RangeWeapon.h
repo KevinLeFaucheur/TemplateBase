@@ -54,14 +54,14 @@ protected:
 	 * Ammunition
 	 */
 	UPROPERTY(ReplicatedUsing=OnRep_Ammunition, EditDefaultsOnly, Category="01-Equipment")
-	int32 Ammunition;
+	int32 Ammunition = 0;
 
 	UFUNCTION()
 	void OnRep_Ammunition();
 	void SpendAmmunition();
 
 	UPROPERTY(EditDefaultsOnly, Category="01-Equipment")
-	int32 AmmunitionCapacity;
+	int32 AmmunitionCapacity = 0;
 
 	/*
 	 * Reloading
