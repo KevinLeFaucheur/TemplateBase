@@ -95,6 +95,9 @@ public:
 	
 	UFUNCTION(Client, Reliable)
 	void ClientShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit, float Delay = 0.f);
+
+	UFUNCTION()
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit) const;
 	
 	void SetHUDAmmunition(int32 Ammo) const;
 	void SetHUDCarriedAmmunition(int32 Ammo) const;
