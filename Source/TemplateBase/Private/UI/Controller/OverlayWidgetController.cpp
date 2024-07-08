@@ -16,6 +16,9 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	OnMaxHealthChanged.Broadcast(GetBaseAttributeSet()->GetMaxHealth());
 	OnManaChanged.Broadcast(GetBaseAttributeSet()->GetMana());
 	OnMaxManaChanged.Broadcast(GetBaseAttributeSet()->GetMaxMana());
+	OnPlayerNameChanged.Broadcast(GetPlayerCharacterState()->GetPlayerName());
+	// OnXPValueChanged.Broadcast(GetPlayerCharacterState()->GetXP());
+	OnXPChanged(GetPlayerCharacterState()->GetXP());
 }
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
@@ -117,6 +120,7 @@ void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 		const float XPBarPercent = static_cast<float>(XPForThisLevel) / static_cast<float>(DeltaLevelUpRequirement);
 		
 		OnXPPercentChanged.Broadcast(XPBarPercent);
+		OnXPValueChanged.Broadcast(NewXP);
 	}
 }
 

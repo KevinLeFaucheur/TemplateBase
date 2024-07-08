@@ -35,6 +35,8 @@ struct FUIWidgetRow : public FTableRowBase
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmunitionChanged, int32, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnXPValueChanged, int32, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerNameChanged, FString, PlayerName);
 
 /**
  * 
@@ -50,6 +52,9 @@ public:
 	
 	 UFUNCTION()
 	void OnXPChanged(int32 NewXP);
+
+	UPROPERTY(BlueprintAssignable, Category="PlayerCharacter")
+	FOnPlayerNameChanged OnPlayerNameChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FOnAttributeChangedSignature OnHealthChanged;
@@ -68,6 +73,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
 	FOnAttributeChangedSignature OnXPPercentChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
+	FOnXPValueChanged OnXPValueChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
 	FOnPlayerStatChangedSignature OnPlayerLevelChanged;
