@@ -115,6 +115,9 @@ FGameplayTag Abilities_Type_None;
  
 FGameplayTag Abilities_Weapon_Sword_1;
 FGameplayTag Abilities_Weapon_Sword_2;
+ 
+FGameplayTag Abilities_Throw_1;
+FGameplayTag Abilities_Throw_2;
 
  /*
   * Gameplay Cues
