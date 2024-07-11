@@ -87,6 +87,7 @@ public:
 	virtual void OnSlotDrop_Implementation(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType) override;
 	virtual void ResetInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex) override;
 	void PlayMontage_Implementation(UAnimMontage* Montage) override;
+	virtual FTaggedMontage GetTaggedMontage_Implementation() override;
 	//~ Player Interface
 
 	UFUNCTION(NetMulticast, Unreliable)
@@ -143,6 +144,9 @@ public:
 	bool bIsUsingItem = false;
 
 	bool bFinishedSwapping = false;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	TMap<EAnimationState, FTaggedMontage> AnimationStateMontages;
 	
 protected:
 	virtual void BeginPlay() override;

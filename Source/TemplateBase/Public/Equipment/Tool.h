@@ -8,6 +8,7 @@
 #include "Data/ToolInfo.h"
 #include "Data/WeapenData.h"
 #include "GameFramework/Actor.h"
+#include "Interaction/CombatInterface.h"
 #include "Interaction/EquipmentInterface.h"
 #include "World/ItemBase.h"
 #include "Tool.generated.h"
@@ -147,6 +148,7 @@ private:
 	
 	UPROPERTY(ReplicatedUsing=OnRep_ToolState, VisibleAnywhere, Category="Equipment")
 	EToolState ToolState = EToolState::ETS_Initial;
+
 	
 	/*
 	 * Sockets

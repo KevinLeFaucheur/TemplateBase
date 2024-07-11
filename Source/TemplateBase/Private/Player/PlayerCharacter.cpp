@@ -793,6 +793,15 @@ void APlayerCharacter::SetAnimationState(const EAnimationState NewState)
 	}
 }
 
+FTaggedMontage APlayerCharacter::GetTaggedMontage_Implementation()
+{
+	if(EquipmentComponent->EquippedTool && AnimationStateMontages.Contains(EquipmentComponent->EquippedTool->GetAnimationState()))
+	{
+		return AnimationStateMontages[EquipmentComponent->EquippedTool->GetAnimationState()];
+	}
+	return FTaggedMontage();
+}
+
 FVector APlayerCharacter::GetHitTarget() const
 {
 	if(EquipmentComponent == nullptr) return FVector();
