@@ -123,6 +123,8 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Weapon_Sword_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Sword.1"), FString("Abilities Weapon Sword 1"));
 	GameplayTags.Abilities_Weapon_Sword_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Sword.2"), FString("Abilities Weapon Sword 2"));
 	
+	GameplayTags.Abilities_Monk_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Monk.Basic"), FString("Abilities Monk Basic"));
+	
 	GameplayTags.Abilities_Throw_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Throw.1"), FString("Abilities Throw 1"));
 	GameplayTags.Abilities_Throw_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Throw.2"), FString("Abilities Throw 2"));
 
@@ -149,6 +151,8 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.CombatSocket_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.RightHand"), FString("Attack with Right Hand Socket"));
 	GameplayTags.CombatSocket_Fang = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.Fang"), FString("Attack with Fang Socket"));
 	GameplayTags.CombatSocket_Tail = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.Tail"), FString("Attack with Tail Socket"));
+	GameplayTags.CombatSocket_LeftFeet = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.LeftFeet"), FString("Attack with Left Feet Socket"));
+	GameplayTags.CombatSocket_RightFeet = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.RightFeet"), FString("Attack with Right Feet Socket"));
 
 	/*
 	 * Montages

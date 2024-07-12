@@ -61,6 +61,9 @@ public:
 	TObjectPtr<UInputAction> AimAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> ToggleMouseCursorAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputAction> InventoryAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
@@ -130,6 +133,8 @@ protected:
 	void AimButtonReleased();
 	void ReloadButtonPressed();
 	void ThrowButtonPressed();
+	
+	void ToggleMouseCursorPressed();
 
 	UFUNCTION(Client, Reliable)
 	void InventoryButtonPressed();

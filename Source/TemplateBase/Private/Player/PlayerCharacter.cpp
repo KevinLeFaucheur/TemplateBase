@@ -799,6 +799,10 @@ FTaggedMontage APlayerCharacter::GetTaggedMontage_Implementation()
 	{
 		return AnimationStateMontages[EquipmentComponent->EquippedTool->GetAnimationState()];
 	}
+	if(AnimationStateMontages.Contains(EAnimationState::Unequipped))
+	{
+		return AnimationStateMontages[EAnimationState::Unequipped];
+	}
 	return FTaggedMontage();
 }
 

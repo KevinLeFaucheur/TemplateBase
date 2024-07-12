@@ -43,6 +43,8 @@ void APlayerCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Started, this, &APlayerCharacterController::ReloadButtonPressed);
 		EnhancedInputComponent->BindAction(ThrowAction, ETriggerEvent::Started, this, &APlayerCharacterController::ThrowButtonPressed);
 		EnhancedInputComponent->BindAction(InventoryAction, ETriggerEvent::Started, this, &APlayerCharacterController::InventoryButtonPressed);
+		
+		EnhancedInputComponent->BindAction(ToggleMouseCursorAction, ETriggerEvent::Started, this, &APlayerCharacterController::ToggleMouseCursorPressed);
 
 		/*
 		 * Hotbar
@@ -180,6 +182,21 @@ void APlayerCharacterController::ReloadButtonPressed()
 void APlayerCharacterController::ThrowButtonPressed()
 {
 	if (PlayerCharacter) PlayerCharacter->ThrowButtonPressed();
+}
+
+void APlayerCharacterController::ToggleMouseCursorPressed()
+{
+	SetShowMouseCursor(!ShouldShowMouseCursor());
+	if(ShouldShowMouseCursor())
+	{
+		const FInputModeGameAndUI InputModeGameAndUI;
+		SetInputMode(InputModeGameAndUI);
+	}
+	else
+	{
+		const FInputModeGameOnly InputModeGameOnly;
+		SetInputMode(InputModeGameOnly);		
+	}
 }
 
 void APlayerCharacterController::InventoryButtonPressed_Implementation()

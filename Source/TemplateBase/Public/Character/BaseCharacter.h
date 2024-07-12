@@ -114,17 +114,23 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
-	UPROPERTY(EditAnywhere, Category="Character")
+	UPROPERTY(EditAnywhere, Category="Character|CombatSocket")
 	FName WeaponSocketName;
 	
-	UPROPERTY(EditAnywhere, Category="Character")
+	UPROPERTY(EditAnywhere, Category="Character|CombatSocket")
 	FName LeftHandSocketName;
 	
-	UPROPERTY(EditAnywhere, Category="Character")
+	UPROPERTY(EditAnywhere, Category="Character|CombatSocket")
 	FName RightHandSocketName;
 	
-	UPROPERTY(EditAnywhere, Category="Character")
+	UPROPERTY(EditAnywhere, Category="Character|CombatSocket")
 	FName TailSocketName;
+	
+	UPROPERTY(EditAnywhere, Category="Character|CombatSocket")
+	FName LeftFootSocketName;
+	
+	UPROPERTY(EditAnywhere, Category="Character|CombatSocket")
+	FName RightFootSocketName;
 
 	bool bDead = false;
 

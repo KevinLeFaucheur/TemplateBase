@@ -84,6 +84,7 @@ void UEquipmentComponent::EquipTool(ATool* ToolToEquip)
 	}
 	else
 	{
+		UBaseAbilitySystemLibrary::RemoveMonkAbilities(PlayerCharacter, PlayerCharacter->GetAbilitySystemComponent());
 		EquipPrimaryTool(ToolToEquip);		
 	}
 	HandleUseAimOffsets();
@@ -157,13 +158,13 @@ void UEquipmentComponent::SwapTools()
 	EquippedTool = SecondaryTool;
 	SecondaryTool = TempTool;
 	
-	if(EquippedTool->HasAbilities())
-	{
-		UBaseAbilitySystemLibrary::GiveToolAbilities(PlayerCharacter, PlayerCharacter->GetAbilitySystemComponent(), EquippedTool);
-	}
 	if(SecondaryTool->HasAbilities())
 	{
 		UBaseAbilitySystemLibrary::RemoveToolAbilities(PlayerCharacter, PlayerCharacter->GetAbilitySystemComponent(), SecondaryTool);
+	}
+	if(EquippedTool->HasAbilities())
+	{
+		UBaseAbilitySystemLibrary::GiveToolAbilities(PlayerCharacter, PlayerCharacter->GetAbilitySystemComponent(), EquippedTool);
 	}
 }
 

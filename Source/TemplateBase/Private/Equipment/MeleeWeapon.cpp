@@ -22,6 +22,8 @@ AMeleeWeapon::AMeleeWeapon()
 	
 	BoxTraceEnd = CreateDefaultSubobject<USceneComponent>(TEXT("Box Trace End"));
 	BoxTraceEnd->SetupAttachment(GetRootComponent());
+	
+	MarksmanFOV = 90.f;
 }
 
 void AMeleeWeapon::BeginPlay()

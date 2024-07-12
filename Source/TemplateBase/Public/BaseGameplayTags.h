@@ -116,6 +116,8 @@ FGameplayTag Abilities_Type_None;
 FGameplayTag Abilities_Weapon_Sword_1;
 FGameplayTag Abilities_Weapon_Sword_2;
  
+FGameplayTag Abilities_Monk_Basic;
+ 
 FGameplayTag Abilities_Throw_1;
 FGameplayTag Abilities_Throw_2;
 
@@ -142,6 +144,8 @@ FGameplayTag CombatSocket_LeftHand;
 FGameplayTag CombatSocket_RightHand;
 FGameplayTag CombatSocket_Fang;
 FGameplayTag CombatSocket_Tail;
+FGameplayTag CombatSocket_LeftFeet;
+FGameplayTag CombatSocket_RightFeet;
   
  /*
   * Montages
