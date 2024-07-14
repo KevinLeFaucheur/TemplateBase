@@ -156,11 +156,20 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartRedDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
 	TArray<TObjectPtr<UMaterialInstance>> DissolveMaterialInstances;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
+	TObjectPtr<UMaterialInstance>RedDissolveMaterialInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
+	TObjectPtr<UNiagaraSystem> RedDissolveSystem;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character|Effects")
 	TObjectPtr<UNiagaraSystem> ImpactEffect;

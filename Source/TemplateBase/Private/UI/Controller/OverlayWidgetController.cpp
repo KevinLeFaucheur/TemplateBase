@@ -18,6 +18,7 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	OnMaxManaChanged.Broadcast(GetBaseAttributeSet()->GetMaxMana());
 	OnPlayerNameChanged.Broadcast(GetPlayerCharacterState()->GetPlayerName());
 	// OnXPValueChanged.Broadcast(GetPlayerCharacterState()->GetXP());
+	OnLevelRequirementChanged(GetPlayerCharacterState()->GetPlayerLevel());
 	OnXPChanged(GetPlayerCharacterState()->GetXP());
 }
 
@@ -28,6 +29,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		 [this] (int32 NewLevel)
 		{
 			OnPlayerLevelChanged.Broadcast(NewLevel);
+		 	OnLevelRequirementChanged(NewLevel);
 		}
 	);
 	
@@ -120,12 +122,28 @@ void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 		const float XPBarPercent = static_cast<float>(XPForThisLevel) / static_cast<float>(DeltaLevelUpRequirement);
 		
 		OnXPPercentChanged.Broadcast(XPBarPercent);
-		OnXPValueChanged.Broadcast(NewXP);
+		// OnXPValueChanged.Broadcast(NewXP);
+		OnXPValueChanged.Broadcast(XPForThisLevel);
 	}
 }
 
-void UOverlayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status,
-	const FGameplayTag& Slot, const FGameplayTag& PreviousSlot) const
+void UOverlayWidgetController::OnLevelRequirementChanged(int32 NewLevel)
+{
+	const UPlayerLevelUpInfo* LevelUpInfo = GetPlayerCharacterState()->LevelUpInfo;
+	checkf(LevelUpInfo, TEXT("Unable to find LevelUpInfon please fill out Player State"));
+
+	const int32 MaxLevel = LevelUpInfo->LevelUpInformation.Num();
+
+	if(NewLevel <= MaxLevel && NewLevel > 0)
+	{
+		const int32 LevelUpRequirement = LevelUpInfo->LevelUpInformation[NewLevel].LevelUpRequirement;
+		const int32 PreviousLevelUpRequirement = LevelUpInfo->LevelUpInformation[NewLevel - 1].LevelUpRequirement;
+		const int32 DeltaLevelUpRequirement = LevelUpRequirement - PreviousLevelUpRequirement;
+		OnLevelRequirementValueChanged.Broadcast(DeltaLevelUpRequirement);
+	}
+}
+
+void UOverlayWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PreviousSlot) const
 {
 	const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
 	FBaseAbilityInfo LastSlotInfo;

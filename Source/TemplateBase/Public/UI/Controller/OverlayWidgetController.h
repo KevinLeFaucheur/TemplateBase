@@ -53,6 +53,9 @@ public:
 	 UFUNCTION()
 	void OnXPChanged(int32 NewXP);
 
+	 UFUNCTION()
+	void OnLevelRequirementChanged(int32 NewXP);
+
 	UPROPERTY(BlueprintAssignable, Category="PlayerCharacter")
 	FOnPlayerNameChanged OnPlayerNameChanged;
 
@@ -76,6 +79,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
 	FOnXPValueChanged OnXPValueChanged;
+	
+	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
+	FOnXPValueChanged OnLevelRequirementValueChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
 	FOnPlayerStatChangedSignature OnPlayerLevelChanged;

@@ -3,6 +3,7 @@
 #include "Character/BaseCharacter.h"
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
+#include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/Passive/PassiveNiagaraComponent.h"
 #include "AbilitySystem/StatusEffect/StatusEffectNiagaraComponent.h"
@@ -181,7 +182,7 @@ void ABaseCharacter::MulticastHandleDeath_Implementation(const FVector& DeathImp
 	Weapon->AddImpulse(DeathImpulse);
 
 	GetMesh()->SetSimulatePhysics(true);
-	GetMesh()->SetEnableGravity(true);
+	// GetMesh()->SetEnableGravity(true);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	GetMesh()->AddImpulse(DeathImpulse, NAME_None, true);
@@ -272,23 +273,42 @@ void ABaseCharacter::SetIsElectrocuted_Implementation(bool bInIsElectrocuted)
  */
 void ABaseCharacter::Dissolve()
 {
-	TArray<UMaterialInstanceDynamic*> DynamicInstances;
-	for (int i = 0; i < DissolveMaterialInstances.Num(); ++i)
+	// TArray<UMaterialInstanceDynamic*> DynamicInstances;
+	// for (int i = 0; i < DissolveMaterialInstances.Num(); ++i)
+	// {
+	// 	if (IsValid(DissolveMaterialInstances[i]))
+	// 	{
+	// 		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstances[i], this);
+	// 		GetMesh()->SetMaterial(i, DynamicMatInst);
+	// 		DynamicInstances.Add(DynamicMatInst);
+	// 	}
+	// }
+	// if(DynamicInstances.Num() > 0) StartDissolveTimeline(DynamicInstances);
+	//
+	// if(IsValid(WeaponDissolveMaterialInstance))
+	// {
+	// 	UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
+	// 	Weapon->SetMaterial(0, DynamicMatInst);
+	// 	StartWeaponDissolveTimeline(DynamicMatInst);
+	// }
+		
+	if(IsValid(RedDissolveMaterialInstance))
 	{
-		if (IsValid(DissolveMaterialInstances[i]))
+		TArray<UMaterialInstanceDynamic*> RedDissolveDynamicInstances;
+		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(RedDissolveMaterialInstance, this);
+		for (int i = 0; i < GetMesh()->GetNumMaterials(); ++i)
 		{
-			UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstances[i], this);
-			GetMesh()->SetMaterial(i, DynamicMatInst);
-			DynamicInstances.Add(DynamicMatInst);
+			if (IsValid(GetMesh()->GetMaterial(i)))
+			{
+				GetMesh()->SetMaterial(i, DynamicMatInst);
+				RedDissolveDynamicInstances.Add(DynamicMatInst);
+			}
 		}
-	}
-	if(DynamicInstances.Num() > 0) StartDissolveTimeline(DynamicInstances);
-	
-	if(IsValid(WeaponDissolveMaterialInstance))
-	{
-		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
+		if(RedDissolveDynamicInstances.Num() > 0) StartDissolveTimeline(RedDissolveDynamicInstances);
 		Weapon->SetMaterial(0, DynamicMatInst);
-		StartWeaponDissolveTimeline(DynamicMatInst);
+		StartWeaponDissolveTimeline(DynamicMatInst);		
+		UNiagaraFunctionLibrary::SpawnSystemAttached(
+			RedDissolveSystem, GetMesh(), FName(), FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, false);
 	}
 }
 

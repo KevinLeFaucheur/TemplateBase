@@ -133,8 +133,7 @@ void UBaseAbilitySystemLibrary::GiveToolAbilities(const UObject* WorldContextObj
 		AbilitySpec.DynamicAbilityTags.AddTag(Ability.Value);
 		ASC->GiveAbility(AbilitySpec);
 		ASC->MarkAbilitySpecDirty(AbilitySpec);
-
-
+		
 		if(UBaseAbilitySystemComponent* BaseASC = Cast<UBaseAbilitySystemComponent>(ASC))
 		{
 			BaseASC->ClientEquipToolAbility(Ability.Key, FBaseGameplayTags::Get().Abilities_Status_Equipped, Ability.Value, FGameplayTag());
