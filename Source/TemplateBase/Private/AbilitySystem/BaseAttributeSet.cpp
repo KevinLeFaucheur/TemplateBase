@@ -84,6 +84,10 @@ void UBaseAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		HandleIncomingDamage(Props);
 	}
+	if(Data.EvaluatedData.Attribute == GetIncomingHealingAttribute())
+	{
+		HandleIncomingHealing(Props);
+	}
 	if(Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
 	{
 		HandleIncomingXP(Props);
@@ -130,8 +134,54 @@ void UBaseAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 
 		if(UBaseAbilitySystemLibrary::IsSuccessfulStatusEffect(Props.EffectContextHandle))
 		{
-				HandleIncomingStatusEffect(Props);
+			HandleIncomingStatusEffect(Props);
 		}
+	}
+}
+
+void UBaseAttributeSet::HandleIncomingHealing(const FEffectProperties& Props)
+{
+	const float LocalIncomingHealing = GetIncomingHealing();
+	SetIncomingHealing(0.f);
+	if(LocalIncomingHealing > 0.f)
+	{
+		const float NewHealth = GetHealth() + LocalIncomingHealing;
+		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+		// const bool bFatal = NewHealth <= 0.f;
+		// if(bFatal)
+		// {
+		// 	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
+		// 	{
+		// 		CombatInterface->Die(UBaseAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));	
+		// 	}
+		// 	SendXPEvent(Props);
+		// }
+		// else
+		// {
+		// 	if(Props.TargetCharacter->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsElectrocuted(Props.TargetCharacter))
+		// 	{
+		// 		FGameplayTagContainer TagContainer;
+		// 		TagContainer.AddTag(FBaseGameplayTags::Get().Effects_HitReact);
+		// 		Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+		// 	}
+		//
+		// 	const FVector& AirborneForce = UBaseAbilitySystemLibrary::GetAirborneForce(Props.EffectContextHandle);
+		// 	if(!AirborneForce.IsNearlyZero())
+		// 	{
+		// 		Props.TargetCharacter->GetCharacterMovement()->StopMovementImmediately();
+		// 		Props.TargetCharacter->LaunchCharacter(AirborneForce, false, true);
+		// 	}
+		// }
+		// const bool bBlockedHit = UBaseAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+		// const bool bCriticalHit = UBaseAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+		
+		ShowHealingText(Props, LocalIncomingHealing, false);
+
+		// if(UBaseAbilitySystemLibrary::IsSuccessfulStatusEffect(Props.EffectContextHandle))
+		// {
+		// 	HandleIncomingStatusEffect(Props);
+		// }
 	}
 }
 
@@ -264,6 +314,24 @@ void UBaseAttributeSet::ShowDamageText(const FEffectProperties& Props, const flo
 		{
 			const float Delay = UBaseAbilitySystemLibrary::GetShowDamageDelay(Props.EffectContextHandle);
 			PC->ClientShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit, Delay);
+		}
+	}
+}
+
+void UBaseAttributeSet::ShowHealingText(const FEffectProperties& Props, float Healing, bool bCriticalHit) const
+{
+	if(Props.SourceCharacter != Props.TargetCharacter)
+	{
+		if (APlayerCharacterController* PC = Cast<APlayerCharacterController>(Props.SourceCharacter->Controller))
+		{
+			// const float Delay = UBaseAbilitySystemLibrary::GetShowDamageDelay(Props.EffectContextHandle);
+			PC->ClientShowHealingNumber(Healing, Props.TargetCharacter,  bCriticalHit/*, Delay*/);
+			return;
+		}
+		if (APlayerCharacterController* PC = Cast<APlayerCharacterController>(Props.TargetCharacter->Controller))
+		{
+			// const float Delay = UBaseAbilitySystemLibrary::GetShowDamageDelay(Props.EffectContextHandle);
+			PC->ClientShowHealingNumber(Healing, Props.TargetCharacter, bCriticalHit/*, Delay*/);
 		}
 	}
 }

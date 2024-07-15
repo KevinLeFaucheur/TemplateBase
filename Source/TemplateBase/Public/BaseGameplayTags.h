@@ -71,6 +71,12 @@ FGameplayTag Damage_Holy;
 FGameplayTag Damage_Dark;
 
 TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+
+ /*
+  * Healing Types
+  */
+ FGameplayTag Healing_Health;
+ FGameplayTag Healing_Mana;
    	  	
  /*
   * Status Effects
@@ -99,6 +105,8 @@ FGameplayTag Abilities_Fire_FireBolt;
 FGameplayTag Abilities_Fire_FireBlast;
 FGameplayTag Abilities_Lightning_Electrocute;
 FGameplayTag Abilities_Arcane_ArcaneShards;
+
+ FGameplayTag Abilities_Cure;
 
  FGameplayTag Abilities_Passive_Barrier;
  FGameplayTag Abilities_Passive_HealthDrain;

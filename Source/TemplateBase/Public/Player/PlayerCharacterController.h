@@ -9,6 +9,7 @@
 #include "Interaction/ControllerInterface.h"
 #include "PlayerCharacterController.generated.h"
 
+class UHealingTextComponent;
 class AMagicCircle;
 class UDamageTextComponent;
 class UBaseAbilitySystemComponent;
@@ -102,6 +103,12 @@ public:
 	UFUNCTION()
 	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit, bool bCriticalHit) const;
 	
+	UFUNCTION(Client, Reliable)
+	void ClientShowHealingNumber(float HealingAmount, ACharacter* TargetCharacter, bool bCriticalHit = false, float Delay = 0.f);
+
+	UFUNCTION()
+	void ShowHealingNumber(float HealingAmount, ACharacter* TargetCharacter, bool bCriticalHit = false) const;
+	
 	void SetHUDAmmunition(int32 Ammo) const;
 	void SetHUDCarriedAmmunition(int32 Ammo) const;
 	void SetHUDThrowableCount(int32 GrenadeCount) const;
@@ -165,6 +172,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UHealingTextComponent> HealingTextComponentClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AMagicCircle> MagicCircleClass;
@@ -178,3 +188,5 @@ private:
 public:
 	FORCEINLINE FVector GetCursorHit() const { return CursorHit.ImpactPoint; }
 };
+
+

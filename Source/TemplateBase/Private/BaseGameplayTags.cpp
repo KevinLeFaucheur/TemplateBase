@@ -73,6 +73,12 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Dark, GameplayTags.Attributes_Resistance_Dark);
    	  	
 	/*
+	 * Healing Types
+	 */
+	GameplayTags.Healing_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Healing.Health"), FString("Healing Health"));
+	GameplayTags.Healing_Mana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Healing.Mana"), FString("Healing Mana"));
+	
+	/*
 	 * Status Effects
 	 */
 	GameplayTags.StatusEffect_Burn = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("StatusEffect.Burn"), FString("Status Effect from Fire"));
@@ -104,6 +110,8 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Fire_FireBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Fire.FireBlast"), FString("Fire Element Ability FireBlast"));
 	GameplayTags.Abilities_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Lightning.Electrocute"), FString("Lightning Element Electrocute Ability"));
 	GameplayTags.Abilities_Arcane_ArcaneShards = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Arcane.ArcaneShards"), FString("Arcane Element Shards Ability"));
+
+	GameplayTags.Abilities_Cure = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Cure"), FString("Abilities Cure"));
 	
 	GameplayTags.Abilities_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.HitReact"), FString("HitReact Ability Effect"));
 	

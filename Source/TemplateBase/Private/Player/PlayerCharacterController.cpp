@@ -12,6 +12,7 @@
 #include "Player/Input/BaseEnhancedInputComponent.h"
 #include "TemplateBase/TemplateBase.h"
 #include "UI/DamageTextComponent.h"
+#include "UI/HealingTextComponent.h"
 
 void APlayerCharacterController::BeginPlay()
 {
@@ -272,6 +273,35 @@ void APlayerCharacterController::ShowDamageNumber(float DamageAmount, ACharacter
 	const float RandZ = DamageTextLocation.Z + FMath::FRandRange(0.f, 75.f);
 	DamageText->SetWorldLocation(FVector(DamageTextLocation.X, RandY, RandZ));
 	DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
+}
+
+void APlayerCharacterController::ClientShowHealingNumber_Implementation(float HealingAmount, ACharacter* TargetCharacter, bool bCriticalHit, float Delay)
+{
+	// TODO: Probably want some kind of option to disable delay
+	if(IsValid(TargetCharacter) && HealingTextComponentClass/*&& IsLocalController()*/)
+	{
+		if(Delay <= 0.f) ShowHealingNumber(HealingAmount, TargetCharacter, bCriticalHit);
+		else
+		{
+			FTimerHandle DamageDelay;
+			FTimerDelegate TimerDelegate;
+			TimerDelegate.BindUObject(this, &APlayerCharacterController::ShowHealingNumber, HealingAmount, TargetCharacter, bCriticalHit);
+			GetWorldTimerManager().SetTimer(DamageDelay, TimerDelegate, Delay, false);
+		}
+	}
+}
+
+void APlayerCharacterController::ShowHealingNumber(float HealingAmount, ACharacter* TargetCharacter, bool bCriticalHit) const
+{
+	UHealingTextComponent* HealingText = NewObject<UHealingTextComponent>(TargetCharacter, HealingTextComponentClass);
+	HealingText->RegisterComponent();
+	HealingText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	HealingText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	// const FVector HealingTextLocation = HealingText->GetComponentLocation();
+	// const float RandY = HealingTextLocation.Y + FMath::FRandRange(- 50.f, 50.f); 
+	// const float RandZ = HealingTextLocation.Z + FMath::FRandRange(0.f, 75.f);
+	// HealingText->SetWorldLocation(FVector(HealingTextLocation.X, RandY, RandZ));
+	HealingText->SetHealingText(HealingAmount, bCriticalHit);
 }
 
 void APlayerCharacterController::UpdateMagicCircleLocation()

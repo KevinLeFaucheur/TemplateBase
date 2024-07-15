@@ -182,6 +182,10 @@ public:
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, IncomingDamage);
 	
 	UPROPERTY(BlueprintReadOnly, Category="Meta Attributes")
+	FGameplayAttributeData IncomingHealing;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, IncomingHealing);
+	
+	UPROPERTY(BlueprintReadOnly, Category="Meta Attributes")
 	FGameplayAttributeData IncomingXP;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, IncomingXP);
 
@@ -275,9 +279,11 @@ public:
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props);
 	void HandleIncomingDamage(const FEffectProperties& Props);
+	void HandleIncomingHealing(const FEffectProperties& Props);
 	void HandleIncomingXP(const FEffectProperties& Props);
 	void HandleIncomingStatusEffect(const FEffectProperties& Props);
 	void ShowDamageText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const;
+	void ShowHealingText(const FEffectProperties& Props, float Healing, bool bCriticalHit) const;
 	void SendXPEvent(const FEffectProperties& Props);
 
 	bool bTopOffHealth = false;
