@@ -81,7 +81,7 @@ public:
 	virtual void AddToPlayerLevel_Implementation(int32 InPlayerLevel) override;
 	virtual void AddToSpellPoints_Implementation(int32 InSpellPoints) override;
 	virtual void LevelUp_Implementation() override;
-	virtual void ToggleMagicCircle_Implementation(bool bShow, UMaterialInterface* DecalMaterial) override;
+	virtual void ToggleSpellIndicator_Implementation(bool bShow, UMaterialInterface* DecalMaterial, float Radius = 125.f,  float Range = 0.f) override;
 	virtual void PickupAmmunition_Implementation(EToolType ToolType, int32 AmmunitionAmount) override;
 	virtual void UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData) override;
 	virtual void OnSlotDrop_Implementation(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType) override;

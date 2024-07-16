@@ -106,7 +106,8 @@ FGameplayTag Abilities_Fire_FireBlast;
 FGameplayTag Abilities_Lightning_Electrocute;
 FGameplayTag Abilities_Arcane_ArcaneShards;
 
- FGameplayTag Abilities_Cure;
+ FGameplayTag Abilities_Cure_1;
+ FGameplayTag Abilities_Cure_2;
 
  FGameplayTag Abilities_Passive_Barrier;
  FGameplayTag Abilities_Passive_HealthDrain;

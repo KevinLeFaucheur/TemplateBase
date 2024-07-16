@@ -10,7 +10,7 @@
 #include "PlayerCharacterController.generated.h"
 
 class UHealingTextComponent;
-class AMagicCircle;
+class ASpellIndicator;
 class UDamageTextComponent;
 class UBaseAbilitySystemComponent;
 class APlayerCharacter;
@@ -117,7 +117,7 @@ public:
 	FOnAmmunitionChangedSignature ThrowableCountChanged;
 
 	UFUNCTION(BlueprintCallable)
-	void ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial = nullptr);
+	void ToggleSpellIndicator(bool bShow, UMaterialInterface* DecalMaterial = nullptr, float Radius = 125.f, float Range = 0.f);
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsInventoryOpen = false;
@@ -177,13 +177,15 @@ private:
 	TSubclassOf<UHealingTextComponent> HealingTextComponentClass;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AMagicCircle> MagicCircleClass;
+	TSubclassOf<ASpellIndicator> SpellIndicatorClass;
 
 	UPROPERTY()
-	TObjectPtr<AMagicCircle> MagicCircle;
+	TObjectPtr<ASpellIndicator> SpellIndicator;
+
+	float SpellRange = 0.f;
 	
 	FHitResult CursorHit;
-	void UpdateMagicCircleLocation();
+	void UpdateSpellIndicatorLocation() const;
 
 public:
 	FORCEINLINE FVector GetCursorHit() const { return CursorHit.ImpactPoint; }

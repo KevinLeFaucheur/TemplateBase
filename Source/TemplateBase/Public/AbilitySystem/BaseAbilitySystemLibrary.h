@@ -202,6 +202,24 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary")
 	static void SetTargetAbilitySystemComponent(UPARAM(ref) FDamageEffectParams& DamageEffectParams, UAbilitySystemComponent* InTargetASC);
+
+	/*
+	 * Healing Effect Params
+	*/
+	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary")
+	static float GetRadialHealingWithFalloff(const AActor* TargetActor, float BaseHealing, float MinimumHealing, const FVector& Origin, float HealingInnerRadius, float HealingOuterRadius, float HealingFalloff);
+	
+	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	static bool IsRadialHealing(const FGameplayEffectContextHandle& EffectContextHandle);
+	
+	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	static float GetRadialHealingInnerRadius(const FGameplayEffectContextHandle& EffectContextHandle);
+	
+	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	static float GetRadialHealingOuterRadius(const FGameplayEffectContextHandle& EffectContextHandle);
+	
+	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary", meta=(WorldContext="WorldContextObject"))
+	static FVector GetRadialHealingOrigin(const FGameplayEffectContextHandle& EffectContextHandle);
 };
 
 

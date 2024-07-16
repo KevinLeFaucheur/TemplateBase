@@ -5,7 +5,7 @@
 #include "BaseGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
-#include "Actor/MagicCircle.h"
+#include "Actor/SpellIndicator.h"
 #include "Components/DecalComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/PlayerCharacter.h"
@@ -69,10 +69,10 @@ void APlayerCharacterController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 	
-	if(IsValid(MagicCircle))
+	if(IsValid(SpellIndicator))
 	{
 		CursorTrace();
-		UpdateMagicCircleLocation();
+		UpdateSpellIndicatorLocation();
 	}
 }
 
@@ -83,7 +83,7 @@ void APlayerCharacterController::CursorTrace()
 		return;
 	}
 	
-	const ECollisionChannel TraceChannel = IsValid(MagicCircle) ? ECC_ExcludeTargets : ECC_Visibility;
+	const ECollisionChannel TraceChannel = IsValid(SpellIndicator) ? ECC_ExcludeTargets : ECC_Visibility;
 	FVector2D ViewportSize;
 	if(GEngine && GEngine->GameViewport) GEngine->GameViewport->GetViewportSize(ViewportSize);
 	
@@ -100,7 +100,7 @@ void APlayerCharacterController::CursorTrace()
 	if(bScreenToWorld)
 	{
 		const FVector Start = CrosshairWorldPosition;
-		const FVector End = Start + CrosshairWorldDirection * TRACE_LENGTH;
+		const FVector End = Start + CrosshairWorldDirection * SpellRange /*TRACE_LENGTH*/;
 		GetWorld()->LineTraceSingleByChannel(CursorHit, Start, End, TraceChannel);
 
 		if(!CursorHit.bBlockingHit) CursorHit.ImpactPoint = End;
@@ -304,9 +304,21 @@ void APlayerCharacterController::ShowHealingNumber(float HealingAmount, ACharact
 	HealingText->SetHealingText(HealingAmount, bCriticalHit);
 }
 
-void APlayerCharacterController::UpdateMagicCircleLocation()
+void APlayerCharacterController::UpdateSpellIndicatorLocation() const
 {
-	if(IsValid(MagicCircle)) MagicCircle->SetActorLocation(CursorHit.ImpactPoint);
+	if(IsValid(SpellIndicator))
+	{
+		const FVector Start = CursorHit.ImpactPoint + FVector(0.f, 0.f, 400.f);
+		const FVector End = CursorHit.ImpactPoint - FVector(0.f, 0.f, 400.f);
+		FHitResult HitResult;
+		TArray<AActor*> ActorsToIgnore;		
+		TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypes;
+		ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
+		UKismetSystemLibrary::LineTraceSingleForObjects(PlayerCharacter, Start, End, ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
+		// UKismetSystemLibrary::DrawDebugSphere(PlayerCharacter, HitResult.ImpactPoint, 50.f, 12, FLinearColor::Green);
+			
+		SpellIndicator->SetActorLocation(HitResult.ImpactPoint);
+	}
 }
 
 void APlayerCharacterController::SetHUDAmmunition(int32 Ammo) const
@@ -324,17 +336,23 @@ void APlayerCharacterController::SetHUDThrowableCount(int32 GrenadeCount) const
 	ThrowableCountChanged.Broadcast(GrenadeCount);
 }
 
-void APlayerCharacterController::ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial)
+void APlayerCharacterController::ToggleSpellIndicator(bool bShow, UMaterialInterface* DecalMaterial, float Radius, float Range)
 {
 	if(bShow)
 	{
-		if(!IsValid(MagicCircle))
+		if(!IsValid(SpellIndicator))
 		{
-			MagicCircle = GetWorld()->SpawnActor<AMagicCircle>(MagicCircleClass, CursorHit.ImpactPoint, FRotator::ZeroRotator);
-			if(DecalMaterial) MagicCircle->MagicCircleDecal->SetMaterial(0, DecalMaterial);
+			SpellIndicator = GetWorld()->SpawnActor<ASpellIndicator>(SpellIndicatorClass, CursorHit.ImpactPoint, FRotator::ZeroRotator);
+			SpellIndicator->SetDecalSize(Radius);
+			if(DecalMaterial) SpellIndicator->SpellIndicatorDecal->SetMaterial(0, DecalMaterial);
+			SpellRange = Range;
 		}
 	}
-	else if(IsValid(MagicCircle)) MagicCircle->Destroy();
+	else if(IsValid(SpellIndicator))
+	{
+		SpellRange = 0.f;
+		SpellIndicator->Destroy();
+	}
 }
 
 void APlayerCharacterController::UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex,

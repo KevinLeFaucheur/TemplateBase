@@ -4,19 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "MagicCircle.generated.h"
+#include "SpellIndicator.generated.h"
 
 UCLASS()
-class TEMPLATEBASE_API AMagicCircle : public AActor
+class TEMPLATEBASE_API ASpellIndicator : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	AMagicCircle();
+	ASpellIndicator();
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<UDecalComponent> MagicCircleDecal;
+	TObjectPtr<UDecalComponent> SpellIndicatorDecal;
+
+	void SetDecalSize(float Radius) const;
 	
 protected:
 	virtual void BeginPlay() override;

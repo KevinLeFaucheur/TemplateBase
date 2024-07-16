@@ -527,11 +527,11 @@ void APlayerCharacter::MulticastLevelUp_Implementation() const
 	}
 }
 
-void APlayerCharacter::ToggleMagicCircle_Implementation(bool bShow, UMaterialInterface* DecalMaterial)
+void APlayerCharacter::ToggleSpellIndicator_Implementation(bool bShow, UMaterialInterface* DecalMaterial, float Radius, float Range)
 {
 	if (APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(GetController()))
 	{
-		PlayerCharacterController->ToggleMagicCircle(bShow, DecalMaterial);
+		PlayerCharacterController->ToggleSpellIndicator(bShow, DecalMaterial, Radius, Range);
 		// PlayerCharacterController->bShowMouseCursor = !bShow;
 	}
 }

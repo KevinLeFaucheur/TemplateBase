@@ -3,6 +3,7 @@
 #include "AbilitySystem/ExecCalc/ExecCalc_Healing.h"
 
 #include "BaseGameplayTags.h"
+#include "AbilitySystem/BaseAbilitySystemLibrary.h"
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "Interaction/CombatInterface.h"
 
@@ -89,17 +90,17 @@ void UExecCalc_Healing::Execute_Implementation(const FGameplayEffectCustomExecut
 	HealingTypeValue *= ( 100.f - Resistance ) / 100.f;
 
 	// TODO: Would need Radial Healing as well
-	// if (UBaseAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
-	// {
-	// 	DamageTypeValue = UBaseAbilitySystemLibrary::GetRadialDamageWithFalloff(
-	// 	   TargetAvatar,
-	// 	   DamageTypeValue,
-	// 	   0.f,
-	// 	   UBaseAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
-	// 	   UBaseAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
-	// 	   UBaseAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
-	// 	   1.f);
-	// }
+	if (UBaseAbilitySystemLibrary::IsRadialHealing(EffectContextHandle))
+	{
+		HealingTypeValue = UBaseAbilitySystemLibrary::GetRadialHealingWithFalloff(
+		   TargetAvatar,
+		   HealingTypeValue,
+		   0.f,
+		   UBaseAbilitySystemLibrary::GetRadialHealingOrigin(EffectContextHandle),
+		   UBaseAbilitySystemLibrary::GetRadialHealingInnerRadius(EffectContextHandle),
+		   UBaseAbilitySystemLibrary::GetRadialHealingOuterRadius(EffectContextHandle),
+		   1.f);
+	}
 	
 	Healing += HealingTypeValue;
 	
@@ -113,7 +114,7 @@ void UExecCalc_Healing::Execute_Implementation(const FGameplayEffectCustomExecut
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(HealingStatics().SpiritDef, EvaluationParameters, SourceSpirit);
 	SourceSpirit = FMath::Max<float>(0.f, SourceSpirit);
 
-	Healing = HealingTypeValue/* * 22.0*/ + ((1.0 /* Level */ + SourceIntelligence + SourceSpirit) * 6.0);
+	Healing = HealingTypeValue/* * 22.0*/ + ((SourceCharacterLevel + SourceIntelligence * 0.5f + SourceSpirit) * 6.0);
 	
 	// Capture Vitality on Target for healing power
 	float TargetVitality = 0.f;

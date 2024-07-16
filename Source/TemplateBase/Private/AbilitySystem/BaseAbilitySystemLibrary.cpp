@@ -649,14 +649,12 @@ void UBaseAbilitySystemLibrary::SetDeathImpulseDirection(FDamageEffectParams& Da
 	else DamageEffectParams.DeathImpulse = DeathImpulseDirection * Magnitude;
 }
 
-void UBaseAbilitySystemLibrary::SetTargetAbilitySystemComponent(FDamageEffectParams& DamageEffectParams,
-	UAbilitySystemComponent* InTargetASC)
+void UBaseAbilitySystemLibrary::SetTargetAbilitySystemComponent(FDamageEffectParams& DamageEffectParams, UAbilitySystemComponent* InTargetASC)
 {
 	DamageEffectParams.TargetAbilitySystemComponent = InTargetASC;
 }
 
-float UBaseAbilitySystemLibrary::GetRadialDamageWithFalloff(const AActor* TargetActor, float BaseDamage,
-	float MinimumDamage, const FVector& Origin, float DamageInnerRadius, float DamageOuterRadius, float DamageFalloff)
+float UBaseAbilitySystemLibrary::GetRadialDamageWithFalloff(const AActor* TargetActor, float BaseDamage,  float MinimumDamage, const FVector& Origin, float DamageInnerRadius, float DamageOuterRadius, float DamageFalloff)
 {
 	if (!TargetActor) return 0.f;
  
@@ -669,4 +667,56 @@ float UBaseAbilitySystemLibrary::GetRadialDamageWithFalloff(const AActor* Target
 	const float DamageScale = RadialDamageParams.GetDamageScale((Origin - TargetActor->GetActorLocation()).Length());
 	
 	return BaseDamage * DamageScale;
+}
+
+// TODO: To Healing variables
+float UBaseAbilitySystemLibrary::GetRadialHealingWithFalloff(const AActor* TargetActor, float BaseHealing, float MinimumHealing, const FVector& Origin, float HealingInnerRadius, float HealingOuterRadius, float HealingFalloff)
+{
+	if (!TargetActor) return 0.f;
+ 
+	FRadialDamageParams RadialDamageParams;
+	RadialDamageParams.BaseDamage = BaseHealing;
+	RadialDamageParams.DamageFalloff = HealingFalloff;
+	RadialDamageParams.InnerRadius = HealingInnerRadius;
+	RadialDamageParams.OuterRadius = HealingOuterRadius;
+	RadialDamageParams.MinimumDamage = MinimumHealing;
+	const float DamageScale = RadialDamageParams.GetDamageScale((Origin - TargetActor->GetActorLocation()).Length());
+	
+	return BaseHealing * DamageScale;
+}
+
+bool UBaseAbilitySystemLibrary::IsRadialHealing(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return BaseEffectContext->IsRadialDamage();
+	}
+	return false;
+}
+
+float UBaseAbilitySystemLibrary::GetRadialHealingInnerRadius(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return BaseEffectContext->GetRadialDamageInnerRadius();
+	}
+	return 0.f;
+}
+
+float UBaseAbilitySystemLibrary::GetRadialHealingOuterRadius(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return BaseEffectContext->GetRadialDamageOuterRadius();
+	}
+	return 0.f;
+}
+
+FVector UBaseAbilitySystemLibrary::GetRadialHealingOrigin(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if (const FBaseGameplayEffectContext* BaseEffectContext = static_cast<const FBaseGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return BaseEffectContext->GetRadialDamageOrigin();
+	}
+	return FVector::ZeroVector;
 }

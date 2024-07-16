@@ -59,7 +59,7 @@ public:
 	void LevelUp();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void ToggleMagicCircle(bool bShow, UMaterialInterface* DecalMaterial = nullptr);
+	void ToggleSpellIndicator(bool bShow, UMaterialInterface* DecalMaterial = nullptr, float Radius = 125.f, float Range = 0.f);
 	
 	UFUNCTION(BlueprintNativeEvent)
 	void PickupAmmunition(EToolType ToolType, int32 AmmunitionAmount);
