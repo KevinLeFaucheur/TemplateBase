@@ -134,6 +134,8 @@ FGameplayTag Abilities_Throw_2;
   * Gameplay Cues
   */
 FGameplayTag GameplayCue_FireBlast;
+FGameplayTag GameplayCue_Healing_Cure_1;
+FGameplayTag GameplayCue_Healing_Cure_2;
 
  /*
   * Abilities Cooldowns

@@ -157,6 +157,11 @@ USkeletalMeshComponent* ABaseCharacter::GetWeapon_Implementation()
 	return Weapon;
 }
 
+USkeletalMeshComponent* ABaseCharacter::GetCharacterMesh_Implementation()
+{
+	return GetMesh();
+}
+
 UAnimMontage* ABaseCharacter::GetHitReactMontage_Implementation()
 {
 	return HitReactMontage;

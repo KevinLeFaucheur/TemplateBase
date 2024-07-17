@@ -141,6 +141,8 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	 * Gameplay Cues
 	 */
 	GameplayTags.GameplayCue_FireBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.FireBlast"), FString("Gameplay Cue FireBlast"));
+	GameplayTags.GameplayCue_Healing_Cure_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Healing.Cure.1"), FString("GameplayCue Healing Cure 1"));
+	GameplayTags.GameplayCue_Healing_Cure_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Healing.Cure.2"), FString("GameplayCue Healing Cure 2"));
 	
 	/*
 	 * Abilities Cooldown

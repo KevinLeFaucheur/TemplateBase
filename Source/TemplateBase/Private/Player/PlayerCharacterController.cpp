@@ -316,7 +316,7 @@ void APlayerCharacterController::UpdateSpellIndicatorLocation() const
 		ObjectTypes.Add(EObjectTypeQuery::ObjectTypeQuery1);
 		UKismetSystemLibrary::LineTraceSingleForObjects(PlayerCharacter, Start, End, ObjectTypes, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 		// UKismetSystemLibrary::DrawDebugSphere(PlayerCharacter, HitResult.ImpactPoint, 50.f, 12, FLinearColor::Green);
-			
+		
 		SpellIndicator->SetActorLocation(HitResult.ImpactPoint);
 	}
 }
