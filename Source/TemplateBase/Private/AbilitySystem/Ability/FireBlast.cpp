@@ -12,10 +12,10 @@ FString UFireBlast::GetDescription(int32 Level)
 	const float Cooldown = GetCooldown(Level);
 	
 	return FString::Printf(TEXT(
-			"<Title>FIRE BLAST</>\n\n"
-			"<Small>Level: </><Level>%d</>\n"
-			"<Small>MP: </><ManaCost>%.1f</>\n"
-			"<Small>CD: </><Cooldown>%.1f</>\n\n"
+			"<Title>FIRE BLAST: </>"
+			"<Small>Level: </><Level>%d</><Default> - </>"
+			"<Small>MP: </><ManaCost>%.1f</><Default> - </>"
+			"<Small>CD: </><Cooldown>%.1f</>\n"
 			
 			"<Default>Launches a lightning beam, propagating to %d additional targets and dealing: </>"
 			"<Damage>%d-%d</>"
@@ -31,10 +31,10 @@ FString UFireBlast::GetNextLevelDescription(int32 Level)
 	const float Cooldown = GetCooldown(Level);
 	
 	return FString::Printf(TEXT(
-			"<Title>NEXT LEVEL</>\n\n"
-			"<Small>Level: </><Level>%d</>\n"
-			"<Small>MP: </><ManaCost>%.1f</>\n"
-			"<Small>CD: </><Cooldown>%.1f</>\n\n"
+			"<Title>NEXT LEVEL: </>"
+			"<Small>Level: </><Level>%d</><Default> - </>"
+			"<Small>MP: </><ManaCost>%.1f</><Default> - </>"
+			"<Small>CD: </><Cooldown>%.1f</>\n"
 			
 			"<Default>Launches a lightning beam, propagating to %d additional targets and dealing: </>"
 			"<Damage>%d-%d</>"

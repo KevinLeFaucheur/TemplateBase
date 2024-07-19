@@ -17,7 +17,7 @@ ATool::ATool()
 void ATool::InitializeTool()
 {
 	AreaSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AreaSphere"));
-	AreaSphere->SetSphereRadius(150.f);
+	AreaSphere->SetSphereRadius(125.f);
 	AreaSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	AreaSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AreaSphere->SetupAttachment(RootComponent);
@@ -26,6 +26,7 @@ void ATool::InitializeTool()
 	PickupWidget->SetupAttachment(RootComponent);
 	PickupWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	PickupWidget->SetDrawAtDesiredSize(true);
+	PickupWidget->SetRelativeLocation(FVector(0.f, 0.f, 75.f));
 }
 
 void ATool::OnConstruction(const FTransform& Transform)

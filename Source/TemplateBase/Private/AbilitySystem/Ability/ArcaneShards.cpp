@@ -12,10 +12,10 @@ FString UArcaneShards::GetDescription(int32 Level)
 	if(Level == 1)
 	{
 		return FString::Printf(TEXT(
-			"<Title>ARCANE SHARDS</>\n\n"
-			"<Small>Level: </><Level>%d</>\n"
-			"<Small>MP: </><ManaCost>%.1f</>\n"
-			"<Small>CD: </><Cooldown>%.1f</>\n\n"
+			"<Title>ARCANE SHARDS: </>"
+			"<Small>Level: </><Level>%d</><Default> - </>"
+			"<Small>MP: </><ManaCost>%.1f</><Default> - </>"
+			"<Small>CD: </><Cooldown>%.1f</>\n"
 			
 			"<Default>Summon a shard of arcane energy dealing: </>"
 			"<Damage>%d-%d</>"
@@ -25,10 +25,10 @@ FString UArcaneShards::GetDescription(int32 Level)
 	else
 	{
 		return FString::Printf(TEXT(
-			"<Title>ARCANE SHARDS</>\n\n"
-			"<Small>Level: </><Level>%d</>\n"
-			"<Small>MP: </><ManaCost>%.1f</>\n"
-			"<Small>CD: </><Cooldown>%.1f</>\n\n"
+			"<Title>ARCANE SHARDS: </>"
+			"<Small>Level: </><Level>%d</><Default> - </>"
+			"<Small>MP: </><ManaCost>%.1f</><Default> - </>"
+			"<Small>CD: </><Cooldown>%.1f</>\n"
 			
 			"<Default>Summon %d shards of arcane energy: </>"
 			"<Damage>%d-%d</>"
@@ -45,10 +45,10 @@ FString UArcaneShards::GetNextLevelDescription(int32 Level)
 	const float Cooldown = GetCooldown(Level);
 	
 	return FString::Printf(TEXT(
-		"<Title>NEXT LEVEL:</>\n\n"
-		"<Small>Level: </><Level>%d</>\n"
-		"<Small>MP: </><ManaCost>%.1f</>\n"
-		"<Small>CD: </><Cooldown>%.1f</>\n\n"
+		"<Title>NEXT LEVEL: </>"
+		"<Small>Level: </><Level>%d</><Default> - </>"
+		"<Small>MP: </><ManaCost>%.1f</><Default> - </>"
+		"<Small>CD: </><Cooldown>%.1f</>\n"
 			
 		"<Default>Summon %d shards of arcane energy: </>"
 		"<Damage>%d-%d</>"

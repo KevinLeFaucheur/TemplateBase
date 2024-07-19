@@ -12,10 +12,10 @@ FString UElectrocute::GetDescription(int32 Level)
 	if(Level == 1)
 	{
 		return FString::Printf(TEXT(
-			"<Title>ELECTROCUTE</>\n\n"
-			"<Small>Level: </><Level>%d</>\n"
-			"<Small>MP: </><ManaCost>%.1f</>\n"
-			"<Small>CD: </><Cooldown>%.1f</>\n\n"
+			"<Title>ELECTROCUTE: </>"
+			"<Small>Level: </><Level>%d</><Default> - </>"
+			"<Small>MP: </><ManaCost>%.1f</><Default> - </>"
+			"<Small>CD: </><Cooldown>%.1f</>\n"
 			
 			"<Default>Emits a lightning beam repeatedly dealing: </>"
 			"<Damage>%d-%d</>"
@@ -25,10 +25,10 @@ FString UElectrocute::GetDescription(int32 Level)
 	else
 	{
 		return FString::Printf(TEXT(
-			"<Title>ELECTROCUTE</>\n\n"
-			"<Small>Level: </><Level>%d</>\n"
-			"<Small>MP: </><ManaCost>%.1f</>\n"
-			"<Small>CD: </><Cooldown>%.1f</>\n\n"
+			"<Title>ELECTROCUTE: </>"
+			"<Small>Level: </><Level>%d</><Default> - </>"
+			"<Small>MP: </><ManaCost>%.1f</><Default> - </>"
+			"<Small>CD: </><Cooldown>%.1f</>\n"
 			
 			"<Default>Emits a lightning beam, propagating to %d additional targets and repeatedly dealing: </>"
 			"<Damage>%d-%d</>"
@@ -45,10 +45,10 @@ FString UElectrocute::GetNextLevelDescription(int32 Level)
 	const float Cooldown = GetCooldown(Level);
 	
 	return FString::Printf(TEXT(
-		"<Title>NEXT LEVEL:</>\n\n"
-		"<Small>Level: </><Level>%d</>\n"
-		"<Small>MP: </><ManaCost>%.1f</>\n"
-		"<Small>CD: </><Cooldown>%.1f</>\n\n"
+		"<Title>NEXT LEVEL: </>"
+		"<Small>Level: </><Level>%d</><Default> - </>"
+		"<Small>MP: </><ManaCost>%.1f</><Default> - </>"
+		"<Small>CD: </><Cooldown>%.1f</>\n"
 			
 		"<Default>Emits a lightning beam, propagating to %d additional targets and repeatedly dealing: </>"
 		"<Damage>%d-%d</>"
