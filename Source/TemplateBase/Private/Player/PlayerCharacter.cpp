@@ -549,6 +549,7 @@ int32 APlayerCharacter::GetThrowableCount_Implementation()
 void APlayerCharacter::SpendAvailableThrowable_Implementation()
 {
 	EquipmentComponent->ThrowableCount = FMath::Clamp(EquipmentComponent->ThrowableCount - 1, 0 , EquipmentComponent->MaxThrowableCount);
+	if(IsLocallyControlled()) EquipmentComponent->UpdateHUDThrowableCount();
 }
 
 void APlayerCharacter::UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData)
