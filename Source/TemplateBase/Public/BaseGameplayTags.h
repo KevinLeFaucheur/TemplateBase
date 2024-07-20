@@ -104,7 +104,9 @@ FGameplayTag Abilities_HitReact;
 FGameplayTag Abilities_Fire_FireBolt;
 FGameplayTag Abilities_Fire_FireBlast;
 FGameplayTag Abilities_Lightning_Electrocute;
+FGameplayTag Abilities_Lightning_Bolt_1;
 FGameplayTag Abilities_Arcane_ArcaneShards;
+FGameplayTag Abilities_Cosmos_Meteor_1;
 
  FGameplayTag Abilities_Cure_1;
  FGameplayTag Abilities_Cure_2;
@@ -124,6 +126,13 @@ FGameplayTag Abilities_Type_None;
  
 FGameplayTag Abilities_Weapon_Sword_1;
 FGameplayTag Abilities_Weapon_Sword_2;
+FGameplayTag Abilities_Weapon_Sword_Slash;
+FGameplayTag Abilities_Weapon_Aim;
+FGameplayTag Abilities_Weapon_Scope;
+ 
+FGameplayTag Abilities_Harvest_Logging;
+FGameplayTag Abilities_Harvest_Mining;
+FGameplayTag Abilities_Harvest_Gathering;
  
 FGameplayTag Abilities_Monk_Basic;
  
@@ -136,6 +145,9 @@ FGameplayTag Abilities_Throw_2;
 FGameplayTag GameplayCue_FireBlast;
 FGameplayTag GameplayCue_Healing_Cure_1;
 FGameplayTag GameplayCue_Healing_Cure_2;
+FGameplayTag GameplayCue_Lightning_Bolt_1;
+FGameplayTag GameplayCue_Cosmos_Meteor_1;
+FGameplayTag GameplayCue_Weapon_Sword_Slash;
 
  /*
   * Abilities Cooldowns

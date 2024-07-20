@@ -109,7 +109,9 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Fire.FireBolt"), FString("Fire Element Ability FireBolt"));
 	GameplayTags.Abilities_Fire_FireBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Fire.FireBlast"), FString("Fire Element Ability FireBlast"));
 	GameplayTags.Abilities_Lightning_Electrocute = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Lightning.Electrocute"), FString("Lightning Element Electrocute Ability"));
+	GameplayTags.Abilities_Lightning_Bolt_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Lightning.Bolt.1"), FString("Abilities Lightning Bolt 1"));
 	GameplayTags.Abilities_Arcane_ArcaneShards = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Arcane.ArcaneShards"), FString("Arcane Element Shards Ability"));
+	GameplayTags.Abilities_Cosmos_Meteor_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Cosmos.Meteor.1"), FString("Abilities Cosmos Meteor 1"));
 
 	GameplayTags.Abilities_Cure_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Cure.1"), FString("Abilities Cure 1"));
 	GameplayTags.Abilities_Cure_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Cure.2"), FString("Abilities Cure 2"));
@@ -128,10 +130,30 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Type_None = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Type.None"), FString("Abilities Type None"));
 	GameplayTags.Abilities_Type_Offensive = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Type.Offensive"), FString("Abilities Type Offensive"));
 	GameplayTags.Abilities_Type_Passive = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Type.Passive"), FString("Abilities Type Passive"));
-	
+
+	/*
+	 * Melee Weapons
+	 */
 	GameplayTags.Abilities_Weapon_Sword_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Sword.1"), FString("Abilities Weapon Sword 1"));
 	GameplayTags.Abilities_Weapon_Sword_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Sword.2"), FString("Abilities Weapon Sword 2"));
-	
+	GameplayTags.Abilities_Weapon_Sword_Slash = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Sword.Slash"), FString("Abilities Weapon Sword Slash"));
+
+	/*
+	 * Fire Weapons
+	 */
+	GameplayTags.Abilities_Weapon_Aim = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Aim"), FString("Abilities Weapon Aim"));
+	GameplayTags.Abilities_Weapon_Scope = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Scope"), FString("Abilities Weapon Scope"));
+
+	/*
+	 * Harvesting Tools
+	 */
+	GameplayTags.Abilities_Harvest_Logging = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Harvest.Logging"), FString("Abilities Harvest Logging"));
+	GameplayTags.Abilities_Harvest_Mining = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Harvest.Mining"), FString("Abilities Harvest Mining"));
+	GameplayTags.Abilities_Harvest_Gathering = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Harvest.Gathering"), FString("Abilities Harvest Gathering"));
+
+	/*
+	 * Fighting
+	 */
 	GameplayTags.Abilities_Monk_Basic = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Monk.Basic"), FString("Abilities Monk Basic"));
 	
 	GameplayTags.Abilities_Throw_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Throw.1"), FString("Abilities Throw 1"));
@@ -143,6 +165,9 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.GameplayCue_FireBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.FireBlast"), FString("Gameplay Cue FireBlast"));
 	GameplayTags.GameplayCue_Healing_Cure_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Healing.Cure.1"), FString("GameplayCue Healing Cure 1"));
 	GameplayTags.GameplayCue_Healing_Cure_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Healing.Cure.2"), FString("GameplayCue Healing Cure 2"));
+	GameplayTags.GameplayCue_Lightning_Bolt_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Lightning.Bolt.1"), FString("GameplayCue Lightning Bolt 1"));
+	GameplayTags.GameplayCue_Cosmos_Meteor_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Cosmos.Meteor.1"), FString("GameplayCue Cosmos Meteor 1"));
+	GameplayTags.GameplayCue_Weapon_Sword_Slash = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Weapon.Sword.Slash"), FString("GameplayCue Weapon Sword Slash"));
 	
 	/*
 	 * Abilities Cooldown
