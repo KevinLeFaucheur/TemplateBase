@@ -4,6 +4,7 @@
 
 #include "BaseGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
+#include "AbilitySystem/Ability/BaseGameplayAbility.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Player/PlayerCharacterState.h"
 
@@ -96,7 +97,19 @@ void USpellMenuWidgetController::SpellSlotSelected(const FGameplayTag& AbilityTa
 				
 	FString Description;
 	FString NextLevelDescription;
-	GetBaseAbilitySystemComponent()->GetDescriptionsByAbilityTag(SelectedAbility.Ability, Description, NextLevelDescription);
+	bool bSuccess = GetBaseAbilitySystemComponent()->GetDescriptionsByAbilityTag(SelectedAbility.Ability, Description, NextLevelDescription);
+	if(!bSuccess)
+	{
+		if(!SelectedAbility.Ability.IsValid() || SelectedAbility.Ability.MatchesTagExact(FBaseGameplayTags::Get().Abilities_None))
+		{
+			Description = FString();
+		}
+		else
+		{
+			Description = UBaseGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).LevelRequirement);
+		}
+		NextLevelDescription = FString();
+	}
 	
 	OnSpellSlotSelected.Broadcast(bEnableSpendPointButton, bEnableEquipButton, Description, NextLevelDescription);
 }
@@ -120,8 +133,7 @@ void USpellMenuWidgetController::SpellSlotDeselect()
 	OnSpellSlotSelected.Broadcast(false, false, FString(), FString());
 }
 
-void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints,
-                                                     bool& bShouldEnableSpendPointButton, bool& bShouldEnableEquipButton)
+void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& AbilityStatus, int32 SpellPoints, bool& bShouldEnableSpendPointButton, bool& bShouldEnableEquipButton)
 {
 	const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
 

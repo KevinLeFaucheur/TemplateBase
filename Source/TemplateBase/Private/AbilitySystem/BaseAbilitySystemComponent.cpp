@@ -358,8 +358,7 @@ void UBaseAbilitySystemComponent::ClientEquipToolAbility_Implementation(const FG
 	ToolAbilityEquipped.Broadcast(AbilityTag, Status, Slot, PreviousSlot);
 }
 
-bool UBaseAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
-                                                              FString& OutNextLevelDescription)
+bool UBaseAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription)
 {
 	if(const FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
 	{
@@ -371,6 +370,8 @@ bool UBaseAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 		}
 	}
 	const UAbilityInfo* AbilityInfo = UBaseAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
+	if(AbilityInfo == nullptr) return false;
+	
 	if(!AbilityTag.IsValid() || AbilityTag.MatchesTagExact(FBaseGameplayTags::Get().Abilities_None))
 	{
 		OutDescription = FString();
