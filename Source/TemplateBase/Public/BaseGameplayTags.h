@@ -153,6 +153,11 @@ FGameplayTag GameplayCue_Weapon_Sword_Slash;
   * Abilities Cooldowns
   */
 FGameplayTag Cooldown_Fire_FireBolt;
+FGameplayTag Cooldown_Healing_Cure_1;
+FGameplayTag Cooldown_Healing_Cure_2;
+FGameplayTag Cooldown_Lightning_Bolt_1;
+FGameplayTag Cooldown_Cosmos_Meteor;
+FGameplayTag Cooldown_Weapon_Sword_Slash;
  
 /*
  * Side Effects

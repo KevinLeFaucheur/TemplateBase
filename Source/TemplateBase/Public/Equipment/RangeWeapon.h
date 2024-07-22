@@ -30,6 +30,7 @@ public:
 	virtual bool CanInterruptReload() const override { return bCanInterruptReload; }
 	virtual bool IsEmpty() const override { return Ammunition <= 0; }
 	virtual bool IsFull() const override { return Ammunition == AmmunitionCapacity; }
+	virtual int32 AmountToFill() const override { return AmmunitionCapacity - Ammunition; }
 	virtual bool IsAutomatic() const override { return bAutomatic; }
 	virtual bool HasScope()const override { return bHasScope; }
 	virtual float GetFireInterval() const override { return FireInterval; }

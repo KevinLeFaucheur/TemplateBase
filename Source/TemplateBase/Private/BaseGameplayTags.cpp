@@ -173,6 +173,11 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	 * Abilities Cooldown
 	 */
 	GameplayTags.Cooldown_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Fire.FireBolt"), FString("Fire Elemental Ability FireBolt"));
+	GameplayTags.Cooldown_Healing_Cure_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Healing.Cure.1"), FString("Cooldown Healing Cure 1"));
+	GameplayTags.Cooldown_Healing_Cure_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Healing.Cure.2"), FString("Cooldown Healing Cure 2"));
+	GameplayTags.Cooldown_Lightning_Bolt_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Lightning.Bolt.1"), FString("Cooldown Lightning Bolt 1"));
+	GameplayTags.Cooldown_Cosmos_Meteor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Cosmos.Meteor"), FString("Cooldown Cosmos Meteor"));
+	GameplayTags.Cooldown_Weapon_Sword_Slash = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Weapon.Sword.Slash"), FString("Cooldown Weapon Sword Slash"));
 	
 	/*
 	 * Side Effects

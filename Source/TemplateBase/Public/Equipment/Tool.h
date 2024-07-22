@@ -190,6 +190,7 @@ public:
 	virtual FName GetReloadEndSection() const { return FName(); }
 	virtual bool IsEmpty() const { return false; }
 	virtual bool IsFull() const { return false; }
+	virtual int32 AmountToFill() const { return 0; }
 	virtual bool IsAutomatic() const { return false; }
 	virtual bool CanInterruptReload() const { return false; }
 	virtual bool HasScope() const { return false; }

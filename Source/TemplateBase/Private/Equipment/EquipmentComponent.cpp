@@ -335,7 +335,7 @@ void UEquipmentComponent::FireIntervalEnd()
 */
 void UEquipmentComponent::Reload()
 {
-	if(CarriedAmmunition > 0 && CombatState == ECombatState::ECS_Unoccupied && EquippedTool && !EquippedTool->IsFull()) // TODO: IsFull return false if NOT Ranged
+	if(CarriedAmmunition > 0 && CombatState == ECombatState::ECS_Unoccupied && EquippedTool && EquippedTool->AmountToFill() > 0/*!EquippedTool->IsFull()*/) // TODO: IsFull return false if NOT Ranged
 	{
 		ServerReload();
 	}

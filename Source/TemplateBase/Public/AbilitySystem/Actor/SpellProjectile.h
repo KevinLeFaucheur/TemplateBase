@@ -19,7 +19,7 @@ class TEMPLATEBASE_API ASpellProjectile : public AActor
 public:	
 	ASpellProjectile();
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
 	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn))
@@ -48,6 +48,9 @@ protected:
 		const FHitResult& SweepResult);
 	
 	bool bHit = false;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="GAS|Abilities|Effects", meta=(ExposeOnSpawn))
+	TObjectPtr<UNiagaraSystem> ImpactEffect;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category="GAS|Abilities")
@@ -55,9 +58,6 @@ private:
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Sphere;
-
-	UPROPERTY(EditAnywhere, Category="GAS|Abilities|Effects")
-	TObjectPtr<UNiagaraSystem> ImpactEffect;
 
 	UPROPERTY(EditAnywhere, Category="GAS|Abilities|Effects")
 	TObjectPtr<USoundBase> ImpactSound;
