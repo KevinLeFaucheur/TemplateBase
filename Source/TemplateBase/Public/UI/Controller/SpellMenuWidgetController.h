@@ -41,6 +41,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void EquipButtonPressed();
+	
+	UFUNCTION(BlueprintCallable)
+	void OnSlotDragged();
 
 	UFUNCTION(BlueprintCallable)
 	void SpellRowSlotPressed(const FGameplayTag& SlotTag, const FGameplayTag& AbilityType);

@@ -127,6 +127,7 @@ FGameplayTag Abilities_Type_None;
 FGameplayTag Abilities_Weapon_Sword_1;
 FGameplayTag Abilities_Weapon_Sword_2;
 FGameplayTag Abilities_Weapon_Sword_Slash;
+FGameplayTag Abilities_Weapon_Fire_FireBolt;
 FGameplayTag Abilities_Weapon_Aim;
 FGameplayTag Abilities_Weapon_Scope;
  
@@ -152,12 +153,15 @@ FGameplayTag GameplayCue_Weapon_Sword_Slash;
  /*
   * Abilities Cooldowns
   */
+FGameplayTag Cooldown_Throw_1;
+FGameplayTag Cooldown_Throw_2;
 FGameplayTag Cooldown_Fire_FireBolt;
 FGameplayTag Cooldown_Healing_Cure_1;
 FGameplayTag Cooldown_Healing_Cure_2;
 FGameplayTag Cooldown_Lightning_Bolt_1;
 FGameplayTag Cooldown_Cosmos_Meteor;
 FGameplayTag Cooldown_Weapon_Sword_Slash;
+FGameplayTag Cooldown_Weapon_Fire_FireBolt;
  
 /*
  * Side Effects
@@ -167,6 +171,7 @@ FGameplayTag Effects_HitReact;
  /*
   * Combat Sockets
   */
+FGameplayTag CombatSocket_Preferred;
 FGameplayTag CombatSocket_Weapon;
 FGameplayTag CombatSocket_LeftHand;
 FGameplayTag CombatSocket_RightHand;

@@ -124,7 +124,7 @@ float ABaseCharacter::TakeDamage(float Damage, const FDamageEvent& DamageEvent, 
 FVector ABaseCharacter::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
 	// TODO: Implements this for both weapons or just hands
-	const FBaseGameplayTags&GameplayTags = FBaseGameplayTags::Get();
+	const FBaseGameplayTags& GameplayTags = FBaseGameplayTags::Get();
 	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Weapon) && IsValid(Weapon))
 	{
 		return Weapon->GetSocketLocation(WeaponSocketName);

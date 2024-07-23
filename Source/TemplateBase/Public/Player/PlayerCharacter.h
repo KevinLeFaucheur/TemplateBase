@@ -54,6 +54,7 @@ public:
 	void ServerLeftMouseButtonPressed();
 	
 	//~ Combat Interface
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual int32 GetCharacterLevel_Implementation() override;
 	virtual int32 GetThrowableCount_Implementation() override;
 	virtual void SpendAvailableThrowable_Implementation() override;
@@ -147,6 +148,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	TMap<EAnimationState, FTaggedMontage> AnimationStateMontages;
+
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	FName PreferredCombatSocket = FName("LeftHandSocket");
 	
 protected:
 	virtual void BeginPlay() override;
@@ -189,8 +193,7 @@ private:
 	FRotator ProxyRotation;
 	float ProxyYaw;
 	float TimeSinceLastMovementReplication;
-
-
+	
 	/*
 	 *
 	 */

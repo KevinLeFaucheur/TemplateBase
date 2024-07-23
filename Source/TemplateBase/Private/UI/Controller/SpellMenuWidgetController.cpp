@@ -168,6 +168,19 @@ void USpellMenuWidgetController::EquipButtonPressed()
 	}
 }
 
+void USpellMenuWidgetController::OnSlotDragged()
+{
+	const FGameplayTag AbilityType = AbilityInfo->FindAbilityInfoForTag(SelectedAbility.Ability).AbilityType;
+	WaitForEquipSelection.Broadcast(AbilityType);
+	bWaitingForEquipSelection = true;
+
+	const FGameplayTag SelectedStatus = GetBaseAbilitySystemComponent()->GetStatusFromAbilityTag(SelectedAbility.Ability);
+	if(SelectedStatus.MatchesTagExact(FBaseGameplayTags::Get().Abilities_Status_Equipped))
+	{
+		SelectedSlot = GetBaseAbilitySystemComponent()->GetSlotTagFromAbilityTag(SelectedAbility.Ability);
+	}
+}
+
 void USpellMenuWidgetController::SpellRowSlotPressed(const FGameplayTag& SlotTag, const FGameplayTag& AbilityType)
 {
 	if(!bWaitingForEquipSelection) return;

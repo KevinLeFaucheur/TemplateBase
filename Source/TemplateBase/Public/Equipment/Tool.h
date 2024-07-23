@@ -154,6 +154,9 @@ private:
 	 * Sockets
 	 */
 	UPROPERTY(EditDefaultsOnly, Category="Equipment")
+	FName CombatSocket = FName("TipSocket");
+	
+	UPROPERTY(EditDefaultsOnly, Category="Equipment")
 	FName MainHandSocket = FName("RightHandSocket");
 	
 	UPROPERTY(EditDefaultsOnly, Category="Equipment|Reload")
@@ -179,6 +182,9 @@ public:
 	FORCEINLINE FName GetBeltSocket() const { return BeltSocket; }
 	FORCEINLINE bool HasAbilities() const { return ToolAbilities.Num() > 0; }
 	TArray<FGameplayTag> GetToolAbilityTags() const;
+
+	
+	virtual FVector GetCombatSocket() const;
 
 	/*
 	 * Overriden in RangeWeapon

@@ -63,8 +63,7 @@ FString UFireBolt::GetNextLevelDescription(int32 Level)
 		), Level, ManaCost, Cooldown, FMath::Min(Level, NumProjectiles), MinDamage, MaxDamage);
 }
 
-void UFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& CombatSocketTag,
-	bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
+void UFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& CombatSocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
 {
 	if(!GetAvatarActorFromActorInfo()->HasAuthority()) return;
 

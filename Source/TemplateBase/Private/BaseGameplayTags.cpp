@@ -137,6 +137,8 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Abilities_Weapon_Sword_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Sword.1"), FString("Abilities Weapon Sword 1"));
 	GameplayTags.Abilities_Weapon_Sword_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Sword.2"), FString("Abilities Weapon Sword 2"));
 	GameplayTags.Abilities_Weapon_Sword_Slash = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Sword.Slash"), FString("Abilities Weapon Sword Slash"));
+	
+	GameplayTags.Abilities_Weapon_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Weapon.Fire.FireBolt"), FString("Abilities Fire FireBolt Weapon Version"));
 
 	/*
 	 * Fire Weapons
@@ -172,12 +174,15 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	/*
 	 * Abilities Cooldown
 	 */
+	GameplayTags.Cooldown_Throw_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Throw.1"), FString("Cooldown Throw 1"));
+	GameplayTags.Cooldown_Throw_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Throw.2"), FString("Cooldown Throw 2"));
 	GameplayTags.Cooldown_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Fire.FireBolt"), FString("Fire Elemental Ability FireBolt"));
 	GameplayTags.Cooldown_Healing_Cure_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Healing.Cure.1"), FString("Cooldown Healing Cure 1"));
 	GameplayTags.Cooldown_Healing_Cure_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Healing.Cure.2"), FString("Cooldown Healing Cure 2"));
 	GameplayTags.Cooldown_Lightning_Bolt_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Lightning.Bolt.1"), FString("Cooldown Lightning Bolt 1"));
 	GameplayTags.Cooldown_Cosmos_Meteor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Cosmos.Meteor"), FString("Cooldown Cosmos Meteor"));
 	GameplayTags.Cooldown_Weapon_Sword_Slash = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Weapon.Sword.Slash"), FString("Cooldown Weapon Sword Slash"));
+	GameplayTags.Cooldown_Weapon_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Weapon.Fire.FireBolt"), FString("Cooldown Fire FireBolt Weapon Version"));
 	
 	/*
 	 * Side Effects
@@ -187,6 +192,7 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	/*
 	 * Combat Sockets
 	 */
+	GameplayTags.CombatSocket_Preferred = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.Preferred"), FString("Attack with Preferred Socket"));
 	GameplayTags.CombatSocket_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.Weapon"), FString("Attack with Weapon Socket"));
 	GameplayTags.CombatSocket_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.LeftHand"), FString("Attack with Left Hand Socket"));
 	GameplayTags.CombatSocket_RightHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CombatSocket.RightHand"), FString("Attack with Right Hand Socket"));

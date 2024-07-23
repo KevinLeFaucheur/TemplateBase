@@ -211,3 +211,12 @@ TArray<FGameplayTag> ATool::GetToolAbilityTags() const
 	}
 	return AbilityTags;
 }
+
+FVector ATool::GetCombatSocket() const
+{
+	if(GetMesh())
+	{
+		return GetMesh()->GetSocketLocation(CombatSocket);
+	}
+	return FVector();
+}

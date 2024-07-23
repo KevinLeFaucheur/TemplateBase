@@ -426,7 +426,18 @@ void APlayerCharacter::HideCharacterIfCameraClose()
 
 /*
  * Combat Interface
- */
+*/
+FVector APlayerCharacter::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
+{
+	const FBaseGameplayTags& GameplayTags = FBaseGameplayTags::Get();
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Preferred))
+	{
+		if(IsValid( EquipmentComponent->EquippedTool)) return EquipmentComponent->EquippedTool->GetCombatSocket();
+		return GetMesh()->GetSocketLocation(PreferredCombatSocket);
+	}
+	return ABaseCharacter::GetCombatSocketLocation_Implementation(MontageTag);
+}
+
 int32 APlayerCharacter::GetCharacterLevel_Implementation()
 {
 	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
