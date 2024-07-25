@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Inventory/InventoryComponent.h"
+#include "UI/Data/UserWidgetData.h"
 #include "UObject/Interface.h"
 #include "ControllerInterface.generated.h"
 
@@ -32,4 +33,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void ResetInventorySlot(EContainerType ContainerType, int32 SlotIndex);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void ShowNotification(UTexture2D* Icon, int32 Quantity, const FText& NotificationText, ENotificationType NotificationType);
 };

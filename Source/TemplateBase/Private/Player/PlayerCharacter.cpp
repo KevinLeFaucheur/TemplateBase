@@ -594,6 +594,10 @@ void APlayerCharacter::ResetInventorySlot_Implementation(EContainerType Containe
 void APlayerCharacter::AddHarvestedResources_Implementation(FInventoryItemData Resource)
 {
 	PlayerInventory->ServerAddItem(Resource);
+	if(const UItemInfo* ResourceInfo = Resource.Asset.LoadSynchronous())
+	{
+		IControllerInterface::Execute_ShowNotification(GetController(), ResourceInfo->ItemData.Icon, Resource.Quantity, ResourceInfo->ItemData.Name, ENotificationType::Loot);
+	}
 }
 
 void APlayerCharacter::PlayMontage_Implementation(UAnimMontage* Montage)

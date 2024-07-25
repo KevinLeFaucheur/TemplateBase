@@ -354,8 +354,3 @@ void APlayerCharacterController::ToggleSpellIndicator(bool bShow, UMaterialInter
 		SpellIndicator->Destroy();
 	}
 }
-
-void APlayerCharacterController::UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex,
-	FInventoryItemData ItemData)
-{
-}

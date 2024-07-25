@@ -25,6 +25,7 @@ struct BaseDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(LightningResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(HolyResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(DarkResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(NoxiousResistance);
 	
 	BaseDamageStatics()
 	{
@@ -42,6 +43,7 @@ struct BaseDamageStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, LightningResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, HolyResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, DarkResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, NoxiousResistance, Target, false);
 	}
 };
 
@@ -89,6 +91,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Lightning, DamageStatics().LightningResistanceDef);
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Holy, DamageStatics().HolyResistanceDef);
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Dark, DamageStatics().DarkResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Noxious, DamageStatics().NoxiousResistanceDef);
 	
 	const UAbilitySystemComponent* SourceASC =  ExecutionParams.GetSourceAbilitySystemComponent();
 	const UAbilitySystemComponent* TargetASC =  ExecutionParams.GetTargetAbilitySystemComponent();

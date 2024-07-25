@@ -122,7 +122,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsInventoryOpen = false;
 	
-	virtual void UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData) override;
+	virtual void UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData) override {}
+	virtual void ShowNotification_Implementation(UTexture2D* Icon, int32 Quantity, const FText& NotificationText, ENotificationType NotificationType) override {}
 	
 protected:
 	virtual void BeginPlay() override;
@@ -189,6 +190,7 @@ private:
 
 public:
 	FORCEINLINE FVector GetCursorHit() const { return CursorHit.ImpactPoint; }
+	
 };
 
 

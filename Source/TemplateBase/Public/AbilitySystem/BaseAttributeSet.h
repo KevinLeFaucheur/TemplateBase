@@ -163,6 +163,10 @@ public:
 	FGameplayAttributeData DarkResistance;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, DarkResistance);
 	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_NoxiousResistance, Category="Resistance Attributes")
+	FGameplayAttributeData NoxiousResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, NoxiousResistance);
+	
 	/*
 	 * Vital Attributes
 	 */
@@ -266,6 +270,9 @@ public:
 	
 	UFUNCTION()
 	void OnRep_DarkResistance(const FGameplayAttributeData& OldDarkResistance) const;
+	
+	UFUNCTION()
+	void OnRep_NoxiousResistance(const FGameplayAttributeData& OldNoxiousResistance) const;
 	
 	/*
 	 * Vital Attributes Rep Notifies
