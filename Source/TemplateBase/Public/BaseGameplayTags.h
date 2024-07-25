@@ -52,6 +52,12 @@ FGameplayTag Attributes_Resistance_Lightning;
 FGameplayTag Attributes_Resistance_Holy;
 FGameplayTag Attributes_Resistance_Dark;
 FGameplayTag Attributes_Resistance_Physical;
+FGameplayTag Attributes_Resistance_Noxious;
+
+ /*
+  * Life Skill Attributes
+  */
+FGameplayTag Attributes_Harvesting_Logging;
 
  /*
   * Meta Attributes
@@ -69,6 +75,7 @@ FGameplayTag Damage_Wind;
 FGameplayTag Damage_Lightning;
 FGameplayTag Damage_Holy;
 FGameplayTag Damage_Dark;
+FGameplayTag Damage_Noxious;
 
 TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 
@@ -107,6 +114,7 @@ FGameplayTag Abilities_Lightning_Electrocute;
 FGameplayTag Abilities_Lightning_Bolt_1;
 FGameplayTag Abilities_Arcane_ArcaneShards;
 FGameplayTag Abilities_Cosmos_Meteor_1;
+FGameplayTag Abilities_Noxious_Bio_1;
 
  FGameplayTag Abilities_Cure_1;
  FGameplayTag Abilities_Cure_2;
@@ -128,6 +136,7 @@ FGameplayTag Abilities_Weapon_Sword_1;
 FGameplayTag Abilities_Weapon_Sword_2;
 FGameplayTag Abilities_Weapon_Sword_Slash;
 FGameplayTag Abilities_Weapon_Fire_FireBolt;
+FGameplayTag Abilities_Weapon_Noxious_Bio_1;
 FGameplayTag Abilities_Weapon_Aim;
 FGameplayTag Abilities_Weapon_Scope;
  
@@ -147,6 +156,7 @@ FGameplayTag GameplayCue_FireBlast;
 FGameplayTag GameplayCue_Healing_Cure_1;
 FGameplayTag GameplayCue_Healing_Cure_2;
 FGameplayTag GameplayCue_Lightning_Bolt_1;
+FGameplayTag GameplayCue_Noxious_Bio_1;
 FGameplayTag GameplayCue_Cosmos_Meteor_1;
 FGameplayTag GameplayCue_Weapon_Sword_Slash;
 
@@ -159,6 +169,7 @@ FGameplayTag Cooldown_Fire_FireBolt;
 FGameplayTag Cooldown_Healing_Cure_1;
 FGameplayTag Cooldown_Healing_Cure_2;
 FGameplayTag Cooldown_Lightning_Bolt_1;
+FGameplayTag Cooldown_Noxious_Bio_1;
 FGameplayTag Cooldown_Cosmos_Meteor;
 FGameplayTag Cooldown_Weapon_Sword_Slash;
 FGameplayTag Cooldown_Weapon_Fire_FireBolt;
