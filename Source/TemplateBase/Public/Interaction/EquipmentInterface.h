@@ -31,6 +31,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void MontageEnd();
-
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void OnHarvestingNotify();
 };

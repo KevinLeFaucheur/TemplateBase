@@ -96,6 +96,7 @@ void UEquipmentComponent::EquipPrimaryTool(ATool* ToolToEquip)
 	EquippedTool = ToolToEquip;
 	EquippedTool->SetToolState(EToolState::ETS_Equipped);
 	EquippedTool->SetOwner(PlayerCharacter);
+	EquippedTool->OnRep_Owner(); // TODO: Investigate, it was called here because because OnRep doesnt seem to trigger when tool is dropped then re-picked up
 	AttachToolToSocket(EquippedTool, EquippedTool->GetMainHandSocket());
 	PlayerCharacter->SetAnimationState(EquippedTool->GetAnimationState());
 

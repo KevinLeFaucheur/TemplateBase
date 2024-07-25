@@ -25,6 +25,12 @@ class TEMPLATEBASE_API IPlayerInterface
 public:
 	virtual void PlayHitReactMontage() {}
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FRotator GetCameraRotation();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FVector GetCameraLocation();
+	
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetXP() const;
 	
@@ -72,6 +78,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void ResetInventorySlot(EContainerType ContainerType, int32 SlotIndex);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void AddHarvestedResources(FInventoryItemData Resource);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void PlayMontage(UAnimMontage* Montage);

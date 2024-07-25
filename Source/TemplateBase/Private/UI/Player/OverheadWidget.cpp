@@ -4,6 +4,8 @@
 #include "UI/Player/OverheadWidget.h"
 
 #include "Components/TextBlock.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/PlayerState.h"
 
 void UOverheadWidget::NativeDestruct()
 {
@@ -11,7 +13,7 @@ void UOverheadWidget::NativeDestruct()
 	Super::NativeDestruct();
 }
 
-void UOverheadWidget::SetDisplayText(const FString& TextToDisplay)
+void UOverheadWidget::SetDisplayText(const FString& TextToDisplay) const
 {
 	if(DisplayText)
 	{
@@ -41,4 +43,13 @@ void UOverheadWidget::ShowPlayerNetRole(const APawn* InPawn)
 	}
 	const FString RemoteRoleString = FString::Printf(TEXT("Remote Role: %s"), *Role);
 	SetDisplayText(RemoteRoleString);
+}
+
+void UOverheadWidget::ShowPlayerName(const ACharacter* InCharacter)
+{
+	if(InCharacter->GetPlayerState())
+	{
+		const FString PlayerNameString = FString::Printf(TEXT("%s"), *InCharacter->GetPlayerState()->GetPlayerName());
+		SetDisplayText(PlayerNameString);
+	}
 }

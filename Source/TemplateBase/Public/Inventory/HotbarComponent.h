@@ -18,4 +18,7 @@ class TEMPLATEBASE_API UHotbarComponent : public UInventoryComponent
 
 public:
 	bool CheckHotbarAtIndex(int32 Index, EItemType& ItemType);
+	virtual void HandleOnSlotDrop(UInventoryComponent* SourceInventory, int32 SourceSlotIndex, int32 TargetSlotIndex) override;
+	virtual bool AddItemToIndex(FInventoryItemData InventoryItemData, int32 SourceSlotIndex, int32 TargetSlotIndex) override;
+	virtual bool RemoveItemAtIndex(int32 SlotIndex) override;
 };

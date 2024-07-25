@@ -70,6 +70,8 @@ public:
 	void ToggleScopeOverlay(bool bShow);
 	
 	//~ Player Interface
+	virtual FRotator GetCameraRotation_Implementation() override;
+	virtual FVector GetCameraLocation_Implementation() override;
 	virtual void PlayHitReactMontage() override;
 	virtual int32 GetXP_Implementation() const override;
 	virtual int32 GetAttributePointReward_Implementation(int32 Level) const override;
@@ -87,6 +89,7 @@ public:
 	virtual void UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData) override;
 	virtual void OnSlotDrop_Implementation(EContainerType TargetContainer, EContainerType SourceContainer, int32 SourceSlotIndex, int32 TargetSlotIndex, EArmorType ArmorType) override;
 	virtual void ResetInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex) override;
+	virtual void AddHarvestedResources_Implementation(FInventoryItemData Resource) override;
 	void PlayMontage_Implementation(UAnimMontage* Montage) override;
 	virtual FTaggedMontage GetTaggedMontage_Implementation() override;
 	//~ Player Interface
@@ -96,6 +99,9 @@ public:
 	
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastPlayMontage(UAnimMontage* Montage);
+
+	UFUNCTION()
+	void OnNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& Payload);
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<USpringArmComponent> SpringArm;

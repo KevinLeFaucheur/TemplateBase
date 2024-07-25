@@ -19,9 +19,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ShowPlayerNetRole(const APawn* InPawn);
 	
+	UFUNCTION(BlueprintCallable)
+	void ShowPlayerName(const ACharacter* InCharacter);
+	
 protected:
 	virtual void NativeDestruct() override;
-	void SetDisplayText(const FString& TextToDisplay);
+	void SetDisplayText(const FString& TextToDisplay) const;
 
 public:
 	UPROPERTY(meta=(BindWidget))

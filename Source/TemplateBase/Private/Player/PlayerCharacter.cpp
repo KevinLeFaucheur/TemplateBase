@@ -425,6 +425,19 @@ void APlayerCharacter::HideCharacterIfCameraClose()
 }
 
 /*
+ * Player Interface
+ */
+FRotator APlayerCharacter::GetCameraRotation_Implementation()
+{
+	return FollowCamera->GetComponentRotation();
+}
+
+FVector APlayerCharacter::GetCameraLocation_Implementation()
+{
+	return FollowCamera->GetComponentLocation();
+}
+
+/*
  * Combat Interface
 */
 FVector APlayerCharacter::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
@@ -578,6 +591,11 @@ void APlayerCharacter::ResetInventorySlot_Implementation(EContainerType Containe
 	IControllerInterface::Execute_ResetInventorySlot(Controller, ContainerType, SlotIndex);
 }
 
+void APlayerCharacter::AddHarvestedResources_Implementation(FInventoryItemData Resource)
+{
+	PlayerInventory->ServerAddItem(Resource);
+}
+
 void APlayerCharacter::PlayMontage_Implementation(UAnimMontage* Montage)
 {
 	MulticastPlayMontage(Montage);
@@ -597,6 +615,16 @@ void APlayerCharacter::MulticastPlayMontage_Implementation(UAnimMontage* Montage
 		bIsUsingItem = false;
 	});
 	GetMesh()->GetAnimInstance()->Montage_SetEndDelegate(MontageCompleted, Montage);
+	if(!GetMesh()->GetAnimInstance()->OnPlayMontageNotifyBegin.IsAlreadyBound(this, &APlayerCharacter::OnNotifyBegin))
+	{
+		GetMesh()->GetAnimInstance()->OnPlayMontageNotifyBegin.AddDynamic(this, &APlayerCharacter::OnNotifyBegin);
+	}	
+}
+
+void APlayerCharacter::OnNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& Payload)
+{
+	GetMesh()->GetAnimInstance()->OnPlayMontageNotifyBegin.RemoveDynamic(this, &APlayerCharacter::OnNotifyBegin);
+	IEquipmentInterface::Execute_OnHarvestingNotify(EquipmentComponent->EquippedTool);
 }
 
 /*
@@ -650,6 +678,7 @@ void APlayerCharacter::OnSlotDrop(const EContainerType TargetContainer, const EC
 		TargetInventory = PlayerInventory;
 		break;
 	case EContainerType::Hotbar:
+		TargetInventory = HotbarComponent;
 		break;
 	case EContainerType::Storage:
 		break;
@@ -664,6 +693,7 @@ void APlayerCharacter::OnSlotDrop(const EContainerType TargetContainer, const EC
 		SourceInventory = PlayerInventory;
 		break;
 	case EContainerType::Hotbar:
+		SourceInventory = HotbarComponent;
 		break;
 	case EContainerType::Storage:
 		break;
@@ -730,12 +760,17 @@ void APlayerCharacter::ServerUseHotbarSlot_Implementation(int32 Index)
 
 void APlayerCharacter::ServerSpawnEquipment_Implementation(TSubclassOf<AActor> Class, int32 Index)
 {
-	EquipmentComponent->EquippedTool = GetWorld()->SpawnActor<ATool>(Class);
-	if(EquipmentComponent->EquippedTool)
+	// EquipmentComponent->EquippedTool = GetWorld()->SpawnActor<ATool>(Class);
+	// if(EquipmentComponent->EquippedTool)
+	// {
+	// 	EquipmentComponent->EquippedTool->SetOwner(this);
+	// 	const FEquipmentInfo EquipmentInfo = IEquipmentInterface::Execute_GetEquipmentInfo(EquipmentComponent->EquippedTool);
+	// 	MulticastAttachActorToMainHand(EquipmentComponent->EquippedTool, EquipmentInfo.MainHandSocket, EquipmentInfo.AnimationState);
+	// }
+	if(ATool* ToolToEquip = GetWorld()->SpawnActor<ATool>(Class))
 	{
-		EquipmentComponent->EquippedTool->SetOwner(this);
-		const FEquipmentInfo EquipmentInfo = IEquipmentInterface::Execute_GetEquipmentInfo(EquipmentComponent->EquippedTool);
-		MulticastAttachActorToMainHand(EquipmentComponent->EquippedTool, EquipmentInfo.MainHandSocket, EquipmentInfo.AnimationState);
+		EquipmentComponent->EquipTool(ToolToEquip);
+		EquipmentComponent->EquippedTool->OnRep_Owner();
 	}
 }
 
