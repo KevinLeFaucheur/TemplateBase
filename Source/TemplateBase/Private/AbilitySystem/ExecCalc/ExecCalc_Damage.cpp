@@ -69,6 +69,7 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().LightningResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().HolyResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().DarkResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().NoxiousResistanceDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,

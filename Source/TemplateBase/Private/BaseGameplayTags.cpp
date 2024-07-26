@@ -99,8 +99,8 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Fire, GameplayTags.StatusEffect_Burn);
 	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Lightning, GameplayTags.StatusEffect_Stun);
 	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Ice, GameplayTags.StatusEffect_Silence);
-	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Physical, GameplayTags.StatusEffect_Poison);
 	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Wind, GameplayTags.StatusEffect_Sleep);
+	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Noxious, GameplayTags.StatusEffect_Poison);
 	
 	/*
 	 * Abilities

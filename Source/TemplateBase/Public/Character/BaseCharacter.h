@@ -93,6 +93,9 @@ protected:
 
 	UFUNCTION()
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void PoisonTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;

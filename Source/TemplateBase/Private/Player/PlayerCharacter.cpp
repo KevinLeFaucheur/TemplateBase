@@ -113,6 +113,7 @@ void APlayerCharacter::InitAbilityActorInfo()
 	AttributeSet = PlayerCharacterState->GetAttributeSet();
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().StatusEffect_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &APlayerCharacter::StunTagChanged);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().StatusEffect_Poison, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &APlayerCharacter::PoisonTagChanged);
 
 	if (APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(GetController()))
 	{
