@@ -114,6 +114,7 @@ void APlayerCharacter::InitAbilityActorInfo()
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().StatusEffect_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &APlayerCharacter::StunTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().StatusEffect_Poison, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &APlayerCharacter::PoisonTagChanged);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag("AlterationEffect"), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &APlayerCharacter::AlterationTagChanged);
 
 	if (APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(GetController()))
 	{
@@ -662,6 +663,15 @@ void APlayerCharacter::OnRep_IsBurning()
 {
 	if(bIsBurning) BurnStatusEffectComponent->Activate();
 	else BurnStatusEffectComponent->Deactivate();
+}
+
+void APlayerCharacter::AlterationTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	Super::AlterationTagChanged(CallbackTag, NewCount);
+	if(GetAbilitySystemComponent()->HasMatchingGameplayTag(FBaseGameplayTags::Get().AlterationEffect_Alteration_Berserk_1))
+	{
+		GEngine->AddOnScreenDebugMessage(146, 8.f, FColor::Green, FString::Printf(TEXT("%s"), *CallbackTag.ToString()));
+	}
 }
 
 /*

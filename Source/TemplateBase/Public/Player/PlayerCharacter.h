@@ -168,6 +168,8 @@ protected:
 
 	virtual void OnRep_IsStunned() override;
 	virtual void OnRep_IsBurning() override;
+
+	virtual void AlterationTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
 	
 	UPROPERTY(Replicated, BlueprintReadWrite, Category="PlayerCharacter")
 	bool bIsCasting = false;

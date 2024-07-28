@@ -62,6 +62,7 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ABaseCharacter, bIsStunned);
 	DOREPLIFETIME(ABaseCharacter, bIsBurning);
 	DOREPLIFETIME(ABaseCharacter, bIsElectrocuted);
+	DOREPLIFETIME(ABaseCharacter, bIsPoisoned);
 }
 
 void ABaseCharacter::BeginPlay()
@@ -173,6 +174,23 @@ void ABaseCharacter::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
 }
 
+void ABaseCharacter::PoisonTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsPoisoned = NewCount > 0;
+	if(bIsPoisoned && PoisonStatusEffectOverlay)
+	{
+		GetMesh()->SetOverlayMaterial(PoisonStatusEffectOverlay);
+	}
+	else
+	{
+		GetMesh()->SetOverlayMaterial(nullptr);
+	}
+}
+
+void ABaseCharacter::AlterationTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+}
+
 void ABaseCharacter::Die(const FVector& DeathImpulse)
 {
 	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
@@ -198,6 +216,7 @@ void ABaseCharacter::MulticastHandleDeath_Implementation(const FVector& DeathImp
 	bDead = true;
 	BurnStatusEffectComponent->Deactivate();
 	StunStatusEffectComponent->Deactivate();
+	GetMesh()->SetOverlayMaterial(nullptr);
 	OnDeath.Broadcast(this);
 }
 

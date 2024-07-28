@@ -100,6 +100,16 @@ FGameplayTag StatusEffect_Duration;
 FGameplayTag StatusEffect_Frequency;
 
 TMap<FGameplayTag, FGameplayTag> DamageTypesToStatusEffects;
+
+ /*
+  * Alteration
+  */
+ FGameplayTag Abilities_Alteration_Berserk_1;
+   	  	
+ /*
+  * Alteration Effects
+  */
+ FGameplayTag AlterationEffect_Alteration_Berserk_1;
  
  /*
   * Abilities
@@ -159,6 +169,8 @@ FGameplayTag GameplayCue_Lightning_Bolt_1;
 FGameplayTag GameplayCue_Noxious_Bio_1;
 FGameplayTag GameplayCue_Cosmos_Meteor_1;
 FGameplayTag GameplayCue_Weapon_Sword_Slash;
+ 
+FGameplayTag GameplayCue_Alteration_Berserk_1;
 
  /*
   * Abilities Cooldowns
@@ -173,6 +185,8 @@ FGameplayTag Cooldown_Noxious_Bio_1;
 FGameplayTag Cooldown_Cosmos_Meteor;
 FGameplayTag Cooldown_Weapon_Sword_Slash;
 FGameplayTag Cooldown_Weapon_Fire_FireBolt;
+ 
+FGameplayTag Cooldown_Alteration_Berserk_1;
  
 /*
  * Side Effects

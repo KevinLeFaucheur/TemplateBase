@@ -57,6 +57,21 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			OnMaxManaChanged.Broadcast(Data.NewValue);
 		}
 	);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag("AlterationEffect"), EGameplayTagEventType::NewOrRemoved).AddLambda(
+		[this] (const FGameplayTag Tag, int32 NewCount)
+		{
+			if(NewCount > 0)
+			{
+				if(AbilitySystemComponent->HasMatchingGameplayTag(FBaseGameplayTags::Get().AlterationEffect_Alteration_Berserk_1))
+				{
+					FAlterationEffect AlterationEffect;
+					AlterationEffect.AlterationEffectTag = FBaseGameplayTags::Get().AlterationEffect_Alteration_Berserk_1;
+					AlterationEffectEvent.Broadcast(AlterationEffect);
+				}
+			}
+		}
+	);
+	
 	if (GetBaseAbilitySystemComponent())
 	{
 		GetBaseAbilitySystemComponent()->AbilityEquipped.AddUObject(this, &UOverlayWidgetController::OnAbilityEquipped);

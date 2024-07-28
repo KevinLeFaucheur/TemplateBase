@@ -38,12 +38,6 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadWrite, Category="Ability|Beam")
-	FVector MouseHitLocation;
-
-	UPROPERTY(BlueprintReadWrite, Category="Ability|Beam")
-	TObjectPtr<AActor> MouseHitActor;
-
-	UPROPERTY(BlueprintReadWrite, Category="Ability|Beam")
 	TObjectPtr<APlayerController> OwnerPlayerController;
 	
 	UPROPERTY(BlueprintReadWrite, Category="Ability|Beam")

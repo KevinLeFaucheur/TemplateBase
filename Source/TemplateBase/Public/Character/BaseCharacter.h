@@ -76,6 +76,9 @@ public:
 	
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	bool bIsElectrocuted = false;
+	
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	bool bIsPoisoned = false;
 
 	UFUNCTION()
 	virtual void OnRep_IsStunned() {}
@@ -94,8 +97,11 @@ protected:
 	UFUNCTION()
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 	
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void PoisonTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	UFUNCTION()
+	virtual void PoisonTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	
+	UFUNCTION()
+	virtual void AlterationTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
@@ -143,6 +149,9 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStatusEffectNiagaraComponent> StunStatusEffectComponent;
+
+	UPROPERTY(EditAnywhere, Category="Character|Effects")
+	TObjectPtr<UMaterialInterface> PoisonStatusEffectOverlay;
 
 	/*
 	 * Minions

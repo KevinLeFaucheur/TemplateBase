@@ -32,11 +32,27 @@ struct FUIWidgetRow : public FTableRowBase
 	UTexture2D* Image = nullptr;
 };
 
+USTRUCT(BlueprintType)
+struct FAlterationEffect : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FGameplayTag AlterationEffectTag = FGameplayTag();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText ToolTip = FText();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* Icon = nullptr;
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAmmunitionChanged, int32, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnXPValueChanged, int32, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerNameChanged, FString, PlayerName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAlterationEffectEvent, FAlterationEffect, AlterationEffect);
 
 /**
  * 
@@ -73,6 +89,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
 	FMessageWidgetRowSignature MessageWidgetRow;
+
+	UPROPERTY(BlueprintAssignable, Category="GAS|Messages")
+	FOnAlterationEffectEvent AlterationEffectEvent;
 	
 	UPROPERTY(BlueprintAssignable, Category="GAS|Meta")
 	FOnAttributeChangedSignature OnXPPercentChanged;

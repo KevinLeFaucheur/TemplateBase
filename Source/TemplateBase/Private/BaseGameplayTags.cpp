@@ -101,6 +101,16 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Ice, GameplayTags.StatusEffect_Silence);
 	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Wind, GameplayTags.StatusEffect_Sleep);
 	GameplayTags.DamageTypesToStatusEffects.Add(GameplayTags.Damage_Noxious, GameplayTags.StatusEffect_Poison);
+		
+	/*
+	 * Alteration
+	 */
+	GameplayTags.Abilities_Alteration_Berserk_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Alteration.Berserk.1"), FString("Abilities Alteration Berserk 1"));
+	
+	/*
+	 * Alteration Effects
+	 */
+	GameplayTags.AlterationEffect_Alteration_Berserk_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AlterationEffect.Alteration.Berserk.1"), FString("AlterationEffect Alteration Berserk 1"));
 	
 	/*
 	 * Abilities
@@ -176,6 +186,7 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.GameplayCue_Noxious_Bio_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Noxious.Bio.1"), FString("GameplayCue Noxious Bio 1"));
 	GameplayTags.GameplayCue_Cosmos_Meteor_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Cosmos.Meteor.1"), FString("GameplayCue Cosmos Meteor 1"));
 	GameplayTags.GameplayCue_Weapon_Sword_Slash = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Weapon.Sword.Slash"), FString("GameplayCue Weapon Sword Slash"));
+	GameplayTags.GameplayCue_Alteration_Berserk_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.Alteration.Berserk.1"), FString("GameplayCue Alteration Berserk 1"));
 	
 	/*
 	 * Abilities Cooldown
@@ -190,6 +201,7 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Cooldown_Cosmos_Meteor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Cosmos.Meteor"), FString("Cooldown Cosmos Meteor"));
 	GameplayTags.Cooldown_Weapon_Sword_Slash = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Weapon.Sword.Slash"), FString("Cooldown Weapon Sword Slash"));
 	GameplayTags.Cooldown_Weapon_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Weapon.Fire.FireBolt"), FString("Cooldown Fire FireBolt Weapon Version"));
+	GameplayTags.Cooldown_Alteration_Berserk_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Alteration.Berserk.1"), FString("Cooldown Alteration Berserk 1"));
 	
 	/*
 	 * Side Effects
