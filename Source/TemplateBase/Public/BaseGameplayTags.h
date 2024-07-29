@@ -110,6 +110,8 @@ TMap<FGameplayTag, FGameplayTag> DamageTypesToStatusEffects;
   * Alteration Effects
   */
  FGameplayTag AlterationEffect_Alteration_Berserk_1;
+
+ TArray<FGameplayTag> AlterationEffects;
  
  /*
   * Abilities

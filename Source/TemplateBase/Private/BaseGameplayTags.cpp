@@ -111,6 +111,7 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	 * Alteration Effects
 	 */
 	GameplayTags.AlterationEffect_Alteration_Berserk_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("AlterationEffect.Alteration.Berserk.1"), FString("AlterationEffect Alteration Berserk 1"));
+	GameplayTags.AlterationEffects.Add(GameplayTags.AlterationEffect_Alteration_Berserk_1);
 	
 	/*
 	 * Abilities

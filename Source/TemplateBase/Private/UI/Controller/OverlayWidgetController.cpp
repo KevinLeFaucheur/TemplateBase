@@ -6,6 +6,7 @@
 #include "AbilitySystem/BaseAbilitySystemComponent.h"
 #include "AbilitySystem/BaseAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
+#include "AbilitySystem/Data/AlterationEffectInfo.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "Player/PlayerCharacterController.h"
 #include "Player/PlayerCharacterState.h"
@@ -57,20 +58,25 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			OnMaxManaChanged.Broadcast(Data.NewValue);
 		}
 	);
-	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag("AlterationEffect"), EGameplayTagEventType::NewOrRemoved).AddLambda(
-		[this] (const FGameplayTag Tag, int32 NewCount)
-		{
-			if(NewCount > 0)
-			{
-				if(AbilitySystemComponent->HasMatchingGameplayTag(FBaseGameplayTags::Get().AlterationEffect_Alteration_Berserk_1))
+	for (FGameplayTag AlterationEffectTag : FBaseGameplayTags::Get().AlterationEffects)
+	{
+		AbilitySystemComponent->RegisterGameplayTagEvent(AlterationEffectTag, EGameplayTagEventType::NewOrRemoved).AddLambda(
+			[this, AlterationEffectTag] (const FGameplayTag Tag, int32 NewCount) {
+				if(NewCount > 0)
 				{
-					FAlterationEffect AlterationEffect;
-					AlterationEffect.AlterationEffectTag = FBaseGameplayTags::Get().AlterationEffect_Alteration_Berserk_1;
-					AlterationEffectEvent.Broadcast(AlterationEffect);
+					const FAlterationEffect AlterationEffect = AlterationEffectInfo->FindAlterationEffectForTag(AlterationEffectTag);
+					OnAlterationEffectAdded.Broadcast(AlterationEffect);
+					const FActiveGameplayEffectsContainer& ActiveGameplayEffects = AbilitySystemComponent->GetActiveGameplayEffects();
+					// for (auto Effect : AbilitySystemComponent->GetActiveGameplayEffects())
+					// {
+					// }
 				}
-			}
-		}
-	);
+				else
+				{
+					OnAlterationEffectRemoved.Broadcast(AlterationEffectTag);
+				}
+			});
+	}
 	
 	if (GetBaseAbilitySystemComponent())
 	{

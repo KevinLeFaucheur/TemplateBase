@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "BaseWidgetController.generated.h"
 
+class UAlterationEffectInfo;
 class UAbilityInfo;
 class UBaseAttributeSet;
 class UBaseAbilitySystemComponent;
@@ -89,6 +90,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|WidgetData")
 	TObjectPtr<UAbilityInfo> ToolAbilityInfo;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="GAS|WidgetData")
+	TObjectPtr<UAlterationEffectInfo> AlterationEffectInfo;
 
 	APlayerCharacterController* GetPlayerCharacterController();
 	APlayerCharacterState* GetPlayerCharacterState();
