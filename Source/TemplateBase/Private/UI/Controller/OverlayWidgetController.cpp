@@ -64,12 +64,19 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			[this, AlterationEffectTag] (const FGameplayTag Tag, int32 NewCount) {
 				if(NewCount > 0)
 				{
-					const FAlterationEffect AlterationEffect = AlterationEffectInfo->FindAlterationEffectForTag(AlterationEffectTag);
+					FAlterationEffect AlterationEffect = AlterationEffectInfo->FindAlterationEffectForTag(AlterationEffectTag);
+					
+					TArray<FGameplayEffectSpec> OutSpecCopies;
+					AbilitySystemComponent->GetAllActiveGameplayEffectSpecs(OutSpecCopies);
+					for (FGameplayEffectSpec Spec : OutSpecCopies)
+					{
+						if(Spec.Def->GetGrantedTags().HasTagExact(AlterationEffectTag))
+						{
+							AlterationEffect.TimeRemaining = Spec.Duration;
+							break;
+						}
+					}
 					OnAlterationEffectAdded.Broadcast(AlterationEffect);
-					const FActiveGameplayEffectsContainer& ActiveGameplayEffects = AbilitySystemComponent->GetActiveGameplayEffects();
-					// for (auto Effect : AbilitySystemComponent->GetActiveGameplayEffects())
-					// {
-					// }
 				}
 				else
 				{

@@ -26,6 +26,9 @@ struct FAlterationEffect
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UTexture2D* Icon = nullptr;
+	
+	UPROPERTY(BlueprintReadOnly)
+	float TimeRemaining = 0.f;
 };
 
 UCLASS()
