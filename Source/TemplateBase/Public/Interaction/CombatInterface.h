@@ -48,9 +48,24 @@ class TEMPLATEBASE_API ICombatInterface
 	GENERATED_BODY()
 
 public:
+	/*
+	 * GAS
+	 */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	ECharacterClass GetCharacterClass();
+	
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetCharacterLevel();
 	
+	UFUNCTION(BlueprintNativeEvent)
+	float GetWeaponPhysicalAttack();
+	
+	UFUNCTION(BlueprintNativeEvent)
+	float GetWeaponMagicalAttack();
+
+	/*
+	 * Combat
+	 */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	FVector GetCombatSocketLocation(const FGameplayTag& MontageTag);
 
@@ -88,9 +103,6 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void IncrementMinionCount(int32 Amount);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	ECharacterClass GetCharacterClass();
 
 	virtual FOnASCRegistered& GetOnASCRegistered() = 0;
 	virtual FOnDeath& GetOnDeathDelegate() = 0;

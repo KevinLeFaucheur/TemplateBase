@@ -63,6 +63,7 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ABaseCharacter, bIsBurning);
 	DOREPLIFETIME(ABaseCharacter, bIsElectrocuted);
 	DOREPLIFETIME(ABaseCharacter, bIsPoisoned);
+	DOREPLIFETIME(ABaseCharacter, bIsBerserk);
 }
 
 void ABaseCharacter::BeginPlay()
@@ -180,6 +181,19 @@ void ABaseCharacter::PoisonTagChanged(const FGameplayTag CallbackTag, int32 NewC
 	if(bIsPoisoned && PoisonStatusEffectOverlay)
 	{
 		GetMesh()->SetOverlayMaterial(PoisonStatusEffectOverlay);
+	}
+	else
+	{
+		GetMesh()->SetOverlayMaterial(nullptr);
+	}
+}
+
+void ABaseCharacter::BerserkTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsBerserk = NewCount > 0;
+	if(bIsBerserk && BerserkStatusEffectOverlay)
+	{
+		GetMesh()->SetOverlayMaterial(BerserkStatusEffectOverlay);
 	}
 	else
 	{

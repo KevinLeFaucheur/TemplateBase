@@ -28,8 +28,8 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Luck, COND_None, REPNOTIFY_Always);
 
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, PhysicalAttack, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MagicalAttack, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, Armor, COND_None, REPNOTIFY_Always);
-	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusArmor, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, ArmorPenetration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BlockChance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, CriticalHitChance, COND_None, REPNOTIFY_Always);
@@ -39,6 +39,19 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, ManaRegeneration, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxHealth, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
+	
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusPhysicalAttack, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusMagicalAttack, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusArmor, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusArmorPenetration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusBlockChance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusCriticalHitChance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusCriticalHitDamage, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusCriticalHitResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusHealthRegeneration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusManaRegeneration, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusMaxHealth, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BonusMaxMana, COND_None, REPNOTIFY_Always);
 	
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, PhysicalResistance, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, BluntResistance, COND_None, REPNOTIFY_Always);
@@ -427,14 +440,14 @@ void UBaseAttributeSet::OnRep_PhysicalAttack(const FGameplayAttributeData& OldPh
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, PhysicalAttack, OldPhysicalAttack);
 }
 
+void UBaseAttributeSet::OnRep_MagicalAttack(const FGameplayAttributeData& OldMagicalAttack) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MagicalAttack, OldMagicalAttack);
+}
+
 void UBaseAttributeSet::OnRep_Armor(const FGameplayAttributeData& OldArmor) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, Armor, OldArmor);
-}
-
-void UBaseAttributeSet::OnRep_BonusArmor(const FGameplayAttributeData& OldBonusArmor) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusArmor, OldBonusArmor);
 }
 
 void UBaseAttributeSet::OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const
@@ -477,16 +490,77 @@ void UBaseAttributeSet::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHeal
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxHealth, OldMaxHealth);
 }
 
-void UBaseAttributeSet::OnRep_BonusMaxHealth(const FGameplayAttributeData& OldBonusMaxHealth) const
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusMaxHealth, OldBonusMaxHealth);
-}
-
 void UBaseAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, MaxMana, OldMaxMana);
 }
 
+/*
+ * Bonus To Secondary Attributes Rep Notifies
+ */
+void UBaseAttributeSet::OnRep_BonusPhysicalAttack(const FGameplayAttributeData& OldBonusPhysicalAttack) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusPhysicalAttack, OldBonusPhysicalAttack);
+}
+
+void UBaseAttributeSet::OnRep_BonusMagicalAttack(const FGameplayAttributeData& OldBonusMagicalAttack) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusMagicalAttack, OldBonusMagicalAttack);
+}
+
+void UBaseAttributeSet::OnRep_BonusArmor(const FGameplayAttributeData& OldBonusArmor) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusArmor, OldBonusArmor);
+}
+
+void UBaseAttributeSet::OnRep_BonusArmorPenetration(const FGameplayAttributeData& OldBonusArmorPenetration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusArmorPenetration, OldBonusArmorPenetration);
+}
+
+void UBaseAttributeSet::OnRep_BonusBlockChance(const FGameplayAttributeData& OldBonusBlockChance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusBlockChance, OldBonusBlockChance);
+}
+
+void UBaseAttributeSet::OnRep_BonusCriticalHitChance(const FGameplayAttributeData& OldBonusCriticalHitChance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusCriticalHitChance, OldBonusCriticalHitChance);
+}
+
+void UBaseAttributeSet::OnRep_BonusCriticalHitDamage(const FGameplayAttributeData& OldBonusCriticalHitDamage) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusCriticalHitDamage, OldBonusCriticalHitDamage);
+}
+
+void UBaseAttributeSet::OnRep_BonusCriticalHitResistance(const FGameplayAttributeData& OldBonusCriticalHitResistance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusCriticalHitResistance, OldBonusCriticalHitResistance);
+}
+
+void UBaseAttributeSet::OnRep_BonusHealthRegeneration(const FGameplayAttributeData& OldBonusHealthRegeneration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusHealthRegeneration, OldBonusHealthRegeneration);
+}
+
+void UBaseAttributeSet::OnRep_BonusManaRegeneration(const FGameplayAttributeData& OldBonusManaRegeneration) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusManaRegeneration, OldBonusManaRegeneration);
+}
+
+void UBaseAttributeSet::OnRep_BonusMaxHealth(const FGameplayAttributeData& OldBonusMaxHealth) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusMaxHealth, OldBonusMaxHealth);
+}
+
+void UBaseAttributeSet::OnRep_BonusMaxMana(const FGameplayAttributeData& OldBonusMaxMana) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, BonusMaxMana, OldBonusMaxMana);
+}
+
+/*
+ * Resistances Rep Notifies
+ */
 void UBaseAttributeSet::OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UBaseAttributeSet, PhysicalResistance, OldPhysicalResistance);

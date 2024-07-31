@@ -32,8 +32,8 @@ FGameplayTag Attributes_Primary_Luck;
   * Secondary Attributes
   */
 FGameplayTag Attributes_Secondary_PhysicalAttack;
+FGameplayTag Attributes_Secondary_MagicalAttack;
 FGameplayTag Attributes_Secondary_Armor;
-FGameplayTag Attributes_Secondary_Bonus_Armor;
 FGameplayTag Attributes_Secondary_ArmorPenetration;
 FGameplayTag Attributes_Secondary_BlockChance;
 FGameplayTag Attributes_Secondary_CriticalHitChance;
@@ -42,8 +42,20 @@ FGameplayTag Attributes_Secondary_CriticalHitResistance;
 FGameplayTag Attributes_Secondary_HealthRegeneration;
 FGameplayTag Attributes_Secondary_ManaRegeneration;
 FGameplayTag Attributes_Secondary_MaxHealth;
-FGameplayTag Attributes_Secondary_Bonus_MaxHealth;
 FGameplayTag Attributes_Secondary_MaxMana;
+ 
+ FGameplayTag Attributes_Secondary_Bonus_PhysicalAttack;
+ FGameplayTag Attributes_Secondary_Bonus_MagicalAttack;
+FGameplayTag Attributes_Secondary_Bonus_Armor;
+ FGameplayTag Attributes_Secondary_Bonus_ArmorPenetration;
+ FGameplayTag Attributes_Secondary_Bonus_BlockChance;
+ FGameplayTag Attributes_Secondary_Bonus_CriticalHitChance;
+ FGameplayTag Attributes_Secondary_Bonus_CriticalHitDamage;
+ FGameplayTag Attributes_Secondary_Bonus_CriticalHitResistance;
+ FGameplayTag Attributes_Secondary_Bonus_HealthRegeneration;
+ FGameplayTag Attributes_Secondary_Bonus_ManaRegeneration;
+FGameplayTag Attributes_Secondary_Bonus_MaxHealth;
+ FGameplayTag Attributes_Secondary_Bonus_MaxMana;
  
  /*
  * Resistances Attributes

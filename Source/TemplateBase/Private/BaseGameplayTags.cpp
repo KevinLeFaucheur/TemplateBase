@@ -26,8 +26,8 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	 * Secondary Attributes
 	 */
 	GameplayTags.Attributes_Secondary_PhysicalAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.PhysicalAttack"), FString("Reduces damage taken, improves PhysicalAttack"));
+	GameplayTags.Attributes_Secondary_MagicalAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.MagicalAttack"), FString("Reduces damage taken, improves MagicalAttack"));
 	GameplayTags.Attributes_Secondary_Armor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Armor"), FString("Reduces damage taken, improves Armor"));
-	GameplayTags.Attributes_Secondary_Bonus_Armor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.Armor"), FString("Reduces damage taken, improves Bonus Armor"));
 	GameplayTags.Attributes_Secondary_ArmorPenetration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.ArmorPenetration"), FString("Ignores percentage of enemy's armor, chance for critical hit"));
 	GameplayTags.Attributes_Secondary_BlockChance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.BlockChance"), FString("Chance to reduce receiving damage"));
 	GameplayTags.Attributes_Secondary_CriticalHitChance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.CriticalHitChance"), FString("Chance for a critical hit"));
@@ -36,8 +36,23 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Secondary_HealthRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.HealthRegeneration"), FString("Amount of health healed every 1 second"));
 	GameplayTags.Attributes_Secondary_ManaRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.ManaRegeneration"), FString("Amount of mana healed every 1 second"));
 	GameplayTags.Attributes_Secondary_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.MaxHealth"), FString("Max amount of health"));
-	GameplayTags.Attributes_Secondary_Bonus_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.MaxHealth"), FString("Bonus to Max amount of health"));
 	GameplayTags.Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.MaxMana"), FString("Max amount of mana"));
+	
+	/*
+	 * Bonus To Secondary Attributes
+	 */
+	GameplayTags.Attributes_Secondary_Bonus_PhysicalAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.PhysicalAttack"), FString("Bonus to PhysicalAttack"));
+	GameplayTags.Attributes_Secondary_Bonus_MagicalAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.MagicalAttack"), FString("Bonus to MagicalAttack"));
+	GameplayTags.Attributes_Secondary_Bonus_Armor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.Armor"), FString("Reduces damage taken, improves Bonus Armor"));
+	GameplayTags.Attributes_Secondary_Bonus_ArmorPenetration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.ArmorPenetration"), FString("Bonus to ArmorPenetration"));
+	GameplayTags.Attributes_Secondary_Bonus_BlockChance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.BlockChance"), FString("Bonus to BlockingChance"));
+	GameplayTags.Attributes_Secondary_Bonus_CriticalHitChance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.CriticalHitChance"), FString("Bonus to CriticalHitChance"));
+	GameplayTags.Attributes_Secondary_Bonus_CriticalHitDamage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.CriticalHitDamage"), FString("Bonus to CriticalHitDamage"));
+	GameplayTags.Attributes_Secondary_Bonus_CriticalHitResistance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.CriticalHitResistance"), FString("Bonus to CriticalHitResistance"));
+	GameplayTags.Attributes_Secondary_Bonus_HealthRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.HealthRegeneration"), FString("Bonus to HealthRegeneration"));
+	GameplayTags.Attributes_Secondary_Bonus_ManaRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.ManaRegeneration"), FString("Bonus to ManaRegeneration"));
+	GameplayTags.Attributes_Secondary_Bonus_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.MaxHealth"), FString("Bonus to Max amount of health"));
+	GameplayTags.Attributes_Secondary_Bonus_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.MaxMana"), FString("Bonus to Max amount of mana"));
 
 	/*
 	 * Resistance Attributes

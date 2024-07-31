@@ -1,6 +1,8 @@
 // Retropsis @ 2024
 
 #include "Equipment/EquipmentComponent.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "AbilitySystem/BaseAbilitySystemLibrary.h"
@@ -88,6 +90,10 @@ void UEquipmentComponent::EquipTool(ATool* ToolToEquip)
 		EquipPrimaryTool(ToolToEquip);		
 	}
 	HandleUseAimOffsets();
+	FGameplayEventData Payload;
+	Payload.EventTag = FBaseGameplayTags::Get().Attributes_Secondary_PhysicalAttack;
+	Payload.EventMagnitude = 0.f;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(PlayerCharacter, FBaseGameplayTags::Get().Attributes_Secondary_PhysicalAttack, Payload);
 }
 
 void UEquipmentComponent::EquipPrimaryTool(ATool* ToolToEquip)

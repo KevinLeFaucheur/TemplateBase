@@ -114,6 +114,7 @@ void APlayerCharacter::InitAbilityActorInfo()
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().StatusEffect_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &APlayerCharacter::StunTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().StatusEffect_Poison, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &APlayerCharacter::PoisonTagChanged);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().AlterationEffect_Alteration_Berserk_1, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &APlayerCharacter::BerserkTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FGameplayTag::RequestGameplayTag("AlterationEffect"), EGameplayTagEventType::NewOrRemoved).AddUObject(this, &APlayerCharacter::AlterationTagChanged);
 
 	if (APlayerCharacterController* PlayerCharacterController = Cast<APlayerCharacterController>(GetController()))
@@ -439,27 +440,6 @@ FVector APlayerCharacter::GetCameraLocation_Implementation()
 	return FollowCamera->GetComponentLocation();
 }
 
-/*
- * Combat Interface
-*/
-FVector APlayerCharacter::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
-{
-	const FBaseGameplayTags& GameplayTags = FBaseGameplayTags::Get();
-	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Preferred))
-	{
-		if(IsValid( EquipmentComponent->EquippedTool)) return EquipmentComponent->EquippedTool->GetCombatSocket();
-		return GetMesh()->GetSocketLocation(PreferredCombatSocket);
-	}
-	return ABaseCharacter::GetCombatSocketLocation_Implementation(MontageTag);
-}
-
-int32 APlayerCharacter::GetCharacterLevel_Implementation()
-{
-	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
-	check(PlayerCharacterState);
-	return PlayerCharacterState->GetPlayerLevel();
-}
-
 int32 APlayerCharacter::GetXP_Implementation() const
 {
 	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
@@ -567,6 +547,39 @@ void APlayerCharacter::PickupAmmunition_Implementation(EToolType ToolType, int32
 	EquipmentComponent->PickupAmmunition(ToolType, AmmunitionAmount);
 }
 
+/*
+ * Combat Interface
+*/
+FVector APlayerCharacter::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
+{
+	const FBaseGameplayTags& GameplayTags = FBaseGameplayTags::Get();
+	if(MontageTag.MatchesTagExact(GameplayTags.CombatSocket_Preferred))
+	{
+		if(IsValid( EquipmentComponent->EquippedTool)) return EquipmentComponent->EquippedTool->GetCombatSocket();
+		return GetMesh()->GetSocketLocation(PreferredCombatSocket);
+	}
+	return ABaseCharacter::GetCombatSocketLocation_Implementation(MontageTag);
+}
+
+int32 APlayerCharacter::GetCharacterLevel_Implementation()
+{
+	const APlayerCharacterState* PlayerCharacterState = GetPlayerState<APlayerCharacterState>();
+	check(PlayerCharacterState);
+	return PlayerCharacterState->GetPlayerLevel();
+}
+
+float APlayerCharacter::GetWeaponPhysicalAttack_Implementation()
+{
+	if(IsValid( EquipmentComponent->EquippedTool)) return EquipmentComponent->EquippedTool->GetPhysicalAttack();
+	return 0.f;
+}
+
+float APlayerCharacter::GetWeaponMagicalAttack_Implementation()
+{
+	if(IsValid( EquipmentComponent->EquippedTool)) return EquipmentComponent->EquippedTool->GetMagicalAttack();
+	return 0.f;
+}
+
 int32 APlayerCharacter::GetThrowableCount_Implementation()
 {
 	return EquipmentComponent->ThrowableCount;
@@ -578,6 +591,9 @@ void APlayerCharacter::SpendAvailableThrowable_Implementation()
 	if(IsLocallyControlled()) EquipmentComponent->UpdateHUDThrowableCount();
 }
 
+/*
+ * 
+ */
 void APlayerCharacter::UpdateInventorySlot_Implementation(EContainerType ContainerType, int32 SlotIndex, FInventoryItemData ItemData)
 {
 	IControllerInterface::Execute_UpdateInventorySlot(Controller, ContainerType, SlotIndex, ItemData);

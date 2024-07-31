@@ -52,6 +52,9 @@ class TEMPLATEBASE_API UOverlayWidgetController : public UBaseWidgetController
 public:
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
+
+	UFUNCTION(BlueprintCallable)
+	void OnAlterationEffectClicked(const FGameplayTag& AlterationEffectTag);
 	
 	 UFUNCTION()
 	void OnXPChanged(int32 NewXP);

@@ -79,6 +79,9 @@ public:
 	
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	bool bIsPoisoned = false;
+	
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	bool bIsBerserk = false;
 
 	UFUNCTION()
 	virtual void OnRep_IsStunned() {}
@@ -99,6 +102,9 @@ protected:
 	
 	UFUNCTION()
 	virtual void PoisonTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	
+	UFUNCTION()
+	virtual void BerserkTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 	
 	UFUNCTION()
 	virtual void AlterationTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
@@ -152,6 +158,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Character|Effects")
 	TObjectPtr<UMaterialInterface> PoisonStatusEffectOverlay;
+	
+	UPROPERTY(EditAnywhere, Category="Character|Effects")
+	TObjectPtr<UMaterialInterface> BerserkStatusEffectOverlay;
 
 	/*
 	 * Minions

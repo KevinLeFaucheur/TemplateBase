@@ -96,13 +96,13 @@ public:
 	FGameplayAttributeData PhysicalAttack;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, PhysicalAttack);
 	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MagicalAttack, Category="Secondary Attributes")
+	FGameplayAttributeData MagicalAttack;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MagicalAttack);
+	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Armor, Category="Secondary Attributes")
 	FGameplayAttributeData Armor;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Armor);
-	
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusArmor, Category="Secondary Attributes")
-	FGameplayAttributeData BonusArmor;
-	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusArmor);
 	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_ArmorPenetration, Category="Secondary Attributes")
 	FGameplayAttributeData ArmorPenetration;
@@ -135,14 +135,61 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxHealth, Category="Secondary Attributes")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxHealth);
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxMana, Category="Secondary Attributes")
+	FGameplayAttributeData MaxMana;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMana);
+		
+	/*
+	 * Bonus To Secondary Attributes
+	*/	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusPhysicalAttack, Category="Secondary Attributes")
+	FGameplayAttributeData BonusPhysicalAttack;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusPhysicalAttack);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusMagicalAttack, Category="Secondary Attributes")
+	FGameplayAttributeData BonusMagicalAttack;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusMagicalAttack);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusArmor, Category="Secondary Attributes")
+	FGameplayAttributeData BonusArmor;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusArmor);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusArmorPenetration, Category="Secondary Attributes")
+	FGameplayAttributeData BonusArmorPenetration;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusArmorPenetration);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusBlockChance, Category="Secondary Attributes")
+	FGameplayAttributeData BonusBlockChance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusBlockChance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusCriticalHitChance, Category="Secondary Attributes")
+	FGameplayAttributeData BonusCriticalHitChance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusCriticalHitChance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusCriticalHitDamage, Category="Secondary Attributes")
+	FGameplayAttributeData BonusCriticalHitDamage;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusCriticalHitDamage);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusCriticalHitResistance, Category="Secondary Attributes")
+	FGameplayAttributeData BonusCriticalHitResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusCriticalHitResistance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusHealthRegeneration, Category="Secondary Attributes")
+	FGameplayAttributeData BonusHealthRegeneration;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusHealthRegeneration);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusManaRegeneration, Category="Secondary Attributes")
+	FGameplayAttributeData BonusManaRegeneration;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusManaRegeneration);
 	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusMaxHealth, Category="Secondary Attributes")
 	FGameplayAttributeData BonusMaxHealth;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusMaxHealth);
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxMana, Category="Secondary Attributes")
-	FGameplayAttributeData MaxMana;
-	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMana);
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusMaxMana, Category="Secondary Attributes")
+	FGameplayAttributeData BonusMaxMana;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusMaxMana);
 	
 	/*
 	 * Resistance Attributes
@@ -245,10 +292,10 @@ public:
 	void OnRep_PhysicalAttack(const FGameplayAttributeData& OldPhysicalAttack) const;
 	
 	UFUNCTION()
-	void OnRep_Armor(const FGameplayAttributeData& OldArmor) const;
+	void OnRep_MagicalAttack(const FGameplayAttributeData& OldMagicalAttack) const;
 	
 	UFUNCTION()
-	void OnRep_BonusArmor(const FGameplayAttributeData& OldBonusArmor) const;
+	void OnRep_Armor(const FGameplayAttributeData& OldArmor) const;
 	
 	UFUNCTION()
 	void OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const;
@@ -275,10 +322,46 @@ public:
 	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 
 	UFUNCTION()
+	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+	
+	/*
+	 * Bonus To Secondary Attributes Rep Notifies
+	*/
+	UFUNCTION()
+	void OnRep_BonusPhysicalAttack(const FGameplayAttributeData& OldBonusPhysicalAttack) const;
+	
+	UFUNCTION()
+	void OnRep_BonusMagicalAttack(const FGameplayAttributeData& OldBonusMagicalAttack) const;
+	
+	UFUNCTION()
+	void OnRep_BonusArmor(const FGameplayAttributeData& OldBonusArmor) const;
+	
+	UFUNCTION()
+	void OnRep_BonusArmorPenetration(const FGameplayAttributeData& OldBonusArmorPenetration) const;
+	
+	UFUNCTION()
+	void OnRep_BonusBlockChance(const FGameplayAttributeData& OldBonusBlockChance) const;
+	
+	UFUNCTION()
+	void OnRep_BonusCriticalHitChance(const FGameplayAttributeData& OldBonusCriticalHitChance) const;
+	
+	UFUNCTION()
+	void OnRep_BonusCriticalHitDamage(const FGameplayAttributeData& OldBonusCriticalHitDamage) const;
+	
+	UFUNCTION()
+	void OnRep_BonusCriticalHitResistance(const FGameplayAttributeData& OldBonusCriticalHitResistance) const;
+	
+	UFUNCTION()
+	void OnRep_BonusHealthRegeneration(const FGameplayAttributeData& OldBonusHealthRegeneration) const;
+	
+	UFUNCTION()
+	void OnRep_BonusManaRegeneration(const FGameplayAttributeData& OldBonusManaRegeneration) const;
+
+	UFUNCTION()
 	void OnRep_BonusMaxHealth(const FGameplayAttributeData& OldBonusMaxHealth) const;
 
 	UFUNCTION()
-	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
+	void OnRep_BonusMaxMana(const FGameplayAttributeData& OldBonusMaxMana) const;
 	
 	/*
 	 * Resistance Attributes Rep Notifies

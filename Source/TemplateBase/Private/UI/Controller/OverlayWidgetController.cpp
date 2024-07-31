@@ -33,7 +33,6 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		 	OnLevelRequirementChanged(NewLevel);
 		}
 	);
-	
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(GetBaseAttributeSet()->GetHealthAttribute()).AddLambda(
 		[this] (const FOnAttributeChangeData& Data)
 		{
@@ -128,6 +127,20 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		{
 			OnGrenadeCountChanged.Broadcast(NewCount);
 		});
+	}
+}
+
+void UOverlayWidgetController::OnAlterationEffectClicked(const FGameplayTag& AlterationEffectTag)
+{
+	TArray<FGameplayEffectSpec> OutSpecCopies;
+	AbilitySystemComponent->GetAllActiveGameplayEffectSpecs(OutSpecCopies);
+	for (FGameplayEffectSpec Spec : OutSpecCopies)
+	{
+		if(Spec.Def->GetGrantedTags().HasTagExact(AlterationEffectTag))
+		{
+			AbilitySystemComponent->RemoveActiveEffectsWithGrantedTags(AlterationEffectTag.GetSingleTagContainer());
+			break;
+		}
 	}
 }
 

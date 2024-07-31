@@ -8,7 +8,6 @@
 #include "Data/ToolInfo.h"
 #include "Data/WeapenData.h"
 #include "GameFramework/Actor.h"
-#include "Interaction/CombatInterface.h"
 #include "Interaction/EquipmentInterface.h"
 #include "World/ItemBase.h"
 #include "Tool.generated.h"
@@ -51,6 +50,15 @@ public:
 	bool bUseAimOffsets = false;
 
 	// TODO: Should be DataAsset/Table
+	/*
+	 *
+	 */
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	float PhysicalAttack = 0.f;
+	
+	UPROPERTY(EditAnywhere, Category="Equipment|Properties")
+	float MagicalAttack = 0.f;
+	
 	/*
 	 * Crosshairs
 	 */
@@ -185,6 +193,8 @@ public:
 
 	
 	virtual FVector GetCombatSocket() const;
+	virtual float GetPhysicalAttack() const { return PhysicalAttack; }
+	virtual float GetMagicalAttack() const { return MagicalAttack; }
 
 	/*
 	 * Overriden in RangeWeapon

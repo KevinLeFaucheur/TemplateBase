@@ -58,6 +58,8 @@ public:
 	virtual int32 GetCharacterLevel_Implementation() override;
 	virtual int32 GetThrowableCount_Implementation() override;
 	virtual void SpendAvailableThrowable_Implementation() override;
+	virtual float GetWeaponPhysicalAttack_Implementation() override;
+	virtual float GetWeaponMagicalAttack_Implementation() override;
 	//~ Combat Interface
 
 	void PlayFireMontage(bool bAiming);

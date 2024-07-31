@@ -87,6 +87,7 @@ void AAICharacter::InitAbilityActorInfo()
 	Cast<UBaseAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().StatusEffect_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAICharacter::StunTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().StatusEffect_Poison, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAICharacter::PoisonTagChanged);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FBaseGameplayTags::Get().AlterationEffect_Alteration_Berserk_1, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAICharacter::BerserkTagChanged);
 	
 	if(HasAuthority())
 	{
