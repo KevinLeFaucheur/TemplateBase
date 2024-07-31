@@ -92,9 +92,17 @@ public:
 	/*
 	 * Secondary Attributes
 	*/
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_PhysicalAttack, Category="Secondary Attributes")
+	FGameplayAttributeData PhysicalAttack;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, PhysicalAttack);
+	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Armor, Category="Secondary Attributes")
 	FGameplayAttributeData Armor;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Armor);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusArmor, Category="Secondary Attributes")
+	FGameplayAttributeData BonusArmor;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusArmor);
 	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_ArmorPenetration, Category="Secondary Attributes")
 	FGameplayAttributeData ArmorPenetration;
@@ -127,6 +135,10 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxHealth, Category="Secondary Attributes")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxHealth);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BonusMaxHealth, Category="Secondary Attributes")
+	FGameplayAttributeData BonusMaxHealth;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BonusMaxHealth);
 
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_MaxMana, Category="Secondary Attributes")
 	FGameplayAttributeData MaxMana;
@@ -138,6 +150,18 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_PhysicalResistance, Category="Resistance Attributes")
 	FGameplayAttributeData PhysicalResistance;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, PhysicalResistance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_BluntResistance, Category="Resistance Attributes")
+	FGameplayAttributeData BluntResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, BluntResistance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_CuttingResistance, Category="Resistance Attributes")
+	FGameplayAttributeData CuttingResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, CuttingResistance);
+	
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_PierceResistance, Category="Resistance Attributes")
+	FGameplayAttributeData PierceResistance;
+	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, PierceResistance);
 	
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_FireResistance, Category="Resistance Attributes")
 	FGameplayAttributeData FireResistance;
@@ -218,7 +242,13 @@ public:
 	 * Secondary Attributes Rep Notifies
 	 */
 	UFUNCTION()
+	void OnRep_PhysicalAttack(const FGameplayAttributeData& OldPhysicalAttack) const;
+	
+	UFUNCTION()
 	void OnRep_Armor(const FGameplayAttributeData& OldArmor) const;
+	
+	UFUNCTION()
+	void OnRep_BonusArmor(const FGameplayAttributeData& OldBonusArmor) const;
 	
 	UFUNCTION()
 	void OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const;
@@ -245,6 +275,9 @@ public:
 	void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
 
 	UFUNCTION()
+	void OnRep_BonusMaxHealth(const FGameplayAttributeData& OldBonusMaxHealth) const;
+
+	UFUNCTION()
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
 	
 	/*
@@ -252,6 +285,15 @@ public:
 	 */
 	UFUNCTION()
 	void OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance) const;
+	
+	UFUNCTION()
+	void OnRep_BluntResistance(const FGameplayAttributeData& OldBluntResistance) const;
+	
+	UFUNCTION()
+	void OnRep_CuttingResistance(const FGameplayAttributeData& OldCuttingResistance) const;
+	
+	UFUNCTION()
+	void OnRep_PierceResistance(const FGameplayAttributeData& OldPierceResistance) const;
 	
 	UFUNCTION()
 	void OnRep_FireResistance(const FGameplayAttributeData& OldFireResistance) const;

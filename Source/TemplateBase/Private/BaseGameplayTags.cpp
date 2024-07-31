@@ -25,7 +25,9 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	/*
 	 * Secondary Attributes
 	 */
+	GameplayTags.Attributes_Secondary_PhysicalAttack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.PhysicalAttack"), FString("Reduces damage taken, improves PhysicalAttack"));
 	GameplayTags.Attributes_Secondary_Armor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Armor"), FString("Reduces damage taken, improves Armor"));
+	GameplayTags.Attributes_Secondary_Bonus_Armor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.Armor"), FString("Reduces damage taken, improves Bonus Armor"));
 	GameplayTags.Attributes_Secondary_ArmorPenetration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.ArmorPenetration"), FString("Ignores percentage of enemy's armor, chance for critical hit"));
 	GameplayTags.Attributes_Secondary_BlockChance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.BlockChance"), FString("Chance to reduce receiving damage"));
 	GameplayTags.Attributes_Secondary_CriticalHitChance = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.CriticalHitChance"), FString("Chance for a critical hit"));
@@ -34,12 +36,16 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Secondary_HealthRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.HealthRegeneration"), FString("Amount of health healed every 1 second"));
 	GameplayTags.Attributes_Secondary_ManaRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.ManaRegeneration"), FString("Amount of mana healed every 1 second"));
 	GameplayTags.Attributes_Secondary_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.MaxHealth"), FString("Max amount of health"));
+	GameplayTags.Attributes_Secondary_Bonus_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.Bonus.MaxHealth"), FString("Bonus to Max amount of health"));
 	GameplayTags.Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Secondary.MaxMana"), FString("Max amount of mana"));
 
 	/*
 	 * Resistance Attributes
 	 */
 	GameplayTags.Attributes_Resistance_Physical= UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Physical"), FString("Resistance to Physical Damage"));
+	GameplayTags.Attributes_Resistance_Blunt= UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Blunt"), FString("Resistance to Blunt Damage"));
+	GameplayTags.Attributes_Resistance_Cutting= UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Cutting"), FString("Resistance to Cutting Damage"));
+	GameplayTags.Attributes_Resistance_Pierce= UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Pierce"), FString("Resistance to Pierce Damage"));
 	GameplayTags.Attributes_Resistance_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Fire"), FString("Resistance to Fire Damage"));
 	GameplayTags.Attributes_Resistance_Ice = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Ice"), FString("Resistance to Ice Damage"));
 	GameplayTags.Attributes_Resistance_Wind = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Resistance.Wind"), FString("Resistance to Wind Damage"));
@@ -58,6 +64,9 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	 */
 	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage"), FString("Damage"));
 	GameplayTags.Damage_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Physical"), FString("Physical Damage"));
+	GameplayTags.Damage_Blunt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Blunt"), FString("Blunt Damage"));
+	GameplayTags.Damage_Cutting = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Cutting"), FString("Cutting Damage"));
+	GameplayTags.Damage_Pierce = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Pierce"), FString("Pierce Damage"));
 	GameplayTags.Damage_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Fire"), FString("Fire Damage"));
 	GameplayTags.Damage_Ice = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Ice"), FString("Ice Damage"));
 	GameplayTags.Damage_Wind = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Wind"), FString("Wind Damage"));
@@ -67,6 +76,9 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Damage_Noxious = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage.Noxious"), FString("Noxious Damage"));
 
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Physical, GameplayTags.Attributes_Resistance_Physical);
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Blunt, GameplayTags.Attributes_Resistance_Blunt);
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Cutting, GameplayTags.Attributes_Resistance_Cutting);
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Pierce, GameplayTags.Attributes_Resistance_Pierce);
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Fire, GameplayTags.Attributes_Resistance_Fire);
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Ice, GameplayTags.Attributes_Resistance_Ice);
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Wind, GameplayTags.Attributes_Resistance_Wind);

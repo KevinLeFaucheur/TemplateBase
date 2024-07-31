@@ -31,7 +31,9 @@ FGameplayTag Attributes_Primary_Luck;
  /*
   * Secondary Attributes
   */
+FGameplayTag Attributes_Secondary_PhysicalAttack;
 FGameplayTag Attributes_Secondary_Armor;
+FGameplayTag Attributes_Secondary_Bonus_Armor;
 FGameplayTag Attributes_Secondary_ArmorPenetration;
 FGameplayTag Attributes_Secondary_BlockChance;
 FGameplayTag Attributes_Secondary_CriticalHitChance;
@@ -40,18 +42,22 @@ FGameplayTag Attributes_Secondary_CriticalHitResistance;
 FGameplayTag Attributes_Secondary_HealthRegeneration;
 FGameplayTag Attributes_Secondary_ManaRegeneration;
 FGameplayTag Attributes_Secondary_MaxHealth;
+FGameplayTag Attributes_Secondary_Bonus_MaxHealth;
 FGameplayTag Attributes_Secondary_MaxMana;
  
  /*
  * Resistances Attributes
  */
+FGameplayTag Attributes_Resistance_Physical;
+FGameplayTag Attributes_Resistance_Blunt;
+FGameplayTag Attributes_Resistance_Cutting;
+FGameplayTag Attributes_Resistance_Pierce;
 FGameplayTag Attributes_Resistance_Fire;
 FGameplayTag Attributes_Resistance_Ice;
 FGameplayTag Attributes_Resistance_Wind;
 FGameplayTag Attributes_Resistance_Lightning;
 FGameplayTag Attributes_Resistance_Holy;
 FGameplayTag Attributes_Resistance_Dark;
-FGameplayTag Attributes_Resistance_Physical;
 FGameplayTag Attributes_Resistance_Noxious;
 
  /*
@@ -69,6 +75,9 @@ FGameplayTag Attributes_Meta_IncomingXP;
   */
 FGameplayTag Damage;
 FGameplayTag Damage_Physical;
+FGameplayTag Damage_Blunt;
+FGameplayTag Damage_Cutting;
+FGameplayTag Damage_Pierce;
 FGameplayTag Damage_Fire;
 FGameplayTag Damage_Ice;
 FGameplayTag Damage_Wind;

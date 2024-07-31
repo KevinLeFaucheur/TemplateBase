@@ -11,6 +11,8 @@
 
 struct BaseDamageStatics
 {
+	DECLARE_ATTRIBUTE_CAPTUREDEF(Strength);
+	
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(ArmorPenetration);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(BlockChance);
@@ -19,6 +21,9 @@ struct BaseDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitResistance);
 	
 	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(BluntResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(CuttingResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(PierceResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(IceResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(WindResistance);
@@ -29,6 +34,8 @@ struct BaseDamageStatics
 	
 	BaseDamageStatics()
 	{
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, Strength, Source, false);
+		
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, Armor, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, ArmorPenetration, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, BlockChance, Target, false);
@@ -37,6 +44,9 @@ struct BaseDamageStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, CriticalHitResistance, Target, false);
 		
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, PhysicalResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, BluntResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, CuttingResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, PierceResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, FireResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, IceResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, WindResistance, Target, false);
@@ -55,6 +65,8 @@ static const BaseDamageStatics& DamageStatics()
 
 UExecCalc_Damage::UExecCalc_Damage()
 {
+	RelevantAttributesToCapture.Add(DamageStatics().StrengthDef);
+	
 	RelevantAttributesToCapture.Add(DamageStatics().ArmorDef);
 	RelevantAttributesToCapture.Add(DamageStatics().ArmorPenetrationDef);
 	RelevantAttributesToCapture.Add(DamageStatics().BlockChanceDef);
@@ -63,6 +75,9 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitResistanceDef);
 	
 	RelevantAttributesToCapture.Add(DamageStatics().PhysicalResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().BluntResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().CuttingResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().PierceResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().FireResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().IceResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().WindResistanceDef);
@@ -77,6 +92,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
 
 	const FBaseGameplayTags& GameplayTags = FBaseGameplayTags::Get();
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_Armor, DamageStatics().StrengthDef);
+	
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_Armor, DamageStatics().ArmorDef);
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_ArmorPenetration, DamageStatics().ArmorPenetrationDef);
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_BlockChance, DamageStatics().BlockChanceDef);
@@ -85,6 +102,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitResistance, DamageStatics().CriticalHitResistanceDef);
 		
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Physical, DamageStatics().PhysicalResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Blunt, DamageStatics().BluntResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Cutting, DamageStatics().CuttingResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Pierce, DamageStatics().PierceResistanceDef);
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Fire, DamageStatics().FireResistanceDef);
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Ice, DamageStatics().IceResistanceDef);
 	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Wind, DamageStatics().WindResistanceDef);
@@ -184,6 +204,13 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		
 		Damage += DamageTypeValue;
 	}
+
+	// Calculating Base Damage with Strength
+	float SourceStrength = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().StrengthDef, EvaluationParameters, SourceStrength);
+	SourceStrength = FMath::Max<float>(0.f, SourceStrength);
+
+	Damage *= SourceStrength / 10.f;
 
 	// Capture Block Chance on Target for a successful Block
 	float TargetBlockChance = 0.f;
