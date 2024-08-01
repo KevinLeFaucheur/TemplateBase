@@ -75,6 +75,12 @@ void FBaseGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attributes.Meta.IncomingXP"), FString("Meta Attribute for Incoming XP"));
 	
 	/*
+	 *  Passive Event Tags
+	 */
+	GameplayTags.Event_Update_Equipment_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Event.Update.Equipment.Weapon"), FString("Event Update Equipment Weapon"));
+	GameplayTags.Event_Update_Equipment_Armor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Event.Update.Equipment.Armor"), FString("Event Update Equipment Armor"));
+	
+	/*
 	 * Damage Types
 	 */
 	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Damage"), FString("Damage"));

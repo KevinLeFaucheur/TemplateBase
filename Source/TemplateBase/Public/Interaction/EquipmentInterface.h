@@ -34,4 +34,7 @@ public:
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OnHarvestingNotify();
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	FHarvestingToolInfo GetHarvestingToolInfo();
 };

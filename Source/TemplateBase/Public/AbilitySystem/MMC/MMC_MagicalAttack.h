@@ -22,4 +22,5 @@ public:
 private:
 	FGameplayEffectAttributeCaptureDefinition IntelligenceDef;
 	FGameplayEffectAttributeCaptureDefinition SpiritDef;
+	FGameplayEffectAttributeCaptureDefinition BonusMagicalAttackDef;
 };

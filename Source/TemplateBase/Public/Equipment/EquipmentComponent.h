@@ -24,7 +24,8 @@ public:
 	friend class APlayerCharacter;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
+	void UpdateToolValues();
+
 	void EquipTool(ATool* ToolToEquip);
 	void DropEquippedTool();
 	void SwapTools();

@@ -172,7 +172,7 @@ public:
 	static void GetClosestTargets(int32 MaxTargets, const TArray<AActor*>& Actors, TArray<AActor*>& OutClosestTargets, const FVector& Origin);
 	
 	UFUNCTION(BlueprintPure, Category="BaseAbilitySystemLibrary")
-	static bool IsHostile(AActor* FirstActor, AActor* SecondActor);
+	static bool IsHostile(const AActor* FirstActor, const AActor* SecondActor);
 
 	UFUNCTION(BlueprintCallable, Category="BaseAbilitySystemLibrary")
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);

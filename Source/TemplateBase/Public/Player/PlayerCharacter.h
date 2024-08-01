@@ -94,6 +94,7 @@ public:
 	virtual void AddHarvestedResources_Implementation(FInventoryItemData Resource) override;
 	void PlayMontage_Implementation(UAnimMontage* Montage) override;
 	virtual FTaggedMontage GetTaggedMontage_Implementation() override;
+	virtual ATool* GetEquippedTool_Implementation() override;
 	//~ Player Interface
 
 	UFUNCTION(NetMulticast, Unreliable)
@@ -104,6 +105,9 @@ public:
 
 	UFUNCTION()
 	void OnNotifyBegin(FName NotifyName, const FBranchingPointNotifyPayload& Payload);
+
+	UFUNCTION(BlueprintCallable)
+	void OnHarvestingEvent() const;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<USpringArmComponent> SpringArm;

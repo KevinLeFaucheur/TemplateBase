@@ -1,6 +1,6 @@
 // Retropsis @ 2024
 
-#include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
+#include "AbilitySystem/ExecCalc/ExecCalc_MonkDamage.h"
 #include "AbilitySystemComponent.h"
 #include "BaseGameplayTags.h"
 #include "AbilitySystem/AbilityTypes.h"
@@ -9,7 +9,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Interaction/CombatInterface.h"
 
-struct BaseDamageStatics
+struct BaseMonkDamageStatics
 {
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Strength);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(PhysicalAttack);
@@ -25,15 +25,8 @@ struct BaseDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(BluntResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CuttingResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(PierceResistance);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(IceResistance);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(WindResistance);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(LightningResistance);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(HolyResistance);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(DarkResistance);
-	DECLARE_ATTRIBUTE_CAPTUREDEF(NoxiousResistance);
 	
-	BaseDamageStatics()
+	BaseMonkDamageStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, Strength, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, PhysicalAttack, Source, false);
@@ -49,73 +42,52 @@ struct BaseDamageStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, BluntResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, CuttingResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, PierceResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, FireResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, IceResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, WindResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, LightningResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, HolyResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, DarkResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, NoxiousResistance, Target, false);
 	}
 };
 
-static const BaseDamageStatics& DamageStatics()
+static const BaseMonkDamageStatics& MonkDamageStatics()
 {
-	static  BaseDamageStatics DStatics;
-	return DStatics;
+	static  BaseMonkDamageStatics MDStatics;
+	return MDStatics;
 }
 
-UExecCalc_Damage::UExecCalc_Damage()
+UExecCalc_MonkDamage::UExecCalc_MonkDamage()
 {
-	RelevantAttributesToCapture.Add(DamageStatics().StrengthDef);
-	RelevantAttributesToCapture.Add(DamageStatics().PhysicalAttackDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().StrengthDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().PhysicalAttackDef);
 	
-	RelevantAttributesToCapture.Add(DamageStatics().ArmorDef);
-	RelevantAttributesToCapture.Add(DamageStatics().ArmorPenetrationDef);
-	RelevantAttributesToCapture.Add(DamageStatics().BlockChanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitChanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitDamageDef);
-	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitResistanceDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().ArmorDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().ArmorPenetrationDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().BlockChanceDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().CriticalHitChanceDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().CriticalHitDamageDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().CriticalHitResistanceDef);
 	
-	RelevantAttributesToCapture.Add(DamageStatics().PhysicalResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().BluntResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().CuttingResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().PierceResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().FireResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().IceResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().WindResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().LightningResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().HolyResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().DarkResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().NoxiousResistanceDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().PhysicalResistanceDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().BluntResistanceDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().CuttingResistanceDef);
+	RelevantAttributesToCapture.Add(MonkDamageStatics().PierceResistanceDef);
 }
 
-void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
+void UExecCalc_MonkDamage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
 	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
 
 	const FBaseGameplayTags& GameplayTags = FBaseGameplayTags::Get();
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Primary_Strength, DamageStatics().StrengthDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_PhysicalAttack, DamageStatics().PhysicalAttackDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Primary_Strength, MonkDamageStatics().StrengthDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_PhysicalAttack, MonkDamageStatics().PhysicalAttackDef);
 	
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_Armor, DamageStatics().ArmorDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_ArmorPenetration, DamageStatics().ArmorPenetrationDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_BlockChance, DamageStatics().BlockChanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitChance, DamageStatics().CriticalHitChanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitDamage, DamageStatics().CriticalHitDamageDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitResistance, DamageStatics().CriticalHitResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_Armor, MonkDamageStatics().ArmorDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_ArmorPenetration, MonkDamageStatics().ArmorPenetrationDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_BlockChance, MonkDamageStatics().BlockChanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitChance, MonkDamageStatics().CriticalHitChanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitDamage, MonkDamageStatics().CriticalHitDamageDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Secondary_CriticalHitResistance, MonkDamageStatics().CriticalHitResistanceDef);
 		
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Physical, DamageStatics().PhysicalResistanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Blunt, DamageStatics().BluntResistanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Cutting, DamageStatics().CuttingResistanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Pierce, DamageStatics().PierceResistanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Fire, DamageStatics().FireResistanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Ice, DamageStatics().IceResistanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Wind, DamageStatics().WindResistanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Lightning, DamageStatics().LightningResistanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Holy, DamageStatics().HolyResistanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Dark, DamageStatics().DarkResistanceDef);
-	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Noxious, DamageStatics().NoxiousResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Physical, MonkDamageStatics().PhysicalResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Blunt, MonkDamageStatics().BluntResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Cutting, MonkDamageStatics().CuttingResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attributes_Resistance_Pierce, MonkDamageStatics().PierceResistanceDef);
 	
 	const UAbilitySystemComponent* SourceASC =  ExecutionParams.GetSourceAbilitySystemComponent();
 	const UAbilitySystemComponent* TargetASC =  ExecutionParams.GetTargetAbilitySystemComponent();
@@ -210,21 +182,19 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	}
 
 	// Calculating Base Damage with Strength
-	// float SourceStrength = 0.f;
-	// ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().StrengthDef, EvaluationParameters, SourceStrength);
-	// SourceStrength = FMath::Max<float>(0.f, SourceStrength);
-	//
-	// Damage *= SourceStrength / 10.f;
+	float SourceStrength = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(MonkDamageStatics().StrengthDef, EvaluationParameters, SourceStrength);
+	SourceStrength = FMath::Max<float>(0.f, SourceStrength);
 	
 	float SourcePhysicalAttack = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().PhysicalAttackDef, EvaluationParameters, SourcePhysicalAttack);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(MonkDamageStatics().PhysicalAttackDef, EvaluationParameters, SourcePhysicalAttack);
 	SourcePhysicalAttack = FMath::Max<float>(0.f, SourcePhysicalAttack);
 
 	Damage += SourcePhysicalAttack + ((SourcePhysicalAttack + SourceCharacterLevel) / 32.f) * ((SourcePhysicalAttack + SourceCharacterLevel) / 32.f);
 
 	// Capture Block Chance on Target for a successful Block
 	float TargetBlockChance = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, EvaluationParameters, TargetBlockChance);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(MonkDamageStatics().BlockChanceDef, EvaluationParameters, TargetBlockChance);
 	TargetBlockChance = FMath::Max<float>(0.f, TargetBlockChance);
 
 	//  Half damage if blocked
@@ -236,11 +206,11 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// 
 	float TargetArmor = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef, EvaluationParameters, TargetArmor);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(MonkDamageStatics().ArmorDef, EvaluationParameters, TargetArmor);
 	TargetArmor = FMath::Max<float>(0.f, TargetArmor);
 	
 	float SourceArmorPenetration = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationDef, EvaluationParameters, SourceArmorPenetration);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(MonkDamageStatics().ArmorPenetrationDef, EvaluationParameters, SourceArmorPenetration);
 	SourceArmorPenetration = FMath::Max<float>(0.f, SourceArmorPenetration);
 
 	// Armor Penetration
@@ -256,15 +226,15 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// Critical Hit Chance
 	float SourceCriticalHitChance = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().CriticalHitChanceDef, EvaluationParameters, SourceCriticalHitChance);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(MonkDamageStatics().CriticalHitChanceDef, EvaluationParameters, SourceCriticalHitChance);
 	SourceCriticalHitChance = FMath::Max<float>(0.f, SourceCriticalHitChance);
 	
 	float TargetCriticalHitResistance = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationDef, EvaluationParameters, TargetCriticalHitResistance);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(MonkDamageStatics().ArmorPenetrationDef, EvaluationParameters, TargetCriticalHitResistance);
 	TargetCriticalHitResistance = FMath::Max<float>(0.f, TargetCriticalHitResistance);
 	
 	float SourceCriticalHitDamage = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationDef, EvaluationParameters, SourceCriticalHitDamage);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(MonkDamageStatics().ArmorPenetrationDef, EvaluationParameters, SourceCriticalHitDamage);
 	SourceCriticalHitDamage = FMath::Max<float>(0.f, SourceCriticalHitDamage);
 
 	const FRealCurve* CriticalHitResistanceCurve = CharacterClassInfo->DamageCalculationCoefficients->FindCurve(FName("CriticalHitResistance"), FString());
@@ -283,7 +253,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
 }
 
-void UExecCalc_Damage::DetermineStatusEffect(const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FGameplayEffectSpec& Spec, FAggregatorEvaluateParameters EvaluationParameters,
+void UExecCalc_MonkDamage::DetermineStatusEffect(const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FGameplayEffectSpec& Spec, FAggregatorEvaluateParameters EvaluationParameters,
 		const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& TagsToDefs) const
 {
 	const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();

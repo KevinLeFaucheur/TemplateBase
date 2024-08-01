@@ -76,6 +76,11 @@ void AHarvestingTool::OnHarvestingNotify_Implementation()
 	ClientGetViewRotation();
 }
 
+FHarvestingToolInfo AHarvestingTool::GetHarvestingToolInfo_Implementation()
+{
+	return FHarvestingToolInfo{ HarvestingToolType, HarvestingToolTier, HarvestingDamage };
+}
+
 void AHarvestingTool::ClientGetViewRotation_Implementation()
 {
 	ServerOnOverlap(IPlayerInterface::Execute_GetCameraRotation(GetOwner()));

@@ -22,4 +22,5 @@ public:
 private:
 	FGameplayEffectAttributeCaptureDefinition StrengthDef;
 	FGameplayEffectAttributeCaptureDefinition DexterityDef;
+	FGameplayEffectAttributeCaptureDefinition BonusPhysicalAttackDef;
 };

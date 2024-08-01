@@ -90,10 +90,7 @@ void UEquipmentComponent::EquipTool(ATool* ToolToEquip)
 		EquipPrimaryTool(ToolToEquip);		
 	}
 	HandleUseAimOffsets();
-	FGameplayEventData Payload;
-	Payload.EventTag = FBaseGameplayTags::Get().Attributes_Secondary_PhysicalAttack;
-	Payload.EventMagnitude = 0.f;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(PlayerCharacter, FBaseGameplayTags::Get().Attributes_Secondary_PhysicalAttack, Payload);
+	UpdateToolValues();
 }
 
 void UEquipmentComponent::EquipPrimaryTool(ATool* ToolToEquip)
@@ -150,6 +147,18 @@ void UEquipmentComponent::OnRep_SecondaryTool()
 	}
 }
 
+void UEquipmentComponent::UpdateToolValues()
+{
+	const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+	FGameplayEventData Payload;
+	Payload.EventTag = GameplayTags.Event_Update_Equipment_Weapon;
+	Payload.EventMagnitude = 0.f;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(PlayerCharacter, GameplayTags.Attributes_Secondary_PhysicalAttack, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(PlayerCharacter, GameplayTags.Attributes_Secondary_MagicalAttack, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(PlayerCharacter, GameplayTags.Attributes_Secondary_Bonus_PhysicalAttack, Payload);
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(PlayerCharacter, GameplayTags.Attributes_Secondary_Bonus_MagicalAttack, Payload);
+}
+
 /*
  * Swapping
  */
@@ -187,6 +196,7 @@ void UEquipmentComponent::SwappingTools()
 	AttachToolToSocket(SecondaryTool, SecondaryTool->GetBackSocket());
 	
 	HandleUseAimOffsets();
+	UpdateToolValues();
 }
 
 bool UEquipmentComponent::ShouldSwapTools()

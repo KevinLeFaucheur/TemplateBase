@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Harvesting/HarvestableData.h"
 #include "EquipmentData.generated.h"
 
 UENUM(BlueprintType)
@@ -31,6 +32,21 @@ struct FEquipmentInfo
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EAnimationState AnimationState = EAnimationState::Default;
 	
+};
+
+USTRUCT(BlueprintType)
+struct FHarvestingToolInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	EHarvestingToolType HarvestingToolType = EHarvestingToolType::Hatchet;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	EHarvestingToolTier HarvestingToolTier = EHarvestingToolTier::Stone;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float HarvestingDamage = 0.f;
 };
 
 UENUM(BlueprintType)

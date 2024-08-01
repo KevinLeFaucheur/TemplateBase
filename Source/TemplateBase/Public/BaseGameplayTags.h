@@ -80,7 +80,13 @@ FGameplayTag Attributes_Harvesting_Logging;
  /*
   * Meta Attributes
   */
-FGameplayTag Attributes_Meta_IncomingXP;
+ FGameplayTag Attributes_Meta_IncomingXP;
+ 
+ /*
+  *  Passive Event Tags
+  */
+ FGameplayTag Event_Update_Equipment_Weapon;
+ FGameplayTag Event_Update_Equipment_Armor;
   	
  /*
   * Damage Types

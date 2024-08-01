@@ -13,15 +13,17 @@ struct BaseHealingStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(MaxHealth);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Intelligence);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Spirit);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(MagicalAttack);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Vitality);
 	
 	BaseHealingStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, Health, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, MaxHealth, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, Vitality, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, Intelligence, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, Spirit, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, MagicalAttack, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UBaseAttributeSet, Vitality, Target, false);
 	}
 };
 
@@ -35,9 +37,10 @@ UExecCalc_Healing::UExecCalc_Healing()
 {
 	RelevantAttributesToCapture.Add(HealingStatics().HealthDef);
 	RelevantAttributesToCapture.Add(HealingStatics().MaxHealthDef);
-	RelevantAttributesToCapture.Add(HealingStatics().VitalityDef);
 	RelevantAttributesToCapture.Add(HealingStatics().IntelligenceDef);
 	RelevantAttributesToCapture.Add(HealingStatics().SpiritDef);
+	RelevantAttributesToCapture.Add(HealingStatics().MagicalAttackDef);
+	RelevantAttributesToCapture.Add(HealingStatics().VitalityDef);
 }
 
 void UExecCalc_Healing::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -113,12 +116,17 @@ void UExecCalc_Healing::Execute_Implementation(const FGameplayEffectCustomExecut
 	float SourceSpirit = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(HealingStatics().SpiritDef, EvaluationParameters, SourceSpirit);
 	SourceSpirit = FMath::Max<float>(0.f, SourceSpirit);
+	
+	// Capture Spirit on Source for healing power
+	float SourceMagicalAttack = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(HealingStatics().MagicalAttackDef, EvaluationParameters, SourceMagicalAttack);
+	SourceMagicalAttack = FMath::Max<float>(0.f, SourceMagicalAttack);
 
-	Healing = HealingTypeValue/* * 22.0*/ + ((SourceCharacterLevel + SourceIntelligence * 0.5f + SourceSpirit) * 6.0);
+	Healing = HealingTypeValue/* * 22.0*/ + ((SourceCharacterLevel + SourceMagicalAttack * 0.25f /* + SourceSpirit*/) * 6.0);
 	
 	// Capture Vitality on Target for healing power
 	float TargetVitality = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(HealingStatics().IntelligenceDef, EvaluationParameters, TargetVitality);
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(HealingStatics().VitalityDef, EvaluationParameters, TargetVitality);
 	TargetVitality = FMath::Max<float>(0.f, TargetVitality);
 	
 	// Capture Health on Target for healing power

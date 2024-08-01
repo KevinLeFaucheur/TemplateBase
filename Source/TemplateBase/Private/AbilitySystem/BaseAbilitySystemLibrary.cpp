@@ -167,7 +167,8 @@ void UBaseAbilitySystemLibrary::RemoveToolAbilities(const UObject* WorldContextO
 				ASC->ClearAbility(AbilitySpec->Handle);
 				ASC->MarkAbilitySpecDirty(*AbilitySpec);
 				
-				BaseASC->ClientEquipToolAbility(FBaseGameplayTags::Get().Abilities_None, FBaseGameplayTags::Get().Abilities_Status_Unlocked, Ability.Value, FGameplayTag());
+				const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+				BaseASC->ClientEquipToolAbility(GameplayTags.Abilities_None, GameplayTags.Abilities_Status_Unlocked, Ability.Value, FGameplayTag());
 			}
 		}
 	}
@@ -177,13 +178,14 @@ void UBaseAbilitySystemLibrary::GiveMonkAbilities(const UObject* WorldContextObj
 {
 	if(UBaseAbilitySystemComponent* BaseASC = Cast<UBaseAbilitySystemComponent>(ASC))
 	{
-		if(FGameplayAbilitySpec* AbilitySpec = BaseASC->GetSpecFromAbilityTag(FBaseGameplayTags::Get().Abilities_Monk_Basic))
+		const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+		if(FGameplayAbilitySpec* AbilitySpec = BaseASC->GetSpecFromAbilityTag(GameplayTags.Abilities_Monk_Basic))
 		{
-			AbilitySpec->DynamicAbilityTags.AddTag(FBaseGameplayTags::Get().InputTag_LMB);
+			AbilitySpec->DynamicAbilityTags.AddTag(GameplayTags.InputTag_LMB);
 			ASC->GiveAbility(*AbilitySpec);
 			ASC->MarkAbilitySpecDirty(*AbilitySpec);
 					
-			BaseASC->ClientEquipToolAbility(FBaseGameplayTags::Get().Abilities_Monk_Basic, FBaseGameplayTags::Get().Abilities_Status_Equipped, FBaseGameplayTags::Get().InputTag_LMB, FGameplayTag());
+			BaseASC->ClientEquipToolAbility(GameplayTags.Abilities_Monk_Basic, GameplayTags.Abilities_Status_Equipped, GameplayTags.InputTag_LMB, FGameplayTag());
 		}
 	}
 }
@@ -192,13 +194,14 @@ void UBaseAbilitySystemLibrary::RemoveMonkAbilities(const UObject* WorldContextO
 {
 	if(UBaseAbilitySystemComponent* BaseASC = Cast<UBaseAbilitySystemComponent>(ASC))
 	{
-		if(FGameplayAbilitySpec* AbilitySpec = BaseASC->GetSpecFromAbilityTag(FBaseGameplayTags::Get().Abilities_Monk_Basic))
+		const FBaseGameplayTags GameplayTags = FBaseGameplayTags::Get();
+		if(FGameplayAbilitySpec* AbilitySpec = BaseASC->GetSpecFromAbilityTag(GameplayTags.Abilities_Monk_Basic))
 		{
-			AbilitySpec->DynamicAbilityTags.RemoveTag(FBaseGameplayTags::Get().InputTag_LMB);
+			AbilitySpec->DynamicAbilityTags.RemoveTag(GameplayTags.InputTag_LMB);
 			ASC->ClearAbility(AbilitySpec->Handle);
 			ASC->MarkAbilitySpecDirty(*AbilitySpec);
 					
-			BaseASC->ClientEquipToolAbility(FBaseGameplayTags::Get().Abilities_None, FBaseGameplayTags::Get().Abilities_Status_Unlocked, FBaseGameplayTags::Get().InputTag_LMB, FGameplayTag());
+			BaseASC->ClientEquipToolAbility(GameplayTags.Abilities_None, GameplayTags.Abilities_Status_Unlocked, GameplayTags.InputTag_LMB, FGameplayTag());
 		}
 	}
 }
@@ -224,8 +227,7 @@ UAbilityInfo* UBaseAbilitySystemLibrary::GetToolAbilityInfo(const UObject* World
 	return  OverworldGameMode->ToolAbilityInfo;
 }
 
-int32 UBaseAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* WorldContextObject,
-                                                             ECharacterClass CharacterClass, int32 CharacterLevel)
+int32 UBaseAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 	if(CharacterClassInfo == nullptr) return 0;
@@ -550,7 +552,7 @@ void UBaseAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray
 	}
 }
 
-bool UBaseAbilitySystemLibrary::IsHostile(AActor* FirstActor, AActor* SecondActor)
+bool UBaseAbilitySystemLibrary::IsHostile(const AActor* FirstActor, const AActor* SecondActor)
 {
 	return ! (FirstActor->ActorHasTag(FName("Player")) && SecondActor->ActorHasTag(FName("Player"))
 		|| FirstActor->ActorHasTag(FName("Enemy")) && SecondActor->ActorHasTag(FName("Enemy")));

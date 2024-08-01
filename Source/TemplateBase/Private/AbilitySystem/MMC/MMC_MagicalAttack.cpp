@@ -17,6 +17,12 @@ UMMC_MagicalAttack::UMMC_MagicalAttack()
 	SpiritDef.bSnapshot = false;
 
 	RelevantAttributesToCapture.Add(SpiritDef);
+	
+	BonusMagicalAttackDef.AttributeToCapture = UBaseAttributeSet::GetBonusMagicalAttackAttribute();
+	BonusMagicalAttackDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
+	BonusMagicalAttackDef.bSnapshot = false;
+
+	RelevantAttributesToCapture.Add(BonusMagicalAttackDef);
 }
 
 float UMMC_MagicalAttack::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
@@ -36,6 +42,10 @@ float UMMC_MagicalAttack::CalculateBaseMagnitude_Implementation(const FGameplayE
 	float Spirit = 0.f;
 	GetCapturedAttributeMagnitude(SpiritDef, Spec, EvaluationParameters, Spirit);
 	Spirit = FMath::Max<float>(Spirit, 0.f);
+	
+	float BonusMagicalAttack = 0.f;
+	GetCapturedAttributeMagnitude(BonusMagicalAttackDef, Spec, EvaluationParameters, BonusMagicalAttack);
+	BonusMagicalAttack = FMath::Max<float>(BonusMagicalAttack, 0.f);
 
 	float MagicalAttack = 0.f;
 	if (Spec.GetContext().GetSourceObject()->Implements<UCombatInterface>())
@@ -43,5 +53,5 @@ float UMMC_MagicalAttack::CalculateBaseMagnitude_Implementation(const FGameplayE
 		MagicalAttack = ICombatInterface::Execute_GetWeaponMagicalAttack(Spec.GetContext().GetSourceObject());
 	}
 	
-	return Intelligence + Spirit + MagicalAttack;
+	return Intelligence + Spirit + MagicalAttack + BonusMagicalAttack;
 }

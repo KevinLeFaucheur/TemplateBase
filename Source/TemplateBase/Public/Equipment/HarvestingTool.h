@@ -25,6 +25,7 @@ public:
 	//~ Equipment Interface
 	// virtual void UseItem_Implementation(AActor* PlayerCharacter) override;
 	virtual void OnHarvestingNotify_Implementation() override;
+	virtual FHarvestingToolInfo GetHarvestingToolInfo_Implementation() override;
 	//~ Equipment Interface
 
 	UFUNCTION(Client, Reliable)

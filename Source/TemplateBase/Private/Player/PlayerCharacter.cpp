@@ -649,6 +649,11 @@ void APlayerCharacter::OnNotifyBegin(FName NotifyName, const FBranchingPointNoti
 	IEquipmentInterface::Execute_OnHarvestingNotify(EquipmentComponent->EquippedTool);
 }
 
+void APlayerCharacter::OnHarvestingEvent() const
+{
+	IEquipmentInterface::Execute_OnHarvestingNotify(EquipmentComponent->EquippedTool);
+}
+
 /*
  * Status Effects
  */
@@ -882,6 +887,11 @@ FTaggedMontage APlayerCharacter::GetTaggedMontage_Implementation()
 		return AnimationStateMontages[EAnimationState::Unequipped];
 	}
 	return FTaggedMontage();
+}
+
+ATool* APlayerCharacter::GetEquippedTool_Implementation()
+{
+	return EquipmentComponent->EquippedTool;
 }
 
 FVector APlayerCharacter::GetHitTarget() const

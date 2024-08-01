@@ -84,4 +84,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void PlayMontage(UAnimMontage* Montage);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	ATool* GetEquippedTool();
 };

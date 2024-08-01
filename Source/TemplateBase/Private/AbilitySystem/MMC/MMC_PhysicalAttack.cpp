@@ -19,6 +19,12 @@ UMMC_PhysicalAttack::UMMC_PhysicalAttack()
 	DexterityDef.bSnapshot = false;
 
 	RelevantAttributesToCapture.Add(DexterityDef);
+	
+	BonusPhysicalAttackDef.AttributeToCapture = UBaseAttributeSet::GetBonusPhysicalAttackAttribute();
+	BonusPhysicalAttackDef.AttributeSource = EGameplayEffectAttributeCaptureSource::Target;
+	BonusPhysicalAttackDef.bSnapshot = false;
+
+	RelevantAttributesToCapture.Add(BonusPhysicalAttackDef);
 }
 
 float UMMC_PhysicalAttack::CalculateBaseMagnitude_Implementation(const FGameplayEffectSpec& Spec) const
@@ -38,6 +44,10 @@ float UMMC_PhysicalAttack::CalculateBaseMagnitude_Implementation(const FGameplay
 	float Dexterity = 0.f;
 	GetCapturedAttributeMagnitude(DexterityDef, Spec, EvaluationParameters, Dexterity);
 	Dexterity = FMath::Max<float>(Dexterity, 0.f);
+	
+	float BonusPhysicalAttack = 0.f;
+	GetCapturedAttributeMagnitude(BonusPhysicalAttackDef, Spec, EvaluationParameters, BonusPhysicalAttack);
+	BonusPhysicalAttack = FMath::Max<float>(BonusPhysicalAttack, 0.f);
 
 	float PhysicalAttack = 0.f;
 	if (Spec.GetContext().GetSourceObject()->Implements<UCombatInterface>())
@@ -45,5 +55,5 @@ float UMMC_PhysicalAttack::CalculateBaseMagnitude_Implementation(const FGameplay
 		PhysicalAttack = ICombatInterface::Execute_GetWeaponPhysicalAttack(Spec.GetContext().GetSourceObject());
 	}
 	
-	return Strength + Dexterity + PhysicalAttack;
+	return Strength + Dexterity + PhysicalAttack + BonusPhysicalAttack;
 }
