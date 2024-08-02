@@ -6,6 +6,7 @@
 #include "Components/PostProcessComponent.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/SkyLightComponent.h"
+#include "Components/VolumetricCloudComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 ADynamicSky::ADynamicSky()
@@ -43,6 +44,9 @@ ADynamicSky::ADynamicSky()
 	SkySphere = CreateDefaultSubobject<UStaticMeshComponent>("SkySphere");
 	SkySphere->SetupAttachment(GetRootComponent());
 	SkySphere->SetWorldScale3D(FVector(100000.f));
+
+	VolumetricCloudComponent = CreateDefaultSubobject<UVolumetricCloudComponent>("VolumetricClouds");
+	VolumetricCloudComponent->SetupAttachment(GetRootComponent());
 }
 
 void ADynamicSky::OnConstruction(const FTransform& Transform)
@@ -53,6 +57,7 @@ void ADynamicSky::OnConstruction(const FTransform& Transform)
 		HandleSunMoonRotation();
 		HandleSunMoonVisibility();
 		HandleNightSettings();
+		HandleCloudsSettings();
 	}
 }
 
@@ -82,6 +87,7 @@ void ADynamicSky::HandleDynamics()
 	HandleSunMoonRotation();
 	HandleSunMoonVisibility();
 	HandleNightSettings();
+	HandleCloudsSettings();
 }
 
 void ADynamicSky::HandleSunMoonRotation()
@@ -138,13 +144,36 @@ bool ADynamicSky::InitializeSkySphereMaterial()
 	return IsValid(DynamicSkySphereMaterial);
 }
 
-bool ADynamicSky::IsDayTime()
+bool ADynamicSky::IsDayTime() const
 {
 	return TimeOfDay > DawnTime && TimeOfDay < DuskTime;
 }
 
-bool ADynamicSky::IsNightTime()
+bool ADynamicSky::IsNightTime() const
 {
 	return !IsDayTime();
+}
+
+/*
+ * Clouds
+ */
+void ADynamicSky::HandleCloudsSettings() const
+{
+	switch (CurrentCloudMode) {
+	case ECloudMode::None:
+	case ECloudMode::VolumetricClouds:
+		DynamicSkySphereMaterial->SetScalarParameterValue(FName("AreCloudsVisible"), 0.f);
+		break;
+	case ECloudMode::Clouds2D:
+		DynamicSkySphereMaterial->SetScalarParameterValue(FName("AreCloudsVisible"), 1.f);
+		SetCloudsSettings();
+		break;
+	}
+}
+
+void ADynamicSky::SetCloudsSettings() const
+{
+	const FVector4d CloudsSettings{ 1.f, Clouds2D_PanningSpeed, Clouds2D_Brightness, IsDayTime() ? Clouds2D_DayTimeCloudsTintStrength : Clouds2D_NightTimeCloudsTintStrength };
+	DynamicSkySphereMaterial->SetVectorParameterValue(FName("CloudsSettings"), CloudsSettings);
 }
 

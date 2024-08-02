@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WeatherData.h"
 #include "GameFramework/Actor.h"
 #include "DynamicSky.generated.h"
 
+class UVolumetricCloudComponent;
+enum class ECloudMode : uint8;
 class UPostProcessComponent;
 
 UCLASS()
@@ -32,12 +35,18 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void HandleNightSettings();
+	
+	UFUNCTION(BlueprintCallable)
+	void HandleCloudsSettings() const;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetCloudsSettings() const;
 
 	UFUNCTION(BlueprintCallable)
-	bool IsDayTime();
+	bool IsDayTime() const;
 
 	UFUNCTION(BlueprintCallable)
-	bool IsNightTime();
+	bool IsNightTime() const;
 
 	UFUNCTION(BlueprintCallable)
 	bool InitializeSkySphereMaterial();
@@ -127,6 +136,27 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category="02-Night Settings")
 	float NightTimeMultiScatteringFactor = 0.5f;
+
+	/*
+	 * Clouds
+	 */
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UVolumetricCloudComponent> VolumetricCloudComponent;
+	
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings")
+	ECloudMode CurrentCloudMode = ECloudMode::Clouds2D;
+	
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings")
+	float Clouds2D_PanningSpeed = 1.f;
+	
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings")
+	float Clouds2D_Brightness = 1.f;
+	
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings", meta=(ClampMin="0.0", ClampMax="1.0", UIMin ="0.0", UIMax="1.0"))
+	float Clouds2D_DayTimeCloudsTintStrength = 0.1f;
+	
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings", meta=(ClampMin="0.0", ClampMax="1.0", UIMin ="0.0", UIMax="1.0"))
+	float Clouds2D_NightTimeCloudsTintStrength = 0.95f;
 public:	
 
 };
