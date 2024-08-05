@@ -11,6 +11,8 @@
  * 
 */
 
+class ATransientHarvestable;
+
 USTRUCT(BlueprintType)
 struct FResource
 {
@@ -36,5 +38,6 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FResource> GivenResources;
 
-	
+	UPROPERTY(EditDefaultsOnly)
+	TSoftClassPtr<ATransientHarvestable> TransientHarvestableClass;
 };

@@ -3,6 +3,7 @@
 #include "AbilitySystem/Ability/HarvestingAbility.h"
 
 #include "Equipment/Tool.h"
+#include "Harvesting/TransientHarvestable.h"
 #include "Interaction/EquipmentInterface.h"
 #include "Interaction/HarvestableInterface.h"
 #include "Interaction/PlayerInterface.h"
@@ -50,7 +51,17 @@ void UHarvestingAbility::Harvest(float Damage, AActor* HitActor)
 	CalculateResources(Resources->GivenResources, Damage);
 	if(NewHealth <= 0.f)
 	{
-		// Destroy it
+		ATransientHarvestable* TransientHarvestable = GetWorld()->SpawnActorDeferred<ATransientHarvestable>(
+		Resources->TransientHarvestableClass.LoadSynchronous(),
+		HitActor->GetTransform(), 
+		GetOwningActorFromActorInfo(),
+		Cast<APawn>(GetAvatarActorFromActorInfo()),
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		TransientHarvestable->Direction = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+
+		TransientHarvestable->FinishSpawning(HitActor->GetTransform());
+		
+		HitActor->Destroy();
 	}
 }
 
