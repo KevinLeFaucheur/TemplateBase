@@ -24,13 +24,13 @@ void UHarvestingAbility::ServerOnOverlap_Implementation(const FRotator Rotation)
 			HarvestingToolInfo = IEquipmentInterface::Execute_GetHarvestingToolInfo(EquippedTool);
 		}
 		
+		FHitResult HitResult;
 		FVector Start = IPlayerInterface::Execute_GetCameraLocation(GetAvatarActorFromActorInfo());
 		const float DistanceToCharacter = (GetAvatarActorFromActorInfo()->GetActorLocation() - Start).Size();
 		Start += UKismetMathLibrary::GetForwardVector(Rotation) * (DistanceToCharacter + 85.f);
 		FVector End = Start + UKismetMathLibrary::GetForwardVector(Rotation) * HarvestingDistance;
 		TArray<AActor*> ActorsToIgnore;
 		ActorsToIgnore.Add(GetAvatarActorFromActorInfo());
-		FHitResult HitResult;
 		UKismetSystemLibrary::SphereTraceSingle(this, Start, End, HarvestingRadius, TraceTypeQuery1, true, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
 
 		if(HitResult.bBlockingHit)

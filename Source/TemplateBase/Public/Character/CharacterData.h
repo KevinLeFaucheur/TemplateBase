@@ -20,6 +20,7 @@ enum class ECombatState : uint8
 	ECS_Reloading UMETA(DisplayName="Reloading"),
 	ECS_Throwing UMETA(DisplayName="Throwing"),
 	ECS_Swapping UMETA(DisplayName="Swapping"),
+	ECS_Harvesting UMETA(DisplayName="Harvesting"),
 	
 	ECS_MAX UMETA(DisplayName="DefaultMAX")
 };

@@ -7,6 +7,7 @@
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/SkyLightComponent.h"
 #include "Components/VolumetricCloudComponent.h"
+#include "Kismet/KismetMaterialLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
 ADynamicSky::ADynamicSky()
@@ -157,16 +158,22 @@ bool ADynamicSky::IsNightTime() const
 /*
  * Clouds
  */
-void ADynamicSky::HandleCloudsSettings() const
+void ADynamicSky::HandleCloudsSettings()
 {
 	switch (CurrentCloudMode) {
 	case ECloudMode::None:
+		DynamicSkySphereMaterial->SetScalarParameterValue(FName("AreCloudsVisible"), 0.f);
+		VolumetricCloudComponent->SetVisibility(false);
+		break;
 	case ECloudMode::VolumetricClouds:
 		DynamicSkySphereMaterial->SetScalarParameterValue(FName("AreCloudsVisible"), 0.f);
+		VolumetricCloudComponent->SetVisibility(true);
+		SetVolumetricCloudsSettings();
 		break;
 	case ECloudMode::Clouds2D:
 		DynamicSkySphereMaterial->SetScalarParameterValue(FName("AreCloudsVisible"), 1.f);
 		SetCloudsSettings();
+		VolumetricCloudComponent->SetVisibility(false);
 		break;
 	}
 }
@@ -175,5 +182,21 @@ void ADynamicSky::SetCloudsSettings() const
 {
 	const FVector4d CloudsSettings{ 1.f, Clouds2D_PanningSpeed, Clouds2D_Brightness, IsDayTime() ? Clouds2D_DayTimeCloudsTintStrength : Clouds2D_NightTimeCloudsTintStrength };
 	DynamicSkySphereMaterial->SetVectorParameterValue(FName("CloudsSettings"), CloudsSettings);
+}
+
+void ADynamicSky::SetVolumetricCloudsSettings()
+{
+	if(bPreviewDynamicChanges)
+	{
+		VolumetricCloudComponent->SetMaterial(VolumetricCloudsMaterial);
+	}
+	else
+	{
+		VolumetricCloudsMID =UKismetMaterialLibrary::CreateDynamicMaterialInstance(this, VolumetricCloudsMaterial);
+        VolumetricCloudComponent->SetMaterial(VolumetricCloudsMID);
+        VolumetricCloudComponent->SetLayerBottomAltitude(VolumetricClouds_LayerBottomAltitude);
+        VolumetricCloudComponent->SetLayerHeight(VolumetricClouds_LayerHeight);
+        VolumetricCloudsMID->SetScalarParameterValue(FName("PanningSpeed"), VolumetricClouds_PanningSpeed);
+	}
 }
 

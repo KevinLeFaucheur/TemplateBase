@@ -8,6 +8,7 @@
 #include "Equipment/Tool.h"
 #include "PlayerCharacter.generated.h"
 
+struct FResource;
 class UHotbarComponent;
 class UPlayerInventoryComponent;
 class UNiagaraComponent;
@@ -47,6 +48,9 @@ public:
 	void ReloadButtonPressed();
 	void ThrowButtonPressed();
 
+	UFUNCTION(Server, Reliable)
+	void ServerInteractButtonPressed(FRotator CameraRotation);
+	
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
 	
@@ -217,8 +221,19 @@ private:
 	/* Camera */
 	void HideCharacterIfCameraClose();
 
-	UPROPERTY(EditAnywhere, Category="PlayerCharacter|Camera")
+	UPROPERTY(EditDefaultsOnly, Category="PlayerCharacter|Camera")
 	float CameraThreshold = 200.f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="PlayerCharacter|Interaction")
+	float InteractionDistance = 280.f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="PlayerCharacter|Interaction")
+	float InteractionRadius = 20.f;
+	
+	UPROPERTY(EditDefaultsOnly, Category="PlayerCharacter|Interaction")
+	TObjectPtr<UAnimMontage> HarvestingMontage;
+	
+	virtual void CalculateResources(const TArray<FResource>& Resources);
 
 public:
 	ATool* GetEquippedTool();

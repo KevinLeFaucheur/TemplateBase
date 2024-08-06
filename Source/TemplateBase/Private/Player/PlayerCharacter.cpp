@@ -18,9 +18,14 @@
 #include "Player/PlayerCharacterState.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/StatusEffect/StatusEffectNiagaraComponent.h"
+#include "Data/HarvestableInfo.h"
 #include "Data/ToolInfo.h"
+#include "Harvesting/TransientHarvestable.h"
+#include "Interaction/GroundHarvestableInterface.h"
+#include "Interaction/InteractionInterface.h"
 #include "Inventory/HotbarComponent.h"
 #include "Inventory/PlayerInventoryComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -259,6 +264,85 @@ void APlayerCharacter::SimProxiesTurn()
 		return;
 	}
 	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+}
+
+/*
+ * Interacting
+ */
+void APlayerCharacter::ServerInteractButtonPressed_Implementation(FRotator CameraRotation)
+{
+	if(GetCombatState() != ECombatState::ECS_Unoccupied || bDead) return;
+
+	SetCombatState(ECombatState::ECS_Harvesting);
+	
+	FHitResult HitResult;
+	FVector Start = FollowCamera->GetComponentLocation();
+	const float DistanceToCharacter = (GetActorLocation() - Start).Size();
+	Start += UKismetMathLibrary::GetForwardVector(CameraRotation) * (DistanceToCharacter + 85.f);
+	FVector End = Start + UKismetMathLibrary::GetForwardVector(CameraRotation) * InteractionDistance;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+	UKismetSystemLibrary::SphereTraceSingle(this, Start, End, InteractionRadius, TraceTypeQuery1, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true);
+	
+	
+	if(HitResult.bBlockingHit)
+	{
+		if(HitResult.GetActor() && HitResult.GetActor()->Implements<UInteractionInterface>() && HitResult.GetActor()->Implements<UGroundHarvestableInterface>())
+		{
+			if(IsEquipped())
+			{
+				
+			}
+			else
+			{
+				// Harvest(HarvestingToolInfo.HarvestingDamage, HitResult.GetActor());
+				MulticastPlayMontage(HarvestingMontage);
+				float Health = IGroundHarvestableInterface::Execute_GetHealth(HitResult.GetActor()) - 15.f;
+				IGroundHarvestableInterface::Execute_UpdateHealth(HitResult.GetActor(), Health);
+				const TObjectPtr<UHarvestableInfo> Resources = IGroundHarvestableInterface::Execute_GetResources(HitResult.GetActor()).LoadSynchronous();
+				CalculateResources(Resources->GivenResources);
+				if(Health <= 0.f)
+				{			
+					ATransientHarvestable* TransientHarvestable = GetWorld()->SpawnActorDeferred<ATransientHarvestable>(
+					Resources->TransientHarvestableClass.LoadSynchronous(),
+					HitResult.GetActor()->GetTransform(),
+					this, Cast<APawn>(this), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+					
+					TransientHarvestable->Direction = GetActorForwardVector();
+
+					TransientHarvestable->FinishSpawning(HitResult.GetActor()->GetTransform());
+					HitResult.GetActor()->Destroy();
+				}
+			}
+		}
+	}
+	
+	SetCombatState(ECombatState::ECS_Unoccupied);
+}
+
+void APlayerCharacter::CalculateResources(const TArray<FResource>& Resources)
+{
+	for (const FResource& Resource : Resources)
+	{
+		// BaseVar * ServerRate *  RandomVariation
+		const float ServerRate = 1.f;
+		const float RandomVariation = FMath::FRandRange(.3f, 1.2f);
+		const int32 NumResources = FMath::TruncToInt32(Resource.Quantity * ServerRate * RandomVariation); 
+		if(NumResources > 0)
+		{
+			if(const UItemInfo* ResourceAsset = Resource.Resource.LoadSynchronous())
+			{
+				FInventoryItemData ResourceToAdd;
+				ResourceToAdd.Asset =ResourceAsset ;
+				ResourceToAdd.ID = ResourceAsset->ItemData.ID;
+				ResourceToAdd.Quantity = NumResources;
+				ResourceToAdd.Health = ResourceAsset->ItemData.Health;
+				ResourceToAdd.MaxHealth = ResourceAsset->ItemData.MaxHealth;
+				ResourceToAdd.StackSize = ResourceAsset->ItemData.StackSize;
+				Execute_AddHarvestedResources(this, ResourceToAdd);
+			}
+		}
+	}
 }
 
 /*

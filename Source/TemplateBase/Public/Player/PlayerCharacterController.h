@@ -44,6 +44,9 @@ public:
 	TObjectPtr<UInputAction> LookAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
+	TObjectPtr<UInputAction> InteractAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
 	TObjectPtr<UInputAction> EquipAction;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="PlayerCharacter")
@@ -135,6 +138,7 @@ protected:
 	void StopJumping();
 	void CrouchButtonPressed();
 	void EquipButtonPressed();
+	void InteractButtonPressed();
 	void FireButtonPressed();
 	void FireButtonReleased();
 	void AimButtonPressed();

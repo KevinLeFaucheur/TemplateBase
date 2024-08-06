@@ -35,6 +35,7 @@ void APlayerCharacterController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacterController::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &APlayerCharacterController::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &APlayerCharacterController::StopJumping);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &APlayerCharacterController::InteractButtonPressed);
 		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Started, this, &APlayerCharacterController::EquipButtonPressed);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &APlayerCharacterController::CrouchButtonPressed);
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &APlayerCharacterController::FireButtonPressed);
@@ -148,6 +149,11 @@ void APlayerCharacterController::StopJumping()
 void APlayerCharacterController::CrouchButtonPressed()
 {
 	if (PlayerCharacter) PlayerCharacter->CrouchButtonPressed();
+}
+
+void APlayerCharacterController::InteractButtonPressed()
+{
+	if (PlayerCharacter) PlayerCharacter->ServerInteractButtonPressed(IPlayerInterface::Execute_GetCameraRotation(PlayerCharacter));
 }
 
 void APlayerCharacterController::EquipButtonPressed()

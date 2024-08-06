@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Harvesting/Harvestable.h"
 #include "Interaction/GroundHarvestableInterface.h"
+#include "Interaction/InteractionInterface.h"
 #include "GroundHarvestable.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TEMPLATEBASE_API AGroundHarvestable : public AHarvestable, public IGroundHarvestableInterface
+class TEMPLATEBASE_API AGroundHarvestable : public AHarvestable, public IGroundHarvestableInterface, public IInteractionInterface
 {
 	GENERATED_BODY()
 

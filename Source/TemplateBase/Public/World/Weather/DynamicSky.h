@@ -37,10 +37,13 @@ protected:
 	void HandleNightSettings();
 	
 	UFUNCTION(BlueprintCallable)
-	void HandleCloudsSettings() const;
+	void HandleCloudsSettings();
 	
 	UFUNCTION(BlueprintCallable)
 	void SetCloudsSettings() const;
+	
+	UFUNCTION(BlueprintCallable)
+	void SetVolumetricCloudsSettings();
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDayTime() const;
@@ -77,11 +80,17 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> SkySphere;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings")
 	TObjectPtr<UMaterialInterface> SkySphereMaterial;
+	
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings")
+	TObjectPtr<UMaterialInterface> VolumetricCloudsMaterial;
 
 	UPROPERTY()
 	TObjectPtr<UMaterialInstanceDynamic> DynamicSkySphereMaterial;
+	
+	UPROPERTY()
+	TObjectPtr<UMaterialInstanceDynamic> VolumetricCloudsMID;
 	
 	UPROPERTY(EditAnywhere, Category="01-Basic Settings", meta=(ClampMin="0.0", ClampMax="24.0", UIMin ="0.0", UIMax="24.0"))
 	float TimeOfDay = 9.f;
@@ -157,6 +166,18 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category="03-Clouds Settings", meta=(ClampMin="0.0", ClampMax="1.0", UIMin ="0.0", UIMax="1.0"))
 	float Clouds2D_NightTimeCloudsTintStrength = 0.95f;
+	
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings", meta=(ClampMin="0.0", ClampMax="20.0", UIMin ="0.0", UIMax="20.0"))
+	float VolumetricClouds_LayerBottomAltitude = 7.f;
+	
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings", meta=(ClampMin="0.1", ClampMax="20.0", UIMin ="0.1", UIMax="20.0"))
+	float VolumetricClouds_LayerHeight = 8.f;
+	
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings", meta=(ClampMin="0.1", ClampMax="20.0", UIMin ="0.1", UIMax="20.0"))
+	float VolumetricClouds_PanningSpeed = 0.5f;
+
+	UPROPERTY(EditAnywhere, Category="03-Clouds Settings")
+	bool bPreviewDynamicChanges = false;
 public:	
 
 };
